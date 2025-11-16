@@ -9,6 +9,7 @@ import {
   webhooks,
 } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
+import { emailOTP } from "better-auth/plugins";
 
 const polarClient = new Polar({
   accessToken: process.env.POLAR_ACCESS_TOKEN,
@@ -24,6 +25,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
   },
   socialProviders: {
     google: {
@@ -36,6 +38,19 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    emailOTP({
+      async sendVerificationOTP({ email, otp, type }) {
+        // Log OTP to console instead of sending email
+        console.log("=".repeat(50));
+        console.log(`📧 Email OTP for ${email}`);
+        console.log(`Type: ${type}`);
+        console.log(`OTP Code: ${otp}`);
+        console.log("=".repeat(50));
+      },
+      sendVerificationOnSignUp: true,
+      otpLength: 6,
+      expiresIn: 300, // 5 minutes
+    }),
     polar({
       client: polarClient,
       createCustomerOnSignUp: true,
@@ -43,8 +58,8 @@ export const auth = betterAuth({
         checkout({
           products: [
             {
-              productId: "123-456-789",
-              slug: "pro",
+              productId: process.env.POLAR_PRODUCT_ID!,
+              slug: "Pro",
             },
           ],
           successUrl: "/success?checkout_id={CHECKOUT_ID}",
