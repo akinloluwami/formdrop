@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { AuthError } from "@/components/AuthError";
 
 export const Route = createFileRoute("/signup")({
   component: RouteComponent,
@@ -33,20 +34,24 @@ function RouteComponent() {
 
     setLoading(true);
 
-    try {
-      await authClient.signUp.email({
-        email,
-        password,
-        name,
-      });
+    const { data, error: signUpError } = await authClient.signUp.email({
+      email,
+      password,
+      name,
+    });
+
+    setLoading(false);
+
+    if (signUpError) {
+      setError(signUpError.message || "Signup failed. Please try again.");
+      console.error("Signup error:", signUpError);
+      return;
+    }
+
+    if (data) {
       // After successful signup, show OTP input
       setShowOtpInput(true);
       setError("");
-    } catch (err: any) {
-      setError(err?.message || "Signup failed. Please try again.");
-      console.error("Signup error:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -55,18 +60,24 @@ function RouteComponent() {
     setError("");
     setLoading(true);
 
-    try {
-      await authClient.emailOtp.verifyEmail({
-        email,
-        otp,
-      });
+    const { data, error: verifyError } = await authClient.emailOtp.verifyEmail({
+      email,
+      otp,
+    });
+
+    setLoading(false);
+
+    if (verifyError) {
+      setError(
+        verifyError.message || "Invalid or expired OTP. Please try again.",
+      );
+      console.error("OTP verification error:", verifyError);
+      return;
+    }
+
+    if (data) {
       // After successful verification, navigate to home
       navigate({ to: "/" });
-    } catch (err: any) {
-      setError(err?.message || "Invalid or expired OTP. Please try again.");
-      console.error("OTP verification error:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -74,51 +85,57 @@ function RouteComponent() {
     setError("");
     setLoading(true);
 
-    try {
+    const { error: resendError } =
       await authClient.emailOtp.sendVerificationOtp({
         email,
         type: "email-verification",
       });
-      setError("");
-      // Show success message
-      alert("A new OTP has been sent to your email!");
-    } catch (err: any) {
-      setError(err?.message || "Failed to resend OTP. Please try again.");
-      console.error("Resend OTP error:", err);
-    } finally {
-      setLoading(false);
+
+    setLoading(false);
+
+    if (resendError) {
+      setError(
+        resendError.message || "Failed to resend OTP. Please try again.",
+      );
+      console.error("Resend OTP error:", resendError);
+      return;
     }
+
+    // Show success message
+    alert("A new OTP has been sent to your email!");
   };
 
   const handleGoogleSignup = async () => {
     setError("");
     setLoading(true);
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
-      });
-    } catch (err) {
-      setError("Google signup failed");
-      console.error("Google signup error:", err);
-    } finally {
-      setLoading(false);
+
+    const { error: socialError } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+
+    setLoading(false);
+
+    if (socialError) {
+      setError(socialError.message || "Google signup failed");
+      console.error("Google signup error:", socialError);
     }
   };
 
   const handleGithubSignup = async () => {
     setError("");
     setLoading(true);
-    try {
-      await authClient.signIn.social({
-        provider: "github",
-        callbackURL: "/",
-      });
-    } catch (err) {
-      setError("GitHub signup failed");
-      console.error("GitHub signup error:", err);
-    } finally {
-      setLoading(false);
+
+    const { error: socialError } = await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/",
+    });
+
+    setLoading(false);
+
+    if (socialError) {
+      setError(socialError.message || "GitHub signup failed");
+      console.error("GitHub signup error:", socialError);
     }
   };
 
@@ -145,9 +162,11 @@ function RouteComponent() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="border rounded-3xl border-gray-200 p-8">
           {error && (
-            <div className="mb-4 p-3 rounded-2xl bg-red-50 border border-red-200">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
+            <AuthError
+              message={error}
+              onDismiss={() => setError("")}
+              className="mb-4"
+            />
           )}
 
           {showOtpInput ? (

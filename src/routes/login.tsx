@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { AuthError } from "@/components/AuthError";
 
 export const Route = createFileRoute("/login")({
   component: RouteComponent,
@@ -18,49 +19,55 @@ function RouteComponent() {
     setError("");
     setLoading(true);
 
-    try {
-      await authClient.signIn.email({
-        email,
-        password,
-      });
+    const { data, error: signInError } = await authClient.signIn.email({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (signInError) {
+      setError(signInError.message || "Invalid email or password");
+      console.error("Login error:", signInError);
+      return;
+    }
+
+    if (data) {
       navigate({ to: "/" });
-    } catch (err) {
-      setError("Invalid email or password");
-      console.error("Login error:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
     setError("");
     setLoading(true);
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
-      });
-    } catch (err) {
-      setError("Google login failed");
-      console.error("Google login error:", err);
-    } finally {
-      setLoading(false);
+
+    const { error: socialError } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+
+    setLoading(false);
+
+    if (socialError) {
+      setError(socialError.message || "Google login failed");
+      console.error("Google login error:", socialError);
     }
   };
 
   const handleGithubLogin = async () => {
     setError("");
     setLoading(true);
-    try {
-      await authClient.signIn.social({
-        provider: "github",
-        callbackURL: "/",
-      });
-    } catch (err) {
-      setError("GitHub login failed");
-      console.error("GitHub login error:", err);
-    } finally {
-      setLoading(false);
+
+    const { error: socialError } = await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/",
+    });
+
+    setLoading(false);
+
+    if (socialError) {
+      setError(socialError.message || "GitHub login failed");
+      console.error("GitHub login error:", socialError);
     }
   };
 
@@ -87,9 +94,11 @@ function RouteComponent() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="border rounded-3xl border-gray-200 p-8">
           {error && (
-            <div className="mb-4 p-3 rounded-2xl bg-red-50 border border-red-200">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
+            <AuthError
+              message={error}
+              onDismiss={() => setError("")}
+              className="mb-4"
+            />
           )}
 
           {/* Social Login Buttons */}
