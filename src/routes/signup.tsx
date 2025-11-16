@@ -1,34 +1,81 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/signup")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement password authentication
+    setError("");
+
     if (password !== confirmPassword) {
-      alert("Passwords don't match!");
+      setError("Passwords don't match!");
       return;
     }
-    console.log("Signup with:", { name, email, password });
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await authClient.signUp.email({
+        email,
+        password,
+        name,
+      });
+      navigate({ to: "/" });
+    } catch (err: any) {
+      setError(err?.message || "Signup failed. Please try again.");
+      console.error("Signup error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleGoogleSignup = () => {
-    // TODO: Implement Google OAuth
-    console.log("Signup with Google");
+  const handleGoogleSignup = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    } catch (err) {
+      setError("Google signup failed");
+      console.error("Google signup error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleGithubSignup = () => {
-    // TODO: Implement GitHub OAuth
-    console.log("Signup with GitHub");
+  const handleGithubSignup = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider: "github",
+        callbackURL: "/",
+      });
+    } catch (err) {
+      setError("GitHub signup failed");
+      console.error("GitHub signup error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,11 +100,18 @@ function RouteComponent() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="border rounded-3xl border-gray-200 p-8">
+          {error && (
+            <div className="mb-4 p-3 rounded-2xl bg-red-50 border border-red-200">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
           {/* Social Signup Buttons */}
           <div className="space-y-3">
             <button
               onClick={handleGoogleSignup}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-4xl bg-white font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-4xl bg-white font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -82,7 +136,8 @@ function RouteComponent() {
 
             <button
               onClick={handleGithubSignup}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-4xl bg-white font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-4xl bg-white font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -201,9 +256,10 @@ function RouteComponent() {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-4xl shadow-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors"
+                disabled={loading}
+                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-4xl shadow-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create account
+                {loading ? "Creating account..." : "Create account"}
               </button>
             </div>
 
