@@ -36,12 +36,12 @@ function RouteComponent() {
         </h2>
         <p className="mt-2 text-center text-gray-600">
           Or{" "}
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             className="font-medium text-gray-900 hover:underline"
           >
             create a new account
-          </a>
+          </Link>
         </p>
       </div>
 
