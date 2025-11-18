@@ -7,48 +7,96 @@ const apiClient = axios.create({
   },
 });
 
-interface CreateFormParams {
-  name: string;
-  description?: string;
-}
+// Types matching the database schema
+type ApiKeyScopeType = "all" | "specific" | "restricted";
 
-interface FormData {
+interface Bucket {
   id: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
   userId: string;
-  submissions: number;
+  name: string;
+  description: string | null;
+  allowedDomains: string[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-interface SubmissionData {
+interface Submission {
   id: string;
-  formId: string;
-  data: Record<string, any>;
-  createdAt: string;
-  ipAddress?: string;
-  userAgent?: string;
+  bucketId: string;
+  payload: Record<string, any>;
+  ip: string | null;
+  userAgent: string | null;
+  createdAt: Date;
 }
 
-interface UpdateFormParams {
+interface ApiKey {
+  id: string;
+  name: string;
+  key: string; // Masked except on creation
+  canRead: boolean;
+  canWrite: boolean;
+  scopeType: ApiKeyScopeType;
+  scopeBucketIds: string[] | null;
+  lastUsedAt: Date | null;
+  createdAt: Date;
+}
+
+// Input types
+interface CreateBucketParams {
+  name: string;
+  description?: string;
+  allowedDomains?: string[];
+}
+
+interface UpdateBucketParams {
   name?: string;
   description?: string;
+  allowedDomains?: string[];
 }
 
-interface ApiResponse<T> {
-  data?: T;
-  error?: string;
+interface CreateApiKeyParams {
+  name: string;
+  canRead?: boolean;
+  canWrite?: boolean;
+  scopeType?: ApiKeyScopeType;
+  bucketIds?: string[];
 }
+
+interface UpdateApiKeyParams {
+  name?: string;
+  canRead?: boolean;
+  canWrite?: boolean;
+  scopeType?: ApiKeyScopeType;
+  bucketIds?: string[];
+}
+
+// Response types
+type SuccessResponse<T> = T;
+type ErrorResponse = { error: string; details?: string };
+type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 
 export const appClient = {
-  forms: {
-    create: async (
-      params: CreateFormParams,
-    ): Promise<ApiResponse<FormData>> => {
+  buckets: {
+    list: async (): Promise<ApiResponse<{ buckets: Bucket[] }>> => {
       try {
-        const response = await apiClient.post<ApiResponse<FormData>>(
-          "/api/forms",
+        const response = await apiClient.get<{ buckets: Bucket[] }>(
+          "/api/buckets",
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    create: async (
+      params: CreateBucketParams,
+    ): Promise<ApiResponse<{ bucket: Bucket }>> => {
+      try {
+        const response = await apiClient.post<{ bucket: Bucket }>(
+          "/api/buckets",
           params,
         );
         return response.data;
@@ -60,23 +108,10 @@ export const appClient = {
       }
     },
 
-    list: async (): Promise<ApiResponse<FormData[]>> => {
+    get: async (bucketId: string): Promise<ApiResponse<{ bucket: Bucket }>> => {
       try {
-        const response =
-          await apiClient.get<ApiResponse<FormData[]>>("/api/forms");
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
-
-    get: async (id: string): Promise<ApiResponse<FormData>> => {
-      try {
-        const response = await apiClient.get<ApiResponse<FormData>>(
-          `/api/forms/${id}`,
+        const response = await apiClient.get<{ bucket: Bucket }>(
+          `/api/buckets/${bucketId}`,
         );
         return response.data;
       } catch (error) {
@@ -88,12 +123,12 @@ export const appClient = {
     },
 
     update: async (
-      id: string,
-      params: UpdateFormParams,
-    ): Promise<ApiResponse<FormData>> => {
+      bucketId: string,
+      params: UpdateBucketParams,
+    ): Promise<ApiResponse<{ bucket: Bucket }>> => {
       try {
-        const response = await apiClient.patch<ApiResponse<FormData>>(
-          `/api/forms/${id}`,
+        const response = await apiClient.patch<{ bucket: Bucket }>(
+          `/api/buckets/${bucketId}`,
           params,
         );
         return response.data;
@@ -105,11 +140,13 @@ export const appClient = {
       }
     },
 
-    delete: async (id: string): Promise<ApiResponse<{ success: boolean }>> => {
+    delete: async (
+      bucketId: string,
+    ): Promise<ApiResponse<{ message: string }>> => {
       try {
-        const response = await apiClient.delete<
-          ApiResponse<{ success: boolean }>
-        >(`/api/forms/${id}`);
+        const response = await apiClient.delete<{ message: string }>(
+          `/api/buckets/${bucketId}`,
+        );
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -121,10 +158,12 @@ export const appClient = {
   },
 
   submissions: {
-    list: async (formId: string): Promise<ApiResponse<SubmissionData[]>> => {
+    list: async (
+      bucketId: string,
+    ): Promise<ApiResponse<{ submissions: Submission[] }>> => {
       try {
-        const response = await apiClient.get<ApiResponse<SubmissionData[]>>(
-          `/api/forms/${formId}/submissions`,
+        const response = await apiClient.get<{ submissions: Submission[] }>(
+          `/api/buckets/${bucketId}/submissions`,
         );
         return response.data;
       } catch (error) {
@@ -136,12 +175,12 @@ export const appClient = {
     },
 
     get: async (
-      formId: string,
+      bucketId: string,
       submissionId: string,
-    ): Promise<ApiResponse<SubmissionData>> => {
+    ): Promise<ApiResponse<{ submission: Submission }>> => {
       try {
-        const response = await apiClient.get<ApiResponse<SubmissionData>>(
-          `/api/forms/${formId}/submissions/${submissionId}`,
+        const response = await apiClient.get<{ submission: Submission }>(
+          `/api/buckets/${bucketId}/submissions/${submissionId}`,
         );
         return response.data;
       } catch (error) {
@@ -153,13 +192,97 @@ export const appClient = {
     },
 
     delete: async (
-      formId: string,
+      bucketId: string,
       submissionId: string,
-    ): Promise<ApiResponse<{ success: boolean }>> => {
+    ): Promise<ApiResponse<{ message: string }>> => {
       try {
-        const response = await apiClient.delete<
-          ApiResponse<{ success: boolean }>
-        >(`/api/forms/${formId}/submissions/${submissionId}`);
+        const response = await apiClient.delete<{ message: string }>(
+          `/api/buckets/${bucketId}/submissions/${submissionId}`,
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+  },
+
+  apiKeys: {
+    list: async (): Promise<ApiResponse<{ apiKeys: ApiKey[] }>> => {
+      try {
+        const response = await apiClient.get<{ apiKeys: ApiKey[] }>(
+          "/api/api-keys",
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    create: async (
+      params: CreateApiKeyParams,
+    ): Promise<
+      ApiResponse<{ apiKey: ApiKey; key: string; warning: string }>
+    > => {
+      try {
+        const response = await apiClient.post<{
+          apiKey: ApiKey;
+          key: string;
+          warning: string;
+        }>("/api/api-keys", params);
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    get: async (keyId: string): Promise<ApiResponse<{ apiKey: ApiKey }>> => {
+      try {
+        const response = await apiClient.get<{ apiKey: ApiKey }>(
+          `/api/api-keys/${keyId}`,
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    update: async (
+      keyId: string,
+      params: UpdateApiKeyParams,
+    ): Promise<ApiResponse<{ apiKey: ApiKey }>> => {
+      try {
+        const response = await apiClient.patch<{ apiKey: ApiKey }>(
+          `/api/api-keys/${keyId}`,
+          params,
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    delete: async (
+      keyId: string,
+    ): Promise<ApiResponse<{ message: string }>> => {
+      try {
+        const response = await apiClient.delete<{ message: string }>(
+          `/api/api-keys/${keyId}`,
+        );
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
