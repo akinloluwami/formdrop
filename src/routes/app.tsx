@@ -37,7 +37,7 @@ function RouteComponent() {
   ];
 
   return (
-    <div className="p-1 bg-gray-100 flex min-h-screen gap-2">
+    <div className="p-1 bg-gray-100 h-screen gap-2 flex">
       <div className="bg-white w-72 p-2 border border-gray-200 rounded-2xl flex flex-col gap-4 justify-between">
         <div className="">
           <div className="">
@@ -69,7 +69,7 @@ function RouteComponent() {
         </div>
         <div className="">Usage</div>
       </div>
-      <div className="bg-white rounded-2xl border border-gray-200 w-full py-2 px-20">
+      <div className="bg-white rounded-2xl border border-gray-200 w-full py-2 px-20 overflow-y-auto">
         <Outlet />
       </div>
     </div>
