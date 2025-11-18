@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { buckets, submissions } from "@/db/schema";
+import { eq, desc, sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/buckets")({
@@ -20,9 +20,20 @@ export const Route = createFileRoute("/api/buckets")({
           const userId = session.user.id;
 
           const userBuckets = await db
-            .select()
+            .select({
+              id: buckets.id,
+              userId: buckets.userId,
+              name: buckets.name,
+              description: buckets.description,
+              allowedDomains: buckets.allowedDomains,
+              createdAt: buckets.createdAt,
+              updatedAt: buckets.updatedAt,
+              submissionCount: sql<number>`cast(count(${submissions.id}) as integer)`,
+            })
             .from(buckets)
+            .leftJoin(submissions, eq(buckets.id, submissions.bucketId))
             .where(eq(buckets.userId, userId))
+            .groupBy(buckets.id)
             .orderBy(desc(buckets.createdAt));
 
           return Response.json({ buckets: userBuckets });
