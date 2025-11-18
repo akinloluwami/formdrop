@@ -11,8 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppFormsIndexRouteImport } from './routes/app/forms/index'
+import { Route as AppFormsIdRouteImport } from './routes/app/forms/$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AppFormsIdSubmissionsRouteImport } from './routes/app/forms/$id/submissions'
+import { Route as AppFormsIdAnalyticsRouteImport } from './routes/app/forms/$id/analytics'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -24,46 +29,115 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppFormsIndexRoute = AppFormsIndexRouteImport.update({
+  id: '/forms/',
+  path: '/forms/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFormsIdRoute = AppFormsIdRouteImport.update({
+  id: '/forms/$id',
+  path: '/forms/$id',
+  getParentRoute: () => AppRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppFormsIdSubmissionsRoute = AppFormsIdSubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => AppFormsIdRoute,
+} as any)
+const AppFormsIdAnalyticsRoute = AppFormsIdAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppFormsIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/forms/$id': typeof AppFormsIdRouteWithChildren
+  '/app/forms': typeof AppFormsIndexRoute
+  '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/forms/$id': typeof AppFormsIdRouteWithChildren
+  '/app/forms': typeof AppFormsIndexRoute
+  '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/forms/$id': typeof AppFormsIdRouteWithChildren
+  '/app/forms/': typeof AppFormsIndexRoute
+  '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/api/auth/$'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/signup'
+    | '/api/auth/$'
+    | '/app/forms/$id'
+    | '/app/forms'
+    | '/app/forms/$id/analytics'
+    | '/app/forms/$id/submissions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/api/auth/$'
-  id: '__root__' | '/' | '/login' | '/signup' | '/api/auth/$'
+  to:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/signup'
+    | '/api/auth/$'
+    | '/app/forms/$id'
+    | '/app/forms'
+    | '/app/forms/$id/analytics'
+    | '/app/forms/$id/submissions'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/login'
+    | '/signup'
+    | '/api/auth/$'
+    | '/app/forms/$id'
+    | '/app/forms/'
+    | '/app/forms/$id/analytics'
+    | '/app/forms/$id/submissions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -85,12 +159,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/forms/': {
+      id: '/app/forms/'
+      path: '/forms'
+      fullPath: '/app/forms'
+      preLoaderRoute: typeof AppFormsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/forms/$id': {
+      id: '/app/forms/$id'
+      path: '/forms/$id'
+      fullPath: '/app/forms/$id'
+      preLoaderRoute: typeof AppFormsIdRouteImport
+      parentRoute: typeof AppRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -99,11 +194,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/forms/$id/submissions': {
+      id: '/app/forms/$id/submissions'
+      path: '/submissions'
+      fullPath: '/app/forms/$id/submissions'
+      preLoaderRoute: typeof AppFormsIdSubmissionsRouteImport
+      parentRoute: typeof AppFormsIdRoute
+    }
+    '/app/forms/$id/analytics': {
+      id: '/app/forms/$id/analytics'
+      path: '/analytics'
+      fullPath: '/app/forms/$id/analytics'
+      preLoaderRoute: typeof AppFormsIdAnalyticsRouteImport
+      parentRoute: typeof AppFormsIdRoute
+    }
   }
 }
 
+interface AppFormsIdRouteChildren {
+  AppFormsIdAnalyticsRoute: typeof AppFormsIdAnalyticsRoute
+  AppFormsIdSubmissionsRoute: typeof AppFormsIdSubmissionsRoute
+}
+
+const AppFormsIdRouteChildren: AppFormsIdRouteChildren = {
+  AppFormsIdAnalyticsRoute: AppFormsIdAnalyticsRoute,
+  AppFormsIdSubmissionsRoute: AppFormsIdSubmissionsRoute,
+}
+
+const AppFormsIdRouteWithChildren = AppFormsIdRoute._addFileChildren(
+  AppFormsIdRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppFormsIdRoute: typeof AppFormsIdRouteWithChildren
+  AppFormsIndexRoute: typeof AppFormsIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppFormsIdRoute: AppFormsIdRouteWithChildren,
+  AppFormsIndexRoute: AppFormsIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

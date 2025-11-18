@@ -12,3 +12,7 @@ code {
   font-family:
     source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+@theme {
+  --color-accent: #6f63e4;
+}
