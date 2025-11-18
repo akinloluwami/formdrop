@@ -1,13 +1,19 @@
-import { App, Route, Response, serve } from "react-serve-js";
+import { App, RouteGroup, Middleware, serve } from "react-serve-js";
+import { CollectRoute } from "./routes/collect";
+import { BucketsRoutes } from "./routes/buckets";
+import { SubmissionsRoutes } from "./routes/submissions";
+import { authMiddleware } from "./middleware/auth";
 
 function Backend() {
   return (
-    <App port={6969} parseBody={true}>
-      <Route path="/" method="GET">
-        {async () => {
-          return <Response json={{ message: "Hello World" }} />;
-        }}
-      </Route>
+    <App port={1400} parseBody={true}>
+      <CollectRoute />
+
+      <RouteGroup prefix="/api">
+        <Middleware use={authMiddleware} />
+        <BucketsRoutes />
+        <SubmissionsRoutes />
+      </RouteGroup>
     </App>
   );
 }
