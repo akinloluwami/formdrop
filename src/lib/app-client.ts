@@ -17,6 +17,7 @@ interface Bucket {
   allowedDomains: string[];
   createdAt: Date;
   updatedAt: Date;
+  submissionCount: number;
 }
 
 interface Submission {
