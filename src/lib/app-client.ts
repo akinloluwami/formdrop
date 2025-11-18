@@ -7,7 +7,6 @@ const apiClient = axios.create({
   },
 });
 
-// Types matching the database schema
 type ApiKeyScopeType = "all" | "specific" | "restricted";
 
 interface Bucket {
@@ -32,7 +31,7 @@ interface Submission {
 interface ApiKey {
   id: string;
   name: string;
-  key: string; // Masked except on creation
+  key: string;
   canRead: boolean;
   canWrite: boolean;
   scopeType: ApiKeyScopeType;
@@ -41,7 +40,6 @@ interface ApiKey {
   createdAt: Date;
 }
 
-// Input types
 interface CreateBucketParams {
   name: string;
   description?: string;
@@ -70,7 +68,6 @@ interface UpdateApiKeyParams {
   bucketIds?: string[];
 }
 
-// Response types
 type SuccessResponse<T> = T;
 type ErrorResponse = { error: string; details?: string };
 type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
