@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { buckets, submissions } from "@/db/schema";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/buckets")({
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/buckets")({
             })
             .from(buckets)
             .leftJoin(submissions, eq(buckets.id, submissions.bucketId))
-            .where(eq(buckets.userId, userId))
+            .where(and(eq(buckets.userId, userId), isNull(buckets.deletedAt)))
             .groupBy(buckets.id)
             .orderBy(desc(buckets.createdAt));
 
