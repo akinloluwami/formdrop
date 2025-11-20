@@ -30,7 +30,13 @@ export const Route = createFileRoute("/api/buckets/$bucketId/submissions")({
           const [bucket] = await db
             .select()
             .from(buckets)
-            .where(and(eq(buckets.id, bucketId), eq(buckets.userId, userId)))
+            .where(
+              and(
+                eq(buckets.id, bucketId),
+                eq(buckets.userId, userId),
+                isNull(buckets.deletedAt),
+              ),
+            )
             .limit(1);
 
           if (!bucket) {
@@ -97,7 +103,13 @@ export const Route = createFileRoute("/api/buckets/$bucketId/submissions")({
           const [bucket] = await db
             .select()
             .from(buckets)
-            .where(and(eq(buckets.id, bucketId), eq(buckets.userId, userId)))
+            .where(
+              and(
+                eq(buckets.id, bucketId),
+                eq(buckets.userId, userId),
+                isNull(buckets.deletedAt),
+              ),
+            )
             .limit(1);
 
           if (!bucket) {
