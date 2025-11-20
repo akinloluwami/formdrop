@@ -205,6 +205,24 @@ export const appClient = {
         return { error: "An unexpected error occurred" };
       }
     },
+
+    bulkDelete: async (
+      bucketId: string,
+      submissionIds: string[],
+    ): Promise<ApiResponse<{ success: boolean }>> => {
+      try {
+        const response = await apiClient.delete<{ success: boolean }>(
+          `/api/buckets/${bucketId}/submissions`,
+          { data: { submissionIds } },
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
   },
 
   apiKeys: {
