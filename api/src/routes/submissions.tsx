@@ -7,7 +7,7 @@ import {
 } from "react-serve-js";
 import { db } from "../db";
 import { buckets, submissions } from "../db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, isNull } from "drizzle-orm";
 
 export const SubmissionsRoutes = () => (
   <RouteGroup prefix="/:bucketId/submissions">
@@ -31,7 +31,11 @@ export const SubmissionsRoutes = () => (
           .select()
           .from(buckets)
           .where(
-            and(eq(buckets.id, bucketId), eq(buckets.userId, apiKey.userId)),
+            and(
+              eq(buckets.id, bucketId),
+              eq(buckets.userId, apiKey.userId),
+              isNull(buckets.deletedAt),
+            ),
           )
           .limit(1);
 
@@ -71,7 +75,11 @@ export const SubmissionsRoutes = () => (
           .select()
           .from(buckets)
           .where(
-            and(eq(buckets.id, bucketId), eq(buckets.userId, apiKey.userId)),
+            and(
+              eq(buckets.id, bucketId),
+              eq(buckets.userId, apiKey.userId),
+              isNull(buckets.deletedAt),
+            ),
           )
           .limit(1);
 
