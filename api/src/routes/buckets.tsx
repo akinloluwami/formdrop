@@ -1,7 +1,7 @@
 import { Response, useContext, Route, RouteGroup } from "react-serve-js";
 import { db } from "../db";
 import { buckets } from "../db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, isNull } from "drizzle-orm";
 
 export const BucketsRoutes = () => (
   <RouteGroup prefix="/buckets">
@@ -22,7 +22,9 @@ export const BucketsRoutes = () => (
         const userBuckets = await db
           .select()
           .from(buckets)
-          .where(eq(buckets.userId, apiKey.userId))
+          .where(
+            and(eq(buckets.userId, apiKey.userId), isNull(buckets.deletedAt)),
+          )
           .orderBy(desc(buckets.createdAt));
 
         return <Response json={{ buckets: userBuckets }} />;
