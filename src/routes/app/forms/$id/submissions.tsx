@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { appClient } from "@/lib/app-client";
 import moment from "moment";
 import {
@@ -8,6 +8,9 @@ import {
   TableIcon,
   Cancel01Icon,
   ArrowDown01Icon,
+  Download01Icon,
+  Delete02Icon,
+  AlertCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
@@ -30,9 +33,15 @@ interface Submission {
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const [viewMode, setViewMode] = useState<ViewMode>("card");
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [selectedSubmission, setSelectedSubmission] =
     useState<Submission | null>(null);
+  const [selectedSubmissionIds, setSelectedSubmissionIds] = useState<string[]>(
+    [],
+  );
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["submissions", id],
@@ -44,6 +53,47 @@ function RouteComponent() {
       return response.submissions;
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const response = await appClient.submissions.bulkDelete(id, ids);
+      if ("error" in response) throw new Error(response.error);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["submissions", id] });
+      setSelectedSubmissionIds([]);
+      setShowDeleteConfirm(false);
+    },
+  });
+
+  const submissions = data || [];
+
+  const toggleSelectAll = () => {
+    if (selectedSubmissionIds.length === submissions.length) {
+      setSelectedSubmissionIds([]);
+    } else {
+      setSelectedSubmissionIds(submissions.map((s) => s.id));
+    }
+  };
+
+  const toggleSelect = (submissionId: string) => {
+    if (selectedSubmissionIds.includes(submissionId)) {
+      setSelectedSubmissionIds(
+        selectedSubmissionIds.filter((id) => id !== submissionId),
+      );
+    } else {
+      setSelectedSubmissionIds([...selectedSubmissionIds, submissionId]);
+    }
+  };
+
+  const handleDelete = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    deleteMutation.mutate(selectedSubmissionIds);
+  };
 
   const truncateText = (text: string, maxLength: number = 50) => {
     if (text.length <= maxLength) return text;
@@ -172,8 +222,6 @@ function RouteComponent() {
     );
   }
 
-  const submissions = data || [];
-
   const allKeys =
     submissions.length > 0
       ? Array.from(
@@ -193,7 +241,24 @@ function RouteComponent() {
           </Link>
           <h2 className="text-lg font-semibold">Submissions</h2>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {selectedSubmissionIds.length > 0 && (
+            <button
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+              className="p-2 rounded-lg transition-colors bg-red-50 text-red-600 hover:bg-red-100 flex items-center gap-2 px-3"
+            >
+              <HugeiconsIcon icon={Delete02Icon} size={18} />
+              <span className="text-sm font-medium">
+                Delete ({selectedSubmissionIds.length})
+              </span>
+            </button>
+          )}
+          <button className="p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-600 flex items-center gap-2 px-3 border border-gray-200">
+            <HugeiconsIcon icon={Download01Icon} size={18} />
+            <span className="text-sm font-medium">Export</span>
+          </button>
+          <div className="w-px h-6 bg-gray-200 mx-1"></div>
           <button
             onClick={() => setViewMode("card")}
             className={`p-2 rounded-lg transition-colors ${
@@ -266,6 +331,17 @@ function RouteComponent() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
+                <th className="px-4 py-3 w-10">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 text-accent focus:ring-accent cursor-pointer"
+                    checked={
+                      submissions.length > 0 &&
+                      selectedSubmissionIds.length === submissions.length
+                    }
+                    onChange={toggleSelectAll}
+                  />
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 whitespace-nowrap">
                   Timestamp
                 </th>
@@ -286,9 +362,24 @@ function RouteComponent() {
               {submissions.map((submission) => (
                 <tr
                   key={submission.id}
-                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+                  className={`hover:bg-gray-50 transition-colors cursor-pointer ${
+                    selectedSubmissionIds.includes(submission.id)
+                      ? "bg-accent/5"
+                      : ""
+                  }`}
                   onClick={() => setSelectedSubmission(submission)}
                 >
+                  <td
+                    className="px-4 py-3"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-accent focus:ring-accent cursor-pointer"
+                      checked={selectedSubmissionIds.includes(submission.id)}
+                      onChange={() => toggleSelect(submission.id)}
+                    />
+                  </td>
                   <td className="px-4 py-3 text-xs text-gray-700 whitespace-nowrap">
                     {moment(submission.createdAt).format("MMM DD, h:mm A")}
                   </td>
@@ -404,6 +495,67 @@ function RouteComponent() {
                     </p>
                   </div>
                 )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+                    <HugeiconsIcon icon={AlertCircleIcon} size={20} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Delete Submissions
+                  </h3>
+                </div>
+                <p className="text-gray-600 text-sm">
+                  Are you sure you want to delete {selectedSubmissionIds.length}{" "}
+                  selected submission
+                  {selectedSubmissionIds.length > 1 ? "s" : ""}? This action
+                  cannot be undone.
+                </p>
+              </div>
+              <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  disabled={deleteMutation.isPending}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {deleteMutation.isPending ? (
+                    "Deleting..."
+                  ) : (
+                    <>
+                      <HugeiconsIcon icon={Delete02Icon} size={16} />
+                      Delete
+                    </>
+                  )}
+                </button>
               </div>
             </motion.div>
           </motion.div>
