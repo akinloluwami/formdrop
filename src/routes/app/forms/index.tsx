@@ -92,7 +92,7 @@ function RouteComponent() {
               className="p-5 border border-gray-200 rounded-3xl flex justify-between items-center hover:border-accent/50 transition-colors"
             >
               <div className="">
-                <h3 className="text-sm font-medium">{bucket.name}</h3>
+                <h3 className="font-medium">{bucket.name}</h3>
                 <div className="flex gap-x-2 items-center mt-1">
                   <p className="text-xs text-gray-600">{bucket.id}</p>
                   <p className="text-xs text-gray-600 bg-gray-200/70 px-2 py-1 rounded-lg">
