@@ -66,6 +66,7 @@ export const submissions = pgTable(
     ip: text("ip"),
     userAgent: text("user_agent"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    deletedAt: timestamp("deleted_at"),
   },
   (table) => [
     index("submissions_bucket_created_idx").on(table.bucketId, table.createdAt),
