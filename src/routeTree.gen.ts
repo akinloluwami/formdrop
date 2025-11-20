@@ -21,8 +21,10 @@ import { Route as ApiBucketsBucketIdRouteImport } from './routes/api/buckets/$bu
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiApiKeysKeyIdRouteImport } from './routes/api/api-keys/$keyId'
 import { Route as AppFormsIdSubmissionsRouteImport } from './routes/app/forms/$id/submissions'
+import { Route as AppFormsIdSettingsRouteImport } from './routes/app/forms/$id/settings'
 import { Route as AppFormsIdAnalyticsRouteImport } from './routes/app/forms/$id/analytics'
 import { Route as ApiBucketsBucketIdSubmissionsRouteImport } from './routes/api/buckets/$bucketId/submissions'
+import { Route as ApiBucketsBucketIdAnalyticsRouteImport } from './routes/api/buckets/$bucketId/analytics'
 import { Route as ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport } from './routes/api/buckets/$bucketId/submissions/$submissionId'
 
 const SignupRoute = SignupRouteImport.update({
@@ -85,6 +87,11 @@ const AppFormsIdSubmissionsRoute = AppFormsIdSubmissionsRouteImport.update({
   path: '/submissions',
   getParentRoute: () => AppFormsIdRoute,
 } as any)
+const AppFormsIdSettingsRoute = AppFormsIdSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppFormsIdRoute,
+} as any)
 const AppFormsIdAnalyticsRoute = AppFormsIdAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -94,6 +101,12 @@ const ApiBucketsBucketIdSubmissionsRoute =
   ApiBucketsBucketIdSubmissionsRouteImport.update({
     id: '/submissions',
     path: '/submissions',
+    getParentRoute: () => ApiBucketsBucketIdRoute,
+  } as any)
+const ApiBucketsBucketIdAnalyticsRoute =
+  ApiBucketsBucketIdAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
     getParentRoute: () => ApiBucketsBucketIdRoute,
   } as any)
 const ApiBucketsBucketIdSubmissionsSubmissionIdRoute =
@@ -115,8 +128,10 @@ export interface FileRoutesByFullPath {
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
+  '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
 }
@@ -132,8 +147,10 @@ export interface FileRoutesByTo {
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
+  '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
 }
@@ -150,8 +167,10 @@ export interface FileRoutesById {
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms/': typeof AppFormsIndexRoute
+  '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
 }
@@ -169,8 +188,10 @@ export interface FileRouteTypes {
     | '/api/buckets/$bucketId'
     | '/app/forms/$id'
     | '/app/forms'
+    | '/api/buckets/$bucketId/analytics'
     | '/api/buckets/$bucketId/submissions'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
     | '/api/buckets/$bucketId/submissions/$submissionId'
   fileRoutesByTo: FileRoutesByTo
@@ -186,8 +207,10 @@ export interface FileRouteTypes {
     | '/api/buckets/$bucketId'
     | '/app/forms/$id'
     | '/app/forms'
+    | '/api/buckets/$bucketId/analytics'
     | '/api/buckets/$bucketId/submissions'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
     | '/api/buckets/$bucketId/submissions/$submissionId'
   id:
@@ -203,8 +226,10 @@ export interface FileRouteTypes {
     | '/api/buckets/$bucketId'
     | '/app/forms/$id'
     | '/app/forms/'
+    | '/api/buckets/$bucketId/analytics'
     | '/api/buckets/$bucketId/submissions'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
     | '/api/buckets/$bucketId/submissions/$submissionId'
   fileRoutesById: FileRoutesById
@@ -305,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFormsIdSubmissionsRouteImport
       parentRoute: typeof AppFormsIdRoute
     }
+    '/app/forms/$id/settings': {
+      id: '/app/forms/$id/settings'
+      path: '/settings'
+      fullPath: '/app/forms/$id/settings'
+      preLoaderRoute: typeof AppFormsIdSettingsRouteImport
+      parentRoute: typeof AppFormsIdRoute
+    }
     '/app/forms/$id/analytics': {
       id: '/app/forms/$id/analytics'
       path: '/analytics'
@@ -319,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBucketsBucketIdSubmissionsRouteImport
       parentRoute: typeof ApiBucketsBucketIdRoute
     }
+    '/api/buckets/$bucketId/analytics': {
+      id: '/api/buckets/$bucketId/analytics'
+      path: '/analytics'
+      fullPath: '/api/buckets/$bucketId/analytics'
+      preLoaderRoute: typeof ApiBucketsBucketIdAnalyticsRouteImport
+      parentRoute: typeof ApiBucketsBucketIdRoute
+    }
     '/api/buckets/$bucketId/submissions/$submissionId': {
       id: '/api/buckets/$bucketId/submissions/$submissionId'
       path: '/$submissionId'
@@ -331,11 +370,13 @@ declare module '@tanstack/react-router' {
 
 interface AppFormsIdRouteChildren {
   AppFormsIdAnalyticsRoute: typeof AppFormsIdAnalyticsRoute
+  AppFormsIdSettingsRoute: typeof AppFormsIdSettingsRoute
   AppFormsIdSubmissionsRoute: typeof AppFormsIdSubmissionsRoute
 }
 
 const AppFormsIdRouteChildren: AppFormsIdRouteChildren = {
   AppFormsIdAnalyticsRoute: AppFormsIdAnalyticsRoute,
+  AppFormsIdSettingsRoute: AppFormsIdSettingsRoute,
   AppFormsIdSubmissionsRoute: AppFormsIdSubmissionsRoute,
 }
 
@@ -383,10 +424,12 @@ const ApiBucketsBucketIdSubmissionsRouteWithChildren =
   )
 
 interface ApiBucketsBucketIdRouteChildren {
+  ApiBucketsBucketIdAnalyticsRoute: typeof ApiBucketsBucketIdAnalyticsRoute
   ApiBucketsBucketIdSubmissionsRoute: typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
 }
 
 const ApiBucketsBucketIdRouteChildren: ApiBucketsBucketIdRouteChildren = {
+  ApiBucketsBucketIdAnalyticsRoute: ApiBucketsBucketIdAnalyticsRoute,
   ApiBucketsBucketIdSubmissionsRoute:
     ApiBucketsBucketIdSubmissionsRouteWithChildren,
 }
