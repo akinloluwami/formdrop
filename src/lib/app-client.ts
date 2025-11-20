@@ -223,6 +223,28 @@ export const appClient = {
         return { error: "An unexpected error occurred" };
       }
     },
+
+    analytics: async (
+      bucketId: string,
+    ): Promise<
+      ApiResponse<{
+        stats: { total: number; thisMonth: number; today: number };
+        chartData: { date: string; submissions: number }[];
+      }>
+    > => {
+      try {
+        const response = await apiClient.get<{
+          stats: { total: number; thisMonth: number; today: number };
+          chartData: { date: string; submissions: number }[];
+        }>(`/api/buckets/${bucketId}/analytics`);
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
   },
 
   apiKeys: {
