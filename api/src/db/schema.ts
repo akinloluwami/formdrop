@@ -47,6 +47,7 @@ export const buckets = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
+    deletedAt: timestamp("deleted_at"),
   },
   (table) => [
     uniqueIndex("user_bucket_unique_idx").on(table.userId, table.name),
