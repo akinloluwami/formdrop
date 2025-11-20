@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { buckets } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/buckets/$bucketId")({
@@ -29,7 +29,13 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
           const [bucket] = await db
             .select()
             .from(buckets)
-            .where(and(eq(buckets.id, bucketId), eq(buckets.userId, userId)))
+            .where(
+              and(
+                eq(buckets.id, bucketId),
+                eq(buckets.userId, userId),
+                isNull(buckets.deletedAt),
+              ),
+            )
             .limit(1);
 
           if (!bucket) {
@@ -77,7 +83,13 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
           const [existingBucket] = await db
             .select()
             .from(buckets)
-            .where(and(eq(buckets.id, bucketId), eq(buckets.userId, userId)))
+            .where(
+              and(
+                eq(buckets.id, bucketId),
+                eq(buckets.userId, userId),
+                isNull(buckets.deletedAt),
+              ),
+            )
             .limit(1);
 
           if (!existingBucket) {
@@ -136,7 +148,13 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
           const [bucket] = await db
             .select()
             .from(buckets)
-            .where(and(eq(buckets.id, bucketId), eq(buckets.userId, userId)))
+            .where(
+              and(
+                eq(buckets.id, bucketId),
+                eq(buckets.userId, userId),
+                isNull(buckets.deletedAt),
+              ),
+            )
             .limit(1);
 
           if (!bucket) {
@@ -146,7 +164,10 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
             );
           }
 
-          await db.delete(buckets).where(eq(buckets.id, bucketId));
+          await db
+            .update(buckets)
+            .set({ deletedAt: new Date() })
+            .where(eq(buckets.id, bucketId));
 
           return Response.json({ message: "Bucket deleted" });
         } catch (error: any) {
