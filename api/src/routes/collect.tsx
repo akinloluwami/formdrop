@@ -87,6 +87,12 @@ export const CollectRoute = () => (
           )
           .limit(1);
 
+        if (bucket && bucket.deletedAt) {
+          return (
+            <Response status={400} json={{ error: "Bucket is deleted" }} />
+          );
+        }
+
         if (!bucket) {
           // Auto-create bucket on first submission
           [bucket] = await db
