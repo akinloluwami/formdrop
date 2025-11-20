@@ -330,4 +330,36 @@ export const appClient = {
       }
     },
   },
+
+  analytics: {
+    get: async (): Promise<
+      ApiResponse<{
+        stats: {
+          totalBuckets: number;
+          totalSubmissions: number;
+          submissionsThisMonth: number;
+        };
+        chartData: { date: string; submissions: number }[];
+        topForms: { id: string; name: string; submissionCount: number }[];
+      }>
+    > => {
+      try {
+        const response = await apiClient.get<{
+          stats: {
+            totalBuckets: number;
+            totalSubmissions: number;
+            submissionsThisMonth: number;
+          };
+          chartData: { date: string; submissions: number }[];
+          topForms: { id: string; name: string; submissionCount: number }[];
+        }>("/api/analytics");
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+  },
 };
