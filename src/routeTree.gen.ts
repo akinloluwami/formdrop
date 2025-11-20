@@ -13,8 +13,10 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppAnalyticsRouteImport } from './routes/app/analytics'
 import { Route as ApiBucketsRouteImport } from './routes/api/buckets'
 import { Route as ApiApiKeysRouteImport } from './routes/api/api-keys'
+import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
 import { Route as AppFormsIndexRouteImport } from './routes/app/forms/index'
 import { Route as AppFormsIdRouteImport } from './routes/app/forms/$id'
 import { Route as ApiBucketsBucketIdRouteImport } from './routes/api/buckets/$bucketId'
@@ -47,6 +49,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
 const ApiBucketsRoute = ApiBucketsRouteImport.update({
   id: '/api/buckets',
   path: '/api/buckets',
@@ -55,6 +62,11 @@ const ApiBucketsRoute = ApiBucketsRouteImport.update({
 const ApiApiKeysRoute = ApiApiKeysRouteImport.update({
   id: '/api/api-keys',
   path: '/api/api-keys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
+  id: '/api/analytics',
+  path: '/api/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppFormsIndexRoute = AppFormsIndexRouteImport.update({
@@ -121,8 +133,10 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRouteWithChildren
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/app/analytics': typeof AppAnalyticsRoute
   '/api/api-keys/$keyId': typeof ApiApiKeysKeyIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
@@ -140,8 +154,10 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRouteWithChildren
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/app/analytics': typeof AppAnalyticsRoute
   '/api/api-keys/$keyId': typeof ApiApiKeysKeyIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
@@ -160,8 +176,10 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRouteWithChildren
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/app/analytics': typeof AppAnalyticsRoute
   '/api/api-keys/$keyId': typeof ApiApiKeysKeyIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
@@ -181,8 +199,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/signup'
+    | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/app/analytics'
     | '/api/api-keys/$keyId'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
@@ -200,8 +220,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/signup'
+    | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/app/analytics'
     | '/api/api-keys/$keyId'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
@@ -219,8 +241,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/signup'
+    | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/app/analytics'
     | '/api/api-keys/$keyId'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
@@ -239,6 +263,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  ApiAnalyticsRoute: typeof ApiAnalyticsRoute
   ApiApiKeysRoute: typeof ApiApiKeysRouteWithChildren
   ApiBucketsRoute: typeof ApiBucketsRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -274,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/analytics': {
+      id: '/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/buckets': {
       id: '/api/buckets'
       path: '/api/buckets'
@@ -286,6 +318,13 @@ declare module '@tanstack/react-router' {
       path: '/api/api-keys'
       fullPath: '/api/api-keys'
       preLoaderRoute: typeof ApiApiKeysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/analytics': {
+      id: '/api/analytics'
+      path: '/api/analytics'
+      fullPath: '/api/analytics'
+      preLoaderRoute: typeof ApiAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/forms/': {
@@ -385,11 +424,13 @@ const AppFormsIdRouteWithChildren = AppFormsIdRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppFormsIdRoute: typeof AppFormsIdRouteWithChildren
   AppFormsIndexRoute: typeof AppFormsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnalyticsRoute: AppAnalyticsRoute,
   AppFormsIdRoute: AppFormsIdRouteWithChildren,
   AppFormsIndexRoute: AppFormsIndexRoute,
 }
@@ -454,6 +495,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  ApiAnalyticsRoute: ApiAnalyticsRoute,
   ApiApiKeysRoute: ApiApiKeysRouteWithChildren,
   ApiBucketsRoute: ApiBucketsRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
