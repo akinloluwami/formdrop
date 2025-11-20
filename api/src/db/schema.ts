@@ -51,6 +51,7 @@ export const buckets = pgTable(
   },
   (table) => [
     uniqueIndex("user_bucket_unique_idx").on(table.userId, table.name),
+
     index("buckets_user_id_idx").on(table.userId),
   ],
 );
@@ -66,9 +67,11 @@ export const submissions = pgTable(
     ip: text("ip"),
     userAgent: text("user_agent"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    deletedAt: timestamp("deleted_at"),
   },
   (table) => [
     index("submissions_bucket_created_idx").on(table.bucketId, table.createdAt),
+
     index("submissions_bucket_id_idx").on(table.bucketId),
   ],
 );
@@ -108,6 +111,7 @@ export const events = pgTable(
   },
   (table) => [
     index("events_user_created_idx").on(table.userId, table.createdAt),
+
     index("events_bucket_created_idx").on(table.bucketId, table.createdAt),
   ],
 );
