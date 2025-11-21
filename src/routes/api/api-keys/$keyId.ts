@@ -102,7 +102,7 @@ export const Route = createFileRoute("/api/api-keys/$keyId")({
               canWrite: canWrite ?? existingKey.canWrite,
               scopeType: scopeType ?? existingKey.scopeType,
               scopeBucketIds:
-                scopeType === "specific" && bucketIds
+                scopeType === "restricted" && bucketIds
                   ? bucketIds
                   : scopeType === "all"
                     ? null
@@ -112,7 +112,7 @@ export const Route = createFileRoute("/api/api-keys/$keyId")({
             .returning();
 
           // Update bucket scopes if needed
-          if (scopeType === "specific" && bucketIds) {
+          if (scopeType === "restricted" && bucketIds) {
             // Delete existing scopes
             await db
               .delete(apiKeyBucketScopes)
