@@ -5,17 +5,23 @@ import {
   buckets,
   submissions,
   apiKeys,
-  apiKeyBucketScopes,
   notifications,
   events,
+  usage,
 } from "../src/db/schema";
 import { faker } from "@faker-js/faker";
 import crypto from "crypto";
 import { auth } from "../src/lib/auth";
 import { eq } from "drizzle-orm";
+import moment from "moment";
 
 // Generate API key
-const generateApiKey = () => `fd_${crypto.randomBytes(32).toString("hex")}`;
+const generateApiKey = (type: "public" | "private") => {
+  if (type === "public") {
+    return `fd_pk_${crypto.randomBytes(7).toString("hex")}`;
+  }
+  return `fd_sk_${crypto.randomBytes(24).toString("hex")}`;
+};
 
 async function seed() {
   console.log("🌱 Starting database seed...");
@@ -23,8 +29,8 @@ async function seed() {
   try {
     // Clean up existing data (in reverse order of dependencies)
     console.log("🧹 Cleaning up existing data...");
+    await db.delete(usage);
     await db.delete(events);
-    await db.delete(apiKeyBucketScopes);
     await db.delete(apiKeys);
     await db.delete(notifications);
     await db.delete(submissions);
@@ -222,36 +228,60 @@ async function seed() {
 
     console.log("✅ Created 58 submissions");
 
+    // Create usage data
+    console.log("📊 Creating usage data...");
+
+    const allSubmissions = [
+      { userId: user1Id, submissions: contactSubmissions },
+      { userId: user1Id, submissions: newsletterSubmissions },
+      { userId: user1Id, submissions: feedbackSubmissions },
+      { userId: user2Id, submissions: supportSubmissions },
+    ];
+
+    const usageMap = new Map<
+      string,
+      { userId: string; bucketId: string; period: string; count: number }
+    >();
+
+    for (const group of allSubmissions) {
+      for (const sub of group.submissions) {
+        const period = moment(sub.createdAt).format("YYYY-MM-DD");
+        const key = `${sub.bucketId}-${period}`;
+
+        if (usageMap.has(key)) {
+          usageMap.get(key)!.count++;
+        } else {
+          usageMap.set(key, {
+            userId: group.userId,
+            bucketId: sub.bucketId,
+            period,
+            count: 1,
+          });
+        }
+      }
+    }
+
+    if (usageMap.size > 0) {
+      await db.insert(usage).values(Array.from(usageMap.values()));
+    }
+
+    console.log(`✅ Created ${usageMap.size} usage records`);
+
     // Create API keys
     console.log("🔐 Creating API keys...");
-    const [prodApiKey, devApiKey] = await db
+    const [publicApiKey, privateApiKey] = await db
       .insert(apiKeys)
       .values([
         {
           userId: user1Id,
-          key: generateApiKey(),
-          name: "Production API Key",
-          canRead: true,
-          canWrite: true,
-          scopeType: "all",
+          key: generateApiKey("public"),
+          type: "public",
           lastUsedAt: faker.date.recent({ days: 1 }),
         },
         {
           userId: user1Id,
-          key: generateApiKey(),
-          name: "Development API Key",
-          canRead: true,
-          canWrite: true,
-          scopeType: "restricted",
-          scopeBucketIds: [contactBucket.id, feedbackBucket.id],
-        },
-        {
-          userId: user1Id,
-          key: generateApiKey(),
-          name: "Read-Only Analytics Key",
-          canRead: true,
-          canWrite: false,
-          scopeType: "all",
+          key: generateApiKey("private"),
+          type: "private",
         },
       ])
       .returning();
@@ -259,30 +289,17 @@ async function seed() {
     await db.insert(apiKeys).values([
       {
         userId: user2Id,
-        key: generateApiKey(),
-        name: "Support API Key",
-        canRead: true,
-        canWrite: true,
-        scopeType: "all",
+        key: generateApiKey("public"),
+        type: "public",
+      },
+      {
+        userId: user2Id,
+        key: generateApiKey("private"),
+        type: "private",
       },
     ]);
 
     console.log("✅ Created 4 API keys");
-
-    // Create bucket scopes for restricted API key
-    console.log("🔒 Creating API key scopes...");
-    await db.insert(apiKeyBucketScopes).values([
-      {
-        apiKeyId: devApiKey.id,
-        bucketId: contactBucket.id,
-      },
-      {
-        apiKeyId: devApiKey.id,
-        bucketId: feedbackBucket.id,
-      },
-    ]);
-
-    console.log("✅ Created 2 API key scopes");
 
     // Create notifications
     console.log("🔔 Creating notifications...");
@@ -336,7 +353,7 @@ async function seed() {
         userId: user1Id,
         bucketId: null,
         eventType: "api_key_generated",
-        details: { keyName: prodApiKey.name },
+        details: { keyType: "public" },
         createdAt: faker.date.recent({ days: 5 }),
       },
       {
@@ -357,7 +374,6 @@ async function seed() {
     console.log("  - 4 buckets");
     console.log("  - 58 submissions");
     console.log("  - 4 API keys");
-    console.log("  - 2 API key scopes");
     console.log("  - 4 notifications");
     console.log("  - 4 events");
     console.log(`\n💡 Tip: Login with ${user1Email} / password123`);
