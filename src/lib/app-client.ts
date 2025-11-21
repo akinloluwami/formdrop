@@ -7,7 +7,7 @@ const apiClient = axios.create({
   },
 });
 
-type ApiKeyScopeType = "all" | "specific" | "restricted";
+type ApiKeyScopeType = "all" | "restricted";
 
 interface Bucket {
   id: string;
