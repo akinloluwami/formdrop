@@ -242,7 +242,7 @@ async function seed() {
           name: "Development API Key",
           canRead: true,
           canWrite: true,
-          scopeType: "specific",
+          scopeType: "restricted",
           scopeBucketIds: [contactBucket.id, feedbackBucket.id],
         },
         {
@@ -269,7 +269,7 @@ async function seed() {
 
     console.log("✅ Created 4 API keys");
 
-    // Create bucket scopes for specific API key
+    // Create bucket scopes for restricted API key
     console.log("🔒 Creating API key scopes...");
     await db.insert(apiKeyBucketScopes).values([
       {
