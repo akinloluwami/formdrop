@@ -13,6 +13,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppApiKeysRouteImport } from './routes/app/api-keys'
 import { Route as AppAnalyticsRouteImport } from './routes/app/analytics'
 import { Route as ApiBucketsRouteImport } from './routes/api/buckets'
 import { Route as ApiApiKeysRouteImport } from './routes/api/api-keys'
@@ -48,6 +49,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppApiKeysRoute = AppApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
   id: '/analytics',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/api/api-keys': typeof ApiApiKeysRouteWithChildren
   '/api/buckets': typeof ApiBucketsRouteWithChildren
   '/app/analytics': typeof AppAnalyticsRoute
+  '/app/api-keys': typeof AppApiKeysRoute
   '/api/api-keys/$keyId': typeof ApiApiKeysKeyIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/api/api-keys': typeof ApiApiKeysRouteWithChildren
   '/api/buckets': typeof ApiBucketsRouteWithChildren
   '/app/analytics': typeof AppAnalyticsRoute
+  '/app/api-keys': typeof AppApiKeysRoute
   '/api/api-keys/$keyId': typeof ApiApiKeysKeyIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/api/api-keys': typeof ApiApiKeysRouteWithChildren
   '/api/buckets': typeof ApiBucketsRouteWithChildren
   '/app/analytics': typeof AppAnalyticsRoute
+  '/app/api-keys': typeof AppApiKeysRoute
   '/api/api-keys/$keyId': typeof ApiApiKeysKeyIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/api/api-keys'
     | '/api/buckets'
     | '/app/analytics'
+    | '/app/api-keys'
     | '/api/api-keys/$keyId'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/api/api-keys'
     | '/api/buckets'
     | '/app/analytics'
+    | '/app/api-keys'
     | '/api/api-keys/$keyId'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/api/api-keys'
     | '/api/buckets'
     | '/app/analytics'
+    | '/app/api-keys'
     | '/api/api-keys/$keyId'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
@@ -298,6 +310,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/api-keys': {
+      id: '/app/api-keys'
+      path: '/api-keys'
+      fullPath: '/app/api-keys'
+      preLoaderRoute: typeof AppApiKeysRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/analytics': {
       id: '/app/analytics'
@@ -425,12 +444,14 @@ const AppFormsIdRouteWithChildren = AppFormsIdRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
+  AppApiKeysRoute: typeof AppApiKeysRoute
   AppFormsIdRoute: typeof AppFormsIdRouteWithChildren
   AppFormsIndexRoute: typeof AppFormsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
+  AppApiKeysRoute: AppApiKeysRoute,
   AppFormsIdRoute: AppFormsIdRouteWithChildren,
   AppFormsIndexRoute: AppFormsIndexRoute,
 }
