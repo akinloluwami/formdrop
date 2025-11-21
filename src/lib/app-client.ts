@@ -7,8 +7,6 @@ const apiClient = axios.create({
   },
 });
 
-type ApiKeyScopeType = "all" | "restricted";
-
 interface Bucket {
   id: string;
   userId: string;
@@ -31,12 +29,9 @@ interface Submission {
 
 interface ApiKey {
   id: string;
-  name: string;
+  userId: string;
   key: string;
-  canRead: boolean;
-  canWrite: boolean;
-  scopeType: ApiKeyScopeType;
-  scopeBucketIds: string[] | null;
+  type: "public" | "private";
   lastUsedAt: Date | null;
   createdAt: Date;
 }
@@ -53,20 +48,8 @@ interface UpdateBucketParams {
   allowedDomains?: string[];
 }
 
-interface CreateApiKeyParams {
-  name: string;
-  canRead?: boolean;
-  canWrite?: boolean;
-  scopeType?: ApiKeyScopeType;
-  bucketIds?: string[];
-}
-
-interface UpdateApiKeyParams {
-  name?: string;
-  canRead?: boolean;
-  canWrite?: boolean;
-  scopeType?: ApiKeyScopeType;
-  bucketIds?: string[];
+interface RollApiKeyParams {
+  type: "public" | "private";
 }
 
 type SuccessResponse<T> = T;
@@ -248,31 +231,13 @@ export const appClient = {
   },
 
   apiKeys: {
-    list: async (): Promise<ApiResponse<{ apiKeys: ApiKey[] }>> => {
-      try {
-        const response = await apiClient.get<{ apiKeys: ApiKey[] }>(
-          "/api/api-keys",
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
-
-    create: async (
-      params: CreateApiKeyParams,
-    ): Promise<
-      ApiResponse<{ apiKey: ApiKey; key: string; warning: string }>
+    list: async (): Promise<
+      ApiResponse<{ keys: { public: ApiKey; private: ApiKey } }>
     > => {
       try {
-        const response = await apiClient.post<{
-          apiKey: ApiKey;
-          key: string;
-          warning: string;
-        }>("/api/api-keys", params);
+        const response = await apiClient.get<{
+          keys: { public: ApiKey; private: ApiKey };
+        }>("/api/api-keys");
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -282,44 +247,13 @@ export const appClient = {
       }
     },
 
-    get: async (keyId: string): Promise<ApiResponse<{ apiKey: ApiKey }>> => {
+    roll: async (
+      params: RollApiKeyParams,
+    ): Promise<ApiResponse<{ key: ApiKey }>> => {
       try {
-        const response = await apiClient.get<{ apiKey: ApiKey }>(
-          `/api/api-keys/${keyId}`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
-
-    update: async (
-      keyId: string,
-      params: UpdateApiKeyParams,
-    ): Promise<ApiResponse<{ apiKey: ApiKey }>> => {
-      try {
-        const response = await apiClient.patch<{ apiKey: ApiKey }>(
-          `/api/api-keys/${keyId}`,
+        const response = await apiClient.post<{ key: ApiKey }>(
+          "/api/api-keys",
           params,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
-
-    delete: async (
-      keyId: string,
-    ): Promise<ApiResponse<{ message: string }>> => {
-      try {
-        const response = await apiClient.delete<{ message: string }>(
-          `/api/api-keys/${keyId}`,
         );
         return response.data;
       } catch (error) {
