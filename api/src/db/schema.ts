@@ -7,7 +7,7 @@ import {
   uniqueIndex,
   index,
   pgEnum,
-  boolean,
+  integer,
 } from "drizzle-orm/pg-core";
 import { account, session, user, verification } from "./auth-schema";
 
@@ -24,10 +24,7 @@ export const eventTypeEnum = pgEnum("event_type", [
   "api_key_generated",
 ]);
 
-export const apiKeyScopeTypeEnum = pgEnum("api_key_scope_type", [
-  "all",
-  "restricted",
-]);
+export const apiKeyTypeEnum = pgEnum("api_key_type", ["public", "private"]);
 
 export const buckets = pgTable(
   "buckets",
@@ -123,39 +120,49 @@ export const apiKeys = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     key: text("key").notNull().unique(),
-    name: text("name").notNull(),
-
-    canRead: boolean("can_read").default(true).notNull(),
-    canWrite: boolean("can_write").default(true).notNull(),
-
-    scopeType: apiKeyScopeTypeEnum("scope_type").default("all").notNull(),
-    scopeBucketIds: jsonb("scope_bucket_ids").$type<string[]>(),
-
+    type: apiKeyTypeEnum("type").notNull(),
     lastUsedAt: timestamp("last_used_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
     index("api_keys_key_idx").on(table.key),
     index("api_keys_user_id_idx").on(table.userId),
+    uniqueIndex("api_keys_user_type_unique").on(table.userId, table.type),
   ],
 );
 
-export const apiKeyBucketScopes = pgTable(
-  "api_key_bucket_scopes",
+export const usage = pgTable(
+  "usage",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    apiKeyId: uuid("api_key_id")
+
+    userId: text("user_id")
       .notNull()
-      .references(() => apiKeys.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" }),
+
     bucketId: uuid("bucket_id")
       .notNull()
       .references(() => buckets.id, { onDelete: "cascade" }),
+
+    // for daily counting — easiest for quotas
+    period: text("period").notNull(),
+
+    count: integer("count").default(0).notNull(),
+
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
   },
   (table) => [
-    uniqueIndex("api_key_bucket_unique_idx").on(table.apiKeyId, table.bucketId),
-    index("api_key_bucket_scopes_api_key_idx").on(table.apiKeyId),
-    index("api_key_bucket_scopes_bucket_idx").on(table.bucketId),
+    // prevent duplicate rows per period
+    uniqueIndex("usage_unique_idx").on(
+      table.userId,
+      table.bucketId,
+      table.period,
+    ),
+    index("usage_user_period_idx").on(table.userId, table.period),
   ],
 );
 
