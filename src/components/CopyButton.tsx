@@ -4,9 +4,10 @@ import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 
 interface CopyButtonProps {
   text: string;
+  className?: string;
 }
 
-export function CopyButton({ text }: CopyButtonProps) {
+export function CopyButton({ text, className }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -22,7 +23,9 @@ export function CopyButton({ text }: CopyButtonProps) {
   return (
     <button
       onClick={handleCopy}
-      className="absolute top-4 right-4 p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+      className={`p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors ${
+        className !== undefined ? className : "absolute top-4 right-4"
+      }`}
       aria-label={copied ? "Copied!" : "Copy to clipboard"}
     >
       {copied ? (
