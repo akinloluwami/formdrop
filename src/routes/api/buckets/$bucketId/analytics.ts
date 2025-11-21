@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { submissions, buckets } from "@/db/schema";
+import { buckets, usage } from "@/db/schema";
 import { eq, and, sql, gte, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import moment from "moment";
@@ -49,62 +49,52 @@ export const Route = createFileRoute("/api/buckets/$bucketId/analytics")({
 
           // Get total submissions
           const [totalResult] = await db
-            .select({ count: sql<number>`count(*)` })
-            .from(submissions)
-            .where(
-              and(
-                eq(submissions.bucketId, bucketId),
-                isNull(submissions.deletedAt),
-              ),
-            );
+            .select({ count: sql<number>`sum(${usage.count})` })
+            .from(usage)
+            .where(eq(usage.bucketId, bucketId));
 
           // Get this month's submissions
-          const startOfMonth = moment().startOf("month").toDate();
+          const startOfMonthStr = moment()
+            .startOf("month")
+            .format("YYYY-MM-DD");
           const [monthResult] = await db
-            .select({ count: sql<number>`count(*)` })
-            .from(submissions)
+            .select({ count: sql<number>`sum(${usage.count})` })
+            .from(usage)
             .where(
               and(
-                eq(submissions.bucketId, bucketId),
-                gte(submissions.createdAt, startOfMonth),
-                isNull(submissions.deletedAt),
+                eq(usage.bucketId, bucketId),
+                gte(usage.period, startOfMonthStr),
               ),
             );
 
           // Get today's submissions
-          const startOfDay = moment().startOf("day").toDate();
+          const todayStr = moment().format("YYYY-MM-DD");
           const [todayResult] = await db
-            .select({ count: sql<number>`count(*)` })
-            .from(submissions)
+            .select({ count: sql<number>`sum(${usage.count})` })
+            .from(usage)
             .where(
-              and(
-                eq(submissions.bucketId, bucketId),
-                gte(submissions.createdAt, startOfDay),
-                isNull(submissions.deletedAt),
-              ),
+              and(eq(usage.bucketId, bucketId), eq(usage.period, todayStr)),
             );
 
           // Get chart data (last 30 days)
-          const thirtyDaysAgo = moment()
+          const thirtyDaysAgoStr = moment()
             .subtract(29, "days")
-            .startOf("day")
-            .toDate();
+            .format("YYYY-MM-DD");
 
           const dailyStats = await db
             .select({
-              date: sql<string>`to_char(${submissions.createdAt}, 'YYYY-MM-DD')`,
-              count: sql<number>`count(*)`,
+              date: usage.period,
+              count: sql<number>`sum(${usage.count})`,
             })
-            .from(submissions)
+            .from(usage)
             .where(
               and(
-                eq(submissions.bucketId, bucketId),
-                gte(submissions.createdAt, thirtyDaysAgo),
-                isNull(submissions.deletedAt),
+                eq(usage.bucketId, bucketId),
+                gte(usage.period, thirtyDaysAgoStr),
               ),
             )
-            .groupBy(sql`to_char(${submissions.createdAt}, 'YYYY-MM-DD')`)
-            .orderBy(sql`to_char(${submissions.createdAt}, 'YYYY-MM-DD')`);
+            .groupBy(usage.period)
+            .orderBy(usage.period);
 
           // Fill in missing days
           const chartData = Array.from({ length: 30 }, (_, i) => {
