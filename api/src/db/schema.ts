@@ -45,7 +45,7 @@ export const buckets = pgTable(
       .notNull(),
     deletedAt: timestamp("deleted_at"),
   },
-  (table) => [
+  (table: any) => [
     uniqueIndex("user_bucket_unique_idx").on(table.userId, table.name),
 
     index("buckets_user_id_idx").on(table.userId),
@@ -65,7 +65,7 @@ export const submissions = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     deletedAt: timestamp("deleted_at"),
   },
-  (table) => [
+  (table: any) => [
     index("submissions_bucket_created_idx").on(table.bucketId, table.createdAt),
 
     index("submissions_bucket_id_idx").on(table.bucketId),
@@ -88,7 +88,7 @@ export const notifications = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => [index("notifications_bucket_id_idx").on(table.bucketId)],
+  (table: any) => [index("notifications_bucket_id_idx").on(table.bucketId)],
 );
 
 export const events = pgTable(
@@ -105,7 +105,7 @@ export const events = pgTable(
     details: jsonb("details"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (table) => [
+  (table: any) => [
     index("events_user_created_idx").on(table.userId, table.createdAt),
 
     index("events_bucket_created_idx").on(table.bucketId, table.createdAt),
@@ -124,7 +124,7 @@ export const apiKeys = pgTable(
     lastUsedAt: timestamp("last_used_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (table) => [
+  (table: any) => [
     index("api_keys_key_idx").on(table.key),
     index("api_keys_user_id_idx").on(table.userId),
     uniqueIndex("api_keys_user_type_unique").on(table.userId, table.type),
@@ -155,7 +155,7 @@ export const usage = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => [
+  (table: any) => [
     // prevent duplicate rows per period
     uniqueIndex("usage_unique_idx").on(
       table.userId,
