@@ -1,9 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { apiKeys, apiKeyBucketScopes } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { apiKeys } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import crypto from "crypto";
+
+const generateApiKey = (type: "public" | "private") => {
+  if (type === "public") {
+    return `fd_pk_${crypto.randomBytes(7).toString("hex")}`;
+  }
+  return `fd_sk_${crypto.randomBytes(24).toString("hex")}`;
+};
 
 export const Route = createFileRoute("/api/api-keys")({
   server: {
@@ -20,28 +27,50 @@ export const Route = createFileRoute("/api/api-keys")({
 
           const userId = session.user.id;
 
+          // Get existing keys
           const userApiKeys = await db
-            .select({
-              id: apiKeys.id,
-              name: apiKeys.name,
-              key: apiKeys.key,
-              canRead: apiKeys.canRead,
-              canWrite: apiKeys.canWrite,
-              scopeType: apiKeys.scopeType,
-              scopeBucketIds: apiKeys.scopeBucketIds,
-              lastUsedAt: apiKeys.lastUsedAt,
-              createdAt: apiKeys.createdAt,
-            })
+            .select()
             .from(apiKeys)
             .where(eq(apiKeys.userId, userId));
 
-          // Mask keys for security - show only first 10 chars
-          const maskedKeys = userApiKeys.map((key) => ({
-            ...key,
-            key: key.key.substring(0, 10) + "..." + key.key.slice(-4),
-          }));
+          let publicKey = userApiKeys.find((k) => k.type === "public");
+          let privateKey = userApiKeys.find((k) => k.type === "private");
 
-          return Response.json({ apiKeys: maskedKeys });
+          // Create missing keys if necessary
+          const keysToInsert = [];
+          if (!publicKey) {
+            keysToInsert.push({
+              userId,
+              key: generateApiKey("public"),
+              type: "public" as const,
+            });
+          }
+          if (!privateKey) {
+            keysToInsert.push({
+              userId,
+              key: generateApiKey("private"),
+              type: "private" as const,
+            });
+          }
+
+          if (keysToInsert.length > 0) {
+            const newKeys = await db
+              .insert(apiKeys)
+              .values(keysToInsert)
+              .returning();
+
+            if (!publicKey)
+              publicKey = newKeys.find((k) => k.type === "public");
+            if (!privateKey)
+              privateKey = newKeys.find((k) => k.type === "private");
+          }
+
+          return Response.json({
+            keys: {
+              public: publicKey,
+              private: privateKey,
+            },
+          });
         } catch (error: any) {
           return Response.json(
             {
@@ -64,71 +93,28 @@ export const Route = createFileRoute("/api/api-keys")({
           }
 
           const userId = session.user.id;
-
           const body = await request.json();
-          const {
-            name,
-            canRead = true,
-            canWrite = true,
-            scopeType = "all",
-            bucketIds = [],
-          } = body;
+          const { type } = body;
 
-          if (!name) {
+          if (type !== "public" && type !== "private") {
             return Response.json(
-              { error: "Name is required" },
+              { error: "Invalid key type" },
               { status: 400 },
             );
           }
 
-          // Generate API key: fd_<random_32_chars>
-          const randomBytes = crypto.randomBytes(24);
-          const keyValue = `fd_${randomBytes.toString("hex")}`;
+          const newKey = generateApiKey(type);
 
-          // Create API key
-          const [newApiKey] = await db
-            .insert(apiKeys)
-            .values({
-              userId,
-              name,
-              key: keyValue,
-              canRead,
-              canWrite,
-              scopeType,
-              scopeBucketIds:
-                scopeType === "restricted" && bucketIds.length > 0
-                  ? bucketIds
-                  : null,
+          const [updatedKey] = await db
+            .update(apiKeys)
+            .set({
+              key: newKey,
+              createdAt: new Date(), // Reset created at on roll
             })
+            .where(and(eq(apiKeys.userId, userId), eq(apiKeys.type, type)))
             .returning();
 
-          // If scope is restricted, create bucket scopes
-          if (scopeType === "restricted" && bucketIds.length > 0) {
-            await db.insert(apiKeyBucketScopes).values(
-              bucketIds.map((bucketId: string) => ({
-                apiKeyId: newApiKey.id,
-                bucketId,
-              })),
-            );
-          }
-
-          return Response.json(
-            {
-              apiKey: {
-                id: newApiKey.id,
-                name: newApiKey.name,
-                canRead: newApiKey.canRead,
-                canWrite: newApiKey.canWrite,
-                scopeType: newApiKey.scopeType,
-                scopeBucketIds: newApiKey.scopeBucketIds,
-                createdAt: newApiKey.createdAt,
-              },
-              // IMPORTANT: Return the full key ONLY once at creation
-              key: keyValue,
-              warning: "Save this key securely. It will not be shown again.",
-            },
-            { status: 201 },
-          );
+          return Response.json({ key: updatedKey });
         } catch (error: any) {
           return Response.json(
             {
