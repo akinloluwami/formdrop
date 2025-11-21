@@ -1,7 +1,7 @@
 import { Response, useRoute, Route } from "react-serve-js";
 import { db } from "../db";
-import { buckets, submissions, apiKeys } from "../db/schema";
-import { eq, and } from "drizzle-orm";
+import { buckets, submissions, apiKeys, usage } from "../db/schema";
+import { eq, and, sql } from "drizzle-orm";
 
 // Helper to check if domain is allowed for bucket
 const isDomainAllowed = (origin: string, allowedDomains: string[]) => {
@@ -49,7 +49,7 @@ export const CollectRoute = () => (
           .where(eq(apiKeys.key, apiKey))
           .limit(1);
 
-        if (!key || !key.canWrite) {
+        if (!key) {
           return (
             <Response
               status={401}
@@ -105,21 +105,6 @@ export const CollectRoute = () => (
             .returning();
         }
 
-        // Check if API key has access to this bucket
-        if (key.scopeType === "restricted") {
-          const allowedBucketIds = (key.scopeBucketIds as string[]) || [];
-          if (!allowedBucketIds.includes(bucket.id)) {
-            return (
-              <Response
-                status={403}
-                json={{
-                  error: "API key does not have access to this bucket",
-                }}
-              />
-            );
-          }
-        }
-
         // Check domain restrictions
         const allowedDomains = (bucket.allowedDomains as string[]) || [];
         if (origin && !isDomainAllowed(origin, allowedDomains)) {
@@ -141,6 +126,23 @@ export const CollectRoute = () => (
             userAgent: req.headers["user-agent"] as string,
           })
           .returning();
+
+        // Track usage
+        const period = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+        await db
+          .insert(usage)
+          .values({
+            userId: key.userId,
+            bucketId: bucket.id,
+            period,
+            count: 1,
+          })
+          .onConflictDoUpdate({
+            target: [usage.userId, usage.bucketId, usage.period],
+            set: {
+              count: sql`${usage.count} + 1`,
+            },
+          });
 
         return (
           <Response
