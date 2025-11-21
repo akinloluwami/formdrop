@@ -96,14 +96,14 @@ export const Route = createFileRoute("/api/api-keys")({
               canWrite,
               scopeType,
               scopeBucketIds:
-                scopeType === "specific" && bucketIds.length > 0
+                scopeType === "restricted" && bucketIds.length > 0
                   ? bucketIds
                   : null,
             })
             .returning();
 
-          // If scope is specific, create bucket scopes
-          if (scopeType === "specific" && bucketIds.length > 0) {
+          // If scope is restricted, create bucket scopes
+          if (scopeType === "restricted" && bucketIds.length > 0) {
             await db.insert(apiKeyBucketScopes).values(
               bucketIds.map((bucketId: string) => ({
                 apiKeyId: newApiKey.id,
