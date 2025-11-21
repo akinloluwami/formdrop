@@ -11,10 +11,14 @@ import {
   Download01Icon,
   Delete02Icon,
   AlertCircleIcon,
+  Html5Icon,
+  JavaScriptIcon,
+  CodeIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { CopyButton } from "@/components/CopyButton";
 
 export const Route = createFileRoute("/app/forms/$id/submissions")({
   component: RouteComponent,
@@ -40,8 +44,28 @@ function RouteComponent() {
     [],
   );
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showIntegrationModal, setShowIntegrationModal] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<"html" | "fetch">("html");
 
   const queryClient = useQueryClient();
+
+  const { data: bucket } = useQuery({
+    queryKey: ["bucket", id],
+    queryFn: async () => {
+      const response = await appClient.buckets.get(id);
+      if ("error" in response) throw new Error(response.error);
+      return response.bucket;
+    },
+  });
+
+  const { data: keys } = useQuery({
+    queryKey: ["api-keys"],
+    queryFn: async () => {
+      const response = await appClient.apiKeys.list();
+      if ("error" in response) return null;
+      return response.keys;
+    },
+  });
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["submissions", id],
@@ -53,6 +77,44 @@ function RouteComponent() {
       return response.submissions;
     },
   });
+
+  const submissions = data || [];
+
+  useEffect(() => {
+    if (!isLoading && submissions.length === 0) {
+      setShowIntegrationModal(true);
+    }
+  }, [isLoading, submissions.length]);
+
+  const publicKey = keys?.public?.key || "your-public-key";
+  const bucketName = bucket?.name || "Contact Form";
+
+  const htmlCodeExample = `<form
+  action="https://api.formdrop.co/collect?key=${publicKey}" 
+  method="POST" name="${bucketName}">
+  <input type="text" name="name" placeholder="Your Name" required />
+  <input type="email" name="email" placeholder="Your Email" required />
+  <button type="submit">Submit</button>
+</form>`;
+
+  const fetchCodeExample = `fetch('https://api.formdrop.co/collect', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': "Bearer ${publicKey}"
+  },
+  body: JSON.stringify({
+    bucket: "${bucketName}",
+    data: {
+      name: "John Doe",
+      email: "john.doe@example.com"
+    }
+  })
+})
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err))
+`;
 
   const deleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
@@ -66,8 +128,6 @@ function RouteComponent() {
       setShowDeleteConfirm(false);
     },
   });
-
-  const submissions = data || [];
 
   const toggleSelectAll = () => {
     if (selectedSubmissionIds.length === submissions.length) {
@@ -284,9 +344,16 @@ function RouteComponent() {
 
       {submissions.length === 0 ? (
         <div className="mt-4 p-8 border border-gray-200 rounded-3xl text-center">
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 text-sm mb-4">
             No submissions yet for this form.
           </p>
+          <button
+            onClick={() => setShowIntegrationModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-xl hover:bg-accent/90 transition-colors text-sm font-medium"
+          >
+            <HugeiconsIcon icon={CodeIcon} size={18} />
+            Show Integration Guide
+          </button>
         </div>
       ) : viewMode === "card" ? (
         <div className="mt-4 space-y-4">
@@ -559,6 +626,93 @@ function RouteComponent() {
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Integration Modal */}
+      <AnimatePresence>
+        {showIntegrationModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowIntegrationModal(false)}
+              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-white rounded-3xl shadow-xl w-full max-w-3xl overflow-hidden"
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Integrate {bucketName}
+                  </h3>
+                  <button
+                    onClick={() => setShowIntegrationModal(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} size={20} />
+                  </button>
+                </div>
+
+                <div className="border rounded-3xl border-gray-200 p-4">
+                  <div className="flex items-center gap-x-4 relative">
+                    {/* Animated indicator background */}
+                    <div
+                      className={`absolute h-10 w-10 rounded-lg transition-all duration-300 ease-out ${
+                        selectedTab === "html"
+                          ? "bg-orange-100 ring-2 ring-orange-600 translate-x-0"
+                          : "bg-yellow-100 ring-2 ring-yellow-500 translate-x-14"
+                      }`}
+                    />
+
+                    <button
+                      onClick={() => setSelectedTab("html")}
+                      className="p-2 rounded-lg transition-colors relative z-10 hover:bg-black/5"
+                    >
+                      <HugeiconsIcon
+                        icon={Html5Icon}
+                        className="text-orange-600"
+                        size={24}
+                      />
+                    </button>
+                    <button
+                      onClick={() => setSelectedTab("fetch")}
+                      className="p-2 rounded-lg transition-colors relative z-10 hover:bg-black/5"
+                    >
+                      <HugeiconsIcon
+                        icon={JavaScriptIcon}
+                        className="text-yellow-500"
+                        size={24}
+                      />
+                    </button>
+                  </div>
+                  <div className="border rounded-3xl border-gray-200 p-4 mt-5 relative bg-gray-50/50">
+                    <CopyButton
+                      text={
+                        selectedTab === "html"
+                          ? htmlCodeExample
+                          : fetchCodeExample
+                      }
+                    />
+                    {selectedTab === "html" ? (
+                      <pre className="overflow-x-auto text-sm">
+                        <code>{htmlCodeExample}</code>
+                      </pre>
+                    ) : (
+                      <pre className="overflow-x-auto text-sm">
+                        <code>{fetchCodeExample}</code>
+                      </pre>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
