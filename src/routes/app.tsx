@@ -1,4 +1,8 @@
-import { AddToListIcon, AnalyticsUpIcon } from "@hugeicons/core-free-icons";
+import {
+  AddToListIcon,
+  AnalyticsUpIcon,
+  Key01Icon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   createFileRoute,
@@ -21,6 +25,7 @@ function RouteComponent() {
   }[] = [
     { name: "Forms", path: "/app/forms", icon: AddToListIcon },
     { name: "Analytics", path: "/app/analytics", icon: AnalyticsUpIcon },
+    { name: "API Keys", path: "/app/api-keys", icon: Key01Icon },
   ];
 
   const usage = [
