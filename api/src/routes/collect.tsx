@@ -106,7 +106,7 @@ export const CollectRoute = () => (
         }
 
         // Check if API key has access to this bucket
-        if (key.scopeType === "specific") {
+        if (key.scopeType === "restricted") {
           const allowedBucketIds = (key.scopeBucketIds as string[]) || [];
           if (!allowedBucketIds.includes(bucket.id)) {
             return (
@@ -115,16 +115,6 @@ export const CollectRoute = () => (
                 json={{
                   error: "API key does not have access to this bucket",
                 }}
-              />
-            );
-          }
-        } else if (key.scopeType === "restricted") {
-          const restrictedBucketIds = (key.scopeBucketIds as string[]) || [];
-          if (restrictedBucketIds.includes(bucket.id)) {
-            return (
-              <Response
-                status={403}
-                json={{ error: "API key is restricted from this bucket" }}
               />
             );
           }
