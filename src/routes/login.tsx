@@ -93,14 +93,6 @@ function RouteComponent() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="border rounded-3xl border-gray-200 p-8">
-          {error && (
-            <AuthError
-              message={error}
-              onDismiss={() => setError("")}
-              className="mb-4"
-            />
-          )}
-
           {/* Social Login Buttons */}
           <div className="space-y-3">
             <button
@@ -216,6 +208,13 @@ function RouteComponent() {
             </div>
 
             <div>
+              {error && (
+                <AuthError
+                  message={error}
+                  onDismiss={() => setError("")}
+                  className="mb-4"
+                />
+              )}
               <button
                 type="submit"
                 disabled={loading}
