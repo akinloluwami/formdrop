@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets, submissions } from "@/db/schema";
+import { buckets, usage } from "@/db/schema";
 import { eq, and, sql, gte, isNull, desc } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import moment from "moment";
@@ -28,55 +28,48 @@ export const Route = createFileRoute("/api/analytics")({
 
           // Get total submissions across all user buckets
           const [submissionsResult] = await db
-            .select({ count: sql<number>`count(*)` })
-            .from(submissions)
-            .innerJoin(buckets, eq(submissions.bucketId, buckets.id))
-            .where(
-              and(
-                eq(buckets.userId, userId),
-                isNull(buckets.deletedAt),
-                isNull(submissions.deletedAt),
-              ),
-            );
+            .select({ count: sql<number>`sum(${usage.count})` })
+            .from(usage)
+            .innerJoin(buckets, eq(usage.bucketId, buckets.id))
+            .where(and(eq(buckets.userId, userId), isNull(buckets.deletedAt)));
 
           // Get submissions for this month
-          const startOfMonth = moment().startOf("month").toDate();
+          const startOfMonthStr = moment()
+            .startOf("month")
+            .format("YYYY-MM-DD");
           const [thisMonthResult] = await db
-            .select({ count: sql<number>`count(*)` })
-            .from(submissions)
-            .innerJoin(buckets, eq(submissions.bucketId, buckets.id))
+            .select({ count: sql<number>`sum(${usage.count})` })
+            .from(usage)
+            .innerJoin(buckets, eq(usage.bucketId, buckets.id))
             .where(
               and(
                 eq(buckets.userId, userId),
                 isNull(buckets.deletedAt),
-                isNull(submissions.deletedAt),
-                gte(submissions.createdAt, startOfMonth),
+                gte(usage.period, startOfMonthStr),
               ),
             );
 
           // Get submissions for the last 30 days for chart
-          const thirtyDaysAgo = moment()
+          const thirtyDaysAgoStr = moment()
             .subtract(29, "days")
-            .startOf("day")
-            .toDate();
+            .format("YYYY-MM-DD");
 
           const dailyStats = await db
             .select({
-              date: sql<string>`to_char(${submissions.createdAt}, 'YYYY-MM-DD')`,
-              count: sql<number>`count(*)`,
+              date: usage.period,
+              count: sql<number>`sum(${usage.count})`,
             })
-            .from(submissions)
-            .innerJoin(buckets, eq(submissions.bucketId, buckets.id))
+            .from(usage)
+            .innerJoin(buckets, eq(usage.bucketId, buckets.id))
             .where(
               and(
                 eq(buckets.userId, userId),
                 isNull(buckets.deletedAt),
-                isNull(submissions.deletedAt),
-                gte(submissions.createdAt, thirtyDaysAgo),
+                gte(usage.period, thirtyDaysAgoStr),
               ),
             )
-            .groupBy(sql`to_char(${submissions.createdAt}, 'YYYY-MM-DD')`)
-            .orderBy(sql`to_char(${submissions.createdAt}, 'YYYY-MM-DD')`);
+            .groupBy(usage.period)
+            .orderBy(usage.period);
 
           // Fill in missing days
           const chartData = Array.from({ length: 30 }, (_, i) => {
@@ -94,19 +87,13 @@ export const Route = createFileRoute("/api/analytics")({
             .select({
               id: buckets.id,
               name: buckets.name,
-              submissionCount: sql<number>`count(${submissions.id})`,
+              submissionCount: sql<number>`sum(${usage.count})`,
             })
             .from(buckets)
-            .leftJoin(
-              submissions,
-              and(
-                eq(buckets.id, submissions.bucketId),
-                isNull(submissions.deletedAt),
-              ),
-            )
+            .leftJoin(usage, eq(buckets.id, usage.bucketId))
             .where(and(eq(buckets.userId, userId), isNull(buckets.deletedAt)))
             .groupBy(buckets.id, buckets.name)
-            .orderBy(desc(sql`count(${submissions.id})`))
+            .orderBy(desc(sql`sum(${usage.count})`))
             .limit(5);
 
           return Response.json({
