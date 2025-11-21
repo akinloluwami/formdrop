@@ -18,11 +18,11 @@ export const SubmissionsRoutes = () => (
         const apiKey = useContext("apiKey");
         const { bucketId } = params;
 
-        if (!apiKey.canRead) {
+        if (apiKey.type !== "private") {
           return (
             <Response
               status={403}
-              json={{ error: "API key does not have read permissions" }}
+              json={{ error: "Private API key required" }}
             />
           );
         }
@@ -60,12 +60,12 @@ export const SubmissionsRoutes = () => (
         const apiKey = useContext("apiKey");
         const { bucketId, submissionId } = params;
 
-        if (!apiKey.canWrite) {
+        if (apiKey.type !== "private") {
           return (
             <Response
               status={403}
               json={{
-                error: "API key does not have write permissions",
+                error: "Private API key required",
               }}
             />
           );
