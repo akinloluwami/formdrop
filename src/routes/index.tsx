@@ -7,12 +7,15 @@ import {
 } from "@hugeicons/core-free-icons";
 import { useState } from "react";
 import { CopyButton } from "../components/CopyButton";
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { data: session } = authClient.useSession();
+
   const links = [
     {
       href: "/pricing",
@@ -22,10 +25,15 @@ function RouteComponent() {
       href: "/docs",
       label: "Docs",
     },
-    {
-      href: "/login",
-      label: "Login",
-    },
+    // Only show Login if not logged in
+    ...(!session
+      ? [
+          {
+            href: "/login",
+            label: "Login",
+          },
+        ]
+      : []),
   ];
 
   const htmlCodeExample = `<form
@@ -73,9 +81,12 @@ function RouteComponent() {
             </Link>
           ))}
         </div>
-        <button className="rounded-full bg-gray-950 text-white px-4 py-3 hover:bg-gray-800">
-          Get Started
-        </button>
+        <Link
+          to={session ? "/app/forms" : "/signup"}
+          className="rounded-full bg-gray-950 text-white px-4 py-3 hover:bg-gray-800"
+        >
+          {session ? "View Forms" : "Get Started"}
+        </Link>
       </div>
       <div className="max-w-4xl mx-auto mt-20">
         <h1 className="text-7xl font-semibold">
@@ -87,11 +98,12 @@ function RouteComponent() {
           Collect form submissions, view them in a dashboard, and get notified —
           all without the hassle.
         </p>
-        <button>
-          <span className="rounded-full bg-gray-950 text-white px-6 py-4 hover:bg-gray-800 mt-6 flex gap-x-2">
-            Get Started for Free <HugeiconsIcon icon={ArrowRightDoubleIcon} />
+        <Link to={session ? "/app/forms" : "/signup"}>
+          <span className="rounded-full bg-gray-950 text-white px-6 py-4 hover:bg-gray-800 mt-6 flex gap-x-2 w-fit">
+            {session ? "Go to app" : "Get Started for Free"}{" "}
+            <HugeiconsIcon icon={ArrowRightDoubleIcon} />
           </span>
-        </button>
+        </Link>
       </div>
       <div className="border rounded-3xl border-gray-200 max-w-4xl mx-auto mt-15 p-4">
         <div className="flex items-center gap-x-4 relative">
