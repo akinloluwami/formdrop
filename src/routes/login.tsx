@@ -33,7 +33,7 @@ function RouteComponent() {
     }
 
     if (data) {
-      navigate({ to: "/" });
+      navigate({ to: "/app/forms" });
     }
   };
 
@@ -43,7 +43,7 @@ function RouteComponent() {
 
     const { error: socialError } = await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL: "/app/forms",
     });
 
     setLoading(false);
@@ -60,7 +60,7 @@ function RouteComponent() {
 
     const { error: socialError } = await authClient.signIn.social({
       provider: "github",
-      callbackURL: "/",
+      callbackURL: "/app/forms",
     });
 
     setLoading(false);
