@@ -29,14 +29,20 @@ export const CollectRoute = () => (
   <Route path="/collect" method="POST">
     {async () => {
       const { req } = useRoute();
-      const apiKey = req.headers.authorization?.replace("Bearer ", "");
+      let apiKey = req.headers.authorization?.replace("Bearer ", "");
+
+      if (!apiKey) {
+        const url = new URL(req.url || "", `http://${req.headers.host}`);
+        apiKey = url.searchParams.get("key") || undefined;
+      }
+
       const origin = req.headers.origin || req.headers.referer || "";
 
       if (!apiKey) {
         return (
           <Response
             status={401}
-            json={{ error: "API key required in Authorization header" }}
+            json={{ error: "API key required in Authorization header or URL" }}
           />
         );
       }
