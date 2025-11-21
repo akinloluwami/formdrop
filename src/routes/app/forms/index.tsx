@@ -23,10 +23,22 @@ function RouteComponent() {
   const [createError, setCreateError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<"html" | "fetch">("html");
 
+  const { data: keys } = useQuery({
+    queryKey: ["api-keys"],
+    queryFn: async () => {
+      const response = await appClient.apiKeys.list();
+      if ("error" in response) {
+        return null;
+      }
+      return response.keys;
+    },
+  });
+
+  const publicKey = keys?.public?.key || "your-public-key";
+
   const htmlCodeExample = `<form
-  action="https://api.formdrop.co/collect" 
-  method="POST" name="contact-form">
-  <input type="hidden" name="x-api-key" value="your-public-key" />
+  action="https://api.formdrop.co/collect?key=${publicKey}" 
+  method="POST" name="Contact Form">
   <input type="text" name="name" placeholder="Your Name" required />
   <input type="email" name="email" placeholder="Your Email" required />
   <button type="submit">Submit</button>
@@ -36,10 +48,10 @@ function RouteComponent() {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': "Bearer your-public-key"
+    'Authorization': "Bearer ${publicKey}"
   },
   body: JSON.stringify({
-    bucket: "contact-form",
+    bucket: "Contact Form",
     data: {
       name: "John Doe",
       email: "john.doe@example.com"
