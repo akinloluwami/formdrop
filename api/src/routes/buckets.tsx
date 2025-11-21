@@ -10,11 +10,11 @@ export const BucketsRoutes = () => (
       {async () => {
         const apiKey = useContext("apiKey");
 
-        if (!apiKey.canRead) {
+        if (apiKey.type !== "private") {
           return (
             <Response
               status={403}
-              json={{ error: "API key does not have read permissions" }}
+              json={{ error: "Private API key required" }}
             />
           );
         }
