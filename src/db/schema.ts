@@ -26,7 +26,6 @@ export const eventTypeEnum = pgEnum("event_type", [
 
 export const apiKeyScopeTypeEnum = pgEnum("api_key_scope_type", [
   "all",
-  "specific",
   "restricted",
 ]);
 
