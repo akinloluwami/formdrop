@@ -6,7 +6,13 @@ import { authMiddleware } from "./middleware/auth";
 
 function Backend() {
   return (
-    <App port={1400} parseBody={true}>
+    <App
+      port={1400}
+      parseBody={true}
+      cors={{
+        origin: "*",
+      }}
+    >
       <CollectRoute />
 
       <RouteGroup prefix="/api">
