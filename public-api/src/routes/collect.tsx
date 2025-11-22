@@ -1,7 +1,11 @@
 import { Response, useRoute, Route } from "react-serve-js";
 import { db } from "../db";
-import { buckets, submissions, apiKeys, usage } from "../db/schema";
+import { buckets, submissions, apiKeys, usage, user } from "../db/schema";
 import { eq, and, sql } from "drizzle-orm";
+import { config } from "dotenv";
+import { sendEmailNotification } from "../lib/sendEmailNotification";
+
+config();
 
 // Helper to check if domain is allowed for bucket
 const isDomainAllowed = (origin: string, allowedDomains: string[]) => {
@@ -63,6 +67,13 @@ export const CollectRoute = () => (
             />
           );
         }
+
+        // Get owner details
+        const [owner] = await db
+          .select()
+          .from(user)
+          .where(eq(user.id, key.userId))
+          .limit(1);
 
         // Update last used timestamp
         await db
@@ -133,8 +144,31 @@ export const CollectRoute = () => (
           })
           .returning();
 
-        // Track usage
         const period = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+        // Send email notification
+        console.log("Attempting to send email notification to:", {
+          email: owner.email,
+          bucketName,
+          userId: key.userId,
+        });
+
+        try {
+          await sendEmailNotification({
+            recipientEmail: owner.email,
+            bucketName,
+            data,
+            userId: key.userId,
+            bucketId: bucket.id,
+            submissionId: submission.id,
+            period,
+          });
+        } catch (error) {
+          console.error("Failed to send email notification:", error);
+          // Don't fail the request if email fails
+        }
+
+        // Track usage
         await db
           .insert(usage)
           .values({
