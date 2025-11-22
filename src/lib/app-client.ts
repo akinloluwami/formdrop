@@ -23,6 +23,21 @@ interface Bucket {
   discordChannelName: string | null;
   discordGuildName: string | null;
   discordNotificationsEnabled: boolean;
+  googleSheetsAccessToken: string | null;
+  googleSheetsRefreshToken: string | null;
+  googleSheetsTokenExpiry: Date | null;
+  googleSheetsSpreadsheetId: string | null;
+  googleSheetsSpreadsheetName: string | null;
+  googleSheetsSheetId: string | null;
+  googleSheetsEnabled: boolean;
+  airtableAccessToken: string | null;
+  airtableRefreshToken: string | null;
+  airtableTokenExpiry: Date | null;
+  airtableBaseId: string | null;
+  airtableBaseName: string | null;
+  airtableTableId: string | null;
+  airtableTableName: string | null;
+  airtableEnabled: boolean;
   allowedDomains: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -71,6 +86,8 @@ interface UpdateBucketParams {
   emailNotificationsEnabled?: boolean;
   slackNotificationsEnabled?: boolean;
   discordNotificationsEnabled?: boolean;
+  googleSheetsEnabled?: boolean;
+  airtableEnabled?: boolean;
   allowedDomains?: string[];
 }
 
