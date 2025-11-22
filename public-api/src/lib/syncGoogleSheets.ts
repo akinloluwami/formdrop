@@ -89,7 +89,7 @@ async function getValidAccessToken(
 }
 
 /**
- * Get or create header row in spreadsheet
+ * Get or create header row in spreadsheet, and add new headers if needed
  */
 async function ensureHeaders(
   spreadsheetId: string,
@@ -116,29 +116,57 @@ async function ensureHeaders(
   const getData = await getResponse.json();
   const existingHeaders = getData.values?.[0] || [];
 
-  // If headers exist and match, we're good
-  if (existingHeaders.length > 0) {
-    return; // Headers already exist
+  // If no headers exist, create them
+  if (existingHeaders.length === 0) {
+    const updateResponse = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          values: [headers],
+        }),
+      },
+    );
+
+    if (!updateResponse.ok) {
+      console.error("Failed to set headers:", await updateResponse.text());
+      throw new Error("Failed to set spreadsheet headers");
+    }
+    return;
   }
 
-  // Set headers if they don't exist
-  const updateResponse = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        values: [headers],
-      }),
-    },
+  // Check if there are new headers that don't exist yet
+  const newHeaders = headers.filter(
+    (header) => !existingHeaders.includes(header),
   );
 
-  if (!updateResponse.ok) {
-    console.error("Failed to set headers:", await updateResponse.text());
-    throw new Error("Failed to set spreadsheet headers");
+  if (newHeaders.length > 0) {
+    // Append new headers to the existing header row
+    const updatedHeaders = [...existingHeaders, ...newHeaders];
+    const updateResponse = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          values: [updatedHeaders],
+        }),
+      },
+    );
+
+    if (!updateResponse.ok) {
+      console.error("Failed to update headers:", await updateResponse.text());
+      throw new Error("Failed to update spreadsheet headers");
+    }
+
+    console.log(`Added new headers to spreadsheet: ${newHeaders.join(", ")}`);
   }
 }
 
@@ -191,20 +219,45 @@ export async function syncGoogleSheets({
       ...Object.keys(submissionData),
     ];
 
-    const values = [
-      submissionId,
-      new Date().toISOString(),
-      ...Object.keys(submissionData).map((key) => {
-        const value = submissionData[key];
-        if (typeof value === "object") {
-          return JSON.stringify(value);
-        }
-        return String(value);
-      }),
-    ];
-
-    // Ensure headers exist
+    // Ensure headers exist (and add new ones if needed)
     await ensureHeaders(spreadsheetId, sheetName, headers, validToken);
+
+    // Get current headers to ensure proper column alignment
+    const headersRange = `${sheetName}!A1:ZZ1`;
+    const headersResponse = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(headersRange)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${validToken}`,
+        },
+      },
+    );
+
+    if (!headersResponse.ok) {
+      throw new Error("Failed to fetch current headers");
+    }
+
+    const headersData = await headersResponse.json();
+    const currentHeaders = headersData.values?.[0] || [];
+
+    // Create a map of submission data for easy lookup
+    const dataMap: Record<string, any> = {
+      "Submission ID": submissionId,
+      Timestamp: new Date().toISOString(),
+      ...submissionData,
+    };
+
+    // Build values array in the correct order based on current headers
+    const values = currentHeaders.map((header: string) => {
+      const value = dataMap[header];
+      if (value === undefined || value === null) {
+        return ""; // Empty cell for missing values
+      }
+      if (typeof value === "object") {
+        return JSON.stringify(value);
+      }
+      return String(value);
+    });
 
     // Append the row
     const range = `${sheetName}!A:ZZ`;
