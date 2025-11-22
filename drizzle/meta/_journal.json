@@ -43,6 +43,13 @@
       "when": 1763809800319,
       "tag": "0005_eminent_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763814654275,
+      "tag": "0006_square_siren",
+      "breakpoints": true
     }
   ]
 }
