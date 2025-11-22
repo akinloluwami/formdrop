@@ -15,6 +15,8 @@ import { account, session, user, verification } from "./auth-schema";
 export const notificationTypeEnum = pgEnum("notification_type", [
   "email",
   "webhook",
+  "slack",
+  "discord",
 ]);
 
 export const eventTypeEnum = pgEnum("event_type", [
