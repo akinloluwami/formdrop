@@ -166,4 +166,42 @@ export const usage = pgTable(
   ],
 );
 
+export const notificationUsage = pgTable(
+  "notification_usage",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+
+    bucketId: uuid("bucket_id")
+      .notNull()
+      .references(() => buckets.id, { onDelete: "cascade" }),
+
+    type: notificationTypeEnum("type").notNull(),
+
+    // for daily counting — easiest for quotas
+    period: text("period").notNull(),
+
+    count: integer("count").default(0).notNull(),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table: any) => [
+    // prevent duplicate rows per period
+    uniqueIndex("notification_usage_unique_idx").on(
+      table.userId,
+      table.bucketId,
+      table.period,
+      table.type,
+    ),
+    index("notification_usage_user_period_idx").on(table.userId, table.period),
+  ],
+);
+
 export { account, session, user, verification };
