@@ -15,6 +15,7 @@ import {
   sendSlackNotification,
   sendDiscordNotification,
 } from "../lib/sendWebhookNotification";
+import { syncGoogleSheets } from "../lib/syncGoogleSheets";
 
 config();
 
@@ -243,6 +244,32 @@ export const CollectRoute = () => (
               });
             } catch (error) {
               console.error("Failed to send Discord notification:", error);
+            }
+          });
+        }
+
+        // Sync to Google Sheets
+        if (
+          bucket.googleSheetsEnabled &&
+          bucket.googleSheetsSpreadsheetId &&
+          bucket.googleSheetsAccessToken
+        ) {
+          Promise.resolve().then(async () => {
+            try {
+              await syncGoogleSheets({
+                spreadsheetId: bucket.googleSheetsSpreadsheetId!,
+                sheetId: bucket.googleSheetsSheetId,
+                accessToken: bucket.googleSheetsAccessToken!,
+                refreshToken: bucket.googleSheetsRefreshToken,
+                tokenExpiry: bucket.googleSheetsTokenExpiry,
+                submissionData: data,
+                submissionId: submission.id,
+                bucketId: bucket.id,
+                userId: key.userId,
+                bucketName,
+              });
+            } catch (error) {
+              console.error("Failed to sync to Google Sheets:", error);
             }
           });
         }
