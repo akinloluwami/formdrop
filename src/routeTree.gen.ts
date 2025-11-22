@@ -25,10 +25,13 @@ import { Route as ApiBucketsBucketIdRouteImport } from './routes/api/buckets/$bu
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppFormsIdSubmissionsRouteImport } from './routes/app/forms/$id/submissions'
 import { Route as AppFormsIdSettingsRouteImport } from './routes/app/forms/$id/settings'
+import { Route as AppFormsIdNotificationsRouteImport } from './routes/app/forms/$id/notifications'
 import { Route as AppFormsIdAnalyticsRouteImport } from './routes/app/forms/$id/analytics'
 import { Route as ApiBucketsBucketIdSubmissionsRouteImport } from './routes/api/buckets/$bucketId/submissions'
+import { Route as ApiBucketsBucketIdRecipientsRouteImport } from './routes/api/buckets/$bucketId/recipients'
 import { Route as ApiBucketsBucketIdAnalyticsRouteImport } from './routes/api/buckets/$bucketId/analytics'
 import { Route as ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport } from './routes/api/buckets/$bucketId/submissions/$submissionId'
+import { Route as ApiBucketsBucketIdRecipientsRecipientIdRouteImport } from './routes/api/buckets/$bucketId/recipients/$recipientId'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -110,6 +113,11 @@ const AppFormsIdSettingsRoute = AppFormsIdSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AppFormsIdRoute,
 } as any)
+const AppFormsIdNotificationsRoute = AppFormsIdNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppFormsIdRoute,
+} as any)
 const AppFormsIdAnalyticsRoute = AppFormsIdAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -119,6 +127,12 @@ const ApiBucketsBucketIdSubmissionsRoute =
   ApiBucketsBucketIdSubmissionsRouteImport.update({
     id: '/submissions',
     path: '/submissions',
+    getParentRoute: () => ApiBucketsBucketIdRoute,
+  } as any)
+const ApiBucketsBucketIdRecipientsRoute =
+  ApiBucketsBucketIdRecipientsRouteImport.update({
+    id: '/recipients',
+    path: '/recipients',
     getParentRoute: () => ApiBucketsBucketIdRoute,
   } as any)
 const ApiBucketsBucketIdAnalyticsRoute =
@@ -132,6 +146,12 @@ const ApiBucketsBucketIdSubmissionsSubmissionIdRoute =
     id: '/$submissionId',
     path: '/$submissionId',
     getParentRoute: () => ApiBucketsBucketIdSubmissionsRoute,
+  } as any)
+const ApiBucketsBucketIdRecipientsRecipientIdRoute =
+  ApiBucketsBucketIdRecipientsRecipientIdRouteImport.update({
+    id: '/$recipientId',
+    path: '/$recipientId',
+    getParentRoute: () => ApiBucketsBucketIdRecipientsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -150,10 +170,13 @@ export interface FileRoutesByFullPath {
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
+  '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
+  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
 }
 export interface FileRoutesByTo {
@@ -172,10 +195,13 @@ export interface FileRoutesByTo {
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
+  '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
+  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
 }
 export interface FileRoutesById {
@@ -195,10 +221,13 @@ export interface FileRoutesById {
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms/': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
+  '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
+  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
 }
 export interface FileRouteTypes {
@@ -219,10 +248,13 @@ export interface FileRouteTypes {
     | '/app/forms/$id'
     | '/app/forms'
     | '/api/buckets/$bucketId/analytics'
+    | '/api/buckets/$bucketId/recipients'
     | '/api/buckets/$bucketId/submissions'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
+    | '/api/buckets/$bucketId/recipients/$recipientId'
     | '/api/buckets/$bucketId/submissions/$submissionId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -241,10 +273,13 @@ export interface FileRouteTypes {
     | '/app/forms/$id'
     | '/app/forms'
     | '/api/buckets/$bucketId/analytics'
+    | '/api/buckets/$bucketId/recipients'
     | '/api/buckets/$bucketId/submissions'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
+    | '/api/buckets/$bucketId/recipients/$recipientId'
     | '/api/buckets/$bucketId/submissions/$submissionId'
   id:
     | '__root__'
@@ -263,10 +298,13 @@ export interface FileRouteTypes {
     | '/app/forms/$id'
     | '/app/forms/'
     | '/api/buckets/$bucketId/analytics'
+    | '/api/buckets/$bucketId/recipients'
     | '/api/buckets/$bucketId/submissions'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
+    | '/api/buckets/$bucketId/recipients/$recipientId'
     | '/api/buckets/$bucketId/submissions/$submissionId'
   fileRoutesById: FileRoutesById
 }
@@ -396,6 +434,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFormsIdSettingsRouteImport
       parentRoute: typeof AppFormsIdRoute
     }
+    '/app/forms/$id/notifications': {
+      id: '/app/forms/$id/notifications'
+      path: '/notifications'
+      fullPath: '/app/forms/$id/notifications'
+      preLoaderRoute: typeof AppFormsIdNotificationsRouteImport
+      parentRoute: typeof AppFormsIdRoute
+    }
     '/app/forms/$id/analytics': {
       id: '/app/forms/$id/analytics'
       path: '/analytics'
@@ -408,6 +453,13 @@ declare module '@tanstack/react-router' {
       path: '/submissions'
       fullPath: '/api/buckets/$bucketId/submissions'
       preLoaderRoute: typeof ApiBucketsBucketIdSubmissionsRouteImport
+      parentRoute: typeof ApiBucketsBucketIdRoute
+    }
+    '/api/buckets/$bucketId/recipients': {
+      id: '/api/buckets/$bucketId/recipients'
+      path: '/recipients'
+      fullPath: '/api/buckets/$bucketId/recipients'
+      preLoaderRoute: typeof ApiBucketsBucketIdRecipientsRouteImport
       parentRoute: typeof ApiBucketsBucketIdRoute
     }
     '/api/buckets/$bucketId/analytics': {
@@ -424,17 +476,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport
       parentRoute: typeof ApiBucketsBucketIdSubmissionsRoute
     }
+    '/api/buckets/$bucketId/recipients/$recipientId': {
+      id: '/api/buckets/$bucketId/recipients/$recipientId'
+      path: '/$recipientId'
+      fullPath: '/api/buckets/$bucketId/recipients/$recipientId'
+      preLoaderRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRouteImport
+      parentRoute: typeof ApiBucketsBucketIdRecipientsRoute
+    }
   }
 }
 
 interface AppFormsIdRouteChildren {
   AppFormsIdAnalyticsRoute: typeof AppFormsIdAnalyticsRoute
+  AppFormsIdNotificationsRoute: typeof AppFormsIdNotificationsRoute
   AppFormsIdSettingsRoute: typeof AppFormsIdSettingsRoute
   AppFormsIdSubmissionsRoute: typeof AppFormsIdSubmissionsRoute
 }
 
 const AppFormsIdRouteChildren: AppFormsIdRouteChildren = {
   AppFormsIdAnalyticsRoute: AppFormsIdAnalyticsRoute,
+  AppFormsIdNotificationsRoute: AppFormsIdNotificationsRoute,
   AppFormsIdSettingsRoute: AppFormsIdSettingsRoute,
   AppFormsIdSubmissionsRoute: AppFormsIdSubmissionsRoute,
 }
@@ -459,6 +520,21 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface ApiBucketsBucketIdRecipientsRouteChildren {
+  ApiBucketsBucketIdRecipientsRecipientIdRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
+}
+
+const ApiBucketsBucketIdRecipientsRouteChildren: ApiBucketsBucketIdRecipientsRouteChildren =
+  {
+    ApiBucketsBucketIdRecipientsRecipientIdRoute:
+      ApiBucketsBucketIdRecipientsRecipientIdRoute,
+  }
+
+const ApiBucketsBucketIdRecipientsRouteWithChildren =
+  ApiBucketsBucketIdRecipientsRoute._addFileChildren(
+    ApiBucketsBucketIdRecipientsRouteChildren,
+  )
+
 interface ApiBucketsBucketIdSubmissionsRouteChildren {
   ApiBucketsBucketIdSubmissionsSubmissionIdRoute: typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
 }
@@ -476,11 +552,14 @@ const ApiBucketsBucketIdSubmissionsRouteWithChildren =
 
 interface ApiBucketsBucketIdRouteChildren {
   ApiBucketsBucketIdAnalyticsRoute: typeof ApiBucketsBucketIdAnalyticsRoute
+  ApiBucketsBucketIdRecipientsRoute: typeof ApiBucketsBucketIdRecipientsRouteWithChildren
   ApiBucketsBucketIdSubmissionsRoute: typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
 }
 
 const ApiBucketsBucketIdRouteChildren: ApiBucketsBucketIdRouteChildren = {
   ApiBucketsBucketIdAnalyticsRoute: ApiBucketsBucketIdAnalyticsRoute,
+  ApiBucketsBucketIdRecipientsRoute:
+    ApiBucketsBucketIdRecipientsRouteWithChildren,
   ApiBucketsBucketIdSubmissionsRoute:
     ApiBucketsBucketIdSubmissionsRouteWithChildren,
 }
