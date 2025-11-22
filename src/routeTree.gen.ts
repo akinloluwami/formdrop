@@ -28,6 +28,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppFormsIdSubmissionsRouteImport } from './routes/app/forms/$id/submissions'
 import { Route as AppFormsIdSettingsRouteImport } from './routes/app/forms/$id/settings'
 import { Route as AppFormsIdNotificationsRouteImport } from './routes/app/forms/$id/notifications'
+import { Route as AppFormsIdIntegrationsRouteImport } from './routes/app/forms/$id/integrations'
 import { Route as AppFormsIdAnalyticsRouteImport } from './routes/app/forms/$id/analytics'
 import { Route as ApiIntegrationsSlackCallbackRouteImport } from './routes/api/integrations/slack/callback'
 import { Route as ApiIntegrationsSlackAuthorizeRouteImport } from './routes/api/integrations/slack/authorize'
@@ -137,6 +138,11 @@ const AppFormsIdNotificationsRoute = AppFormsIdNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => AppFormsIdRoute,
 } as any)
+const AppFormsIdIntegrationsRoute = AppFormsIdIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => AppFormsIdRoute,
+} as any)
 const AppFormsIdAnalyticsRoute = AppFormsIdAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
   '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/integrations': typeof AppFormsIdIntegrationsRoute
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
   '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/integrations': typeof AppFormsIdIntegrationsRoute
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
   '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
+  '/app/forms/$id/integrations': typeof AppFormsIdIntegrationsRoute
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
@@ -347,6 +356,7 @@ export interface FileRouteTypes {
     | '/api/integrations/slack/authorize'
     | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/integrations'
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/api/integrations/slack/authorize'
     | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/integrations'
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
@@ -415,6 +426,7 @@ export interface FileRouteTypes {
     | '/api/integrations/slack/authorize'
     | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
+    | '/app/forms/$id/integrations'
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
@@ -576,6 +588,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFormsIdNotificationsRouteImport
       parentRoute: typeof AppFormsIdRoute
     }
+    '/app/forms/$id/integrations': {
+      id: '/app/forms/$id/integrations'
+      path: '/integrations'
+      fullPath: '/app/forms/$id/integrations'
+      preLoaderRoute: typeof AppFormsIdIntegrationsRouteImport
+      parentRoute: typeof AppFormsIdRoute
+    }
     '/app/forms/$id/analytics': {
       id: '/app/forms/$id/analytics'
       path: '/analytics'
@@ -672,6 +691,7 @@ declare module '@tanstack/react-router' {
 
 interface AppFormsIdRouteChildren {
   AppFormsIdAnalyticsRoute: typeof AppFormsIdAnalyticsRoute
+  AppFormsIdIntegrationsRoute: typeof AppFormsIdIntegrationsRoute
   AppFormsIdNotificationsRoute: typeof AppFormsIdNotificationsRoute
   AppFormsIdSettingsRoute: typeof AppFormsIdSettingsRoute
   AppFormsIdSubmissionsRoute: typeof AppFormsIdSubmissionsRoute
@@ -679,6 +699,7 @@ interface AppFormsIdRouteChildren {
 
 const AppFormsIdRouteChildren: AppFormsIdRouteChildren = {
   AppFormsIdAnalyticsRoute: AppFormsIdAnalyticsRoute,
+  AppFormsIdIntegrationsRoute: AppFormsIdIntegrationsRoute,
   AppFormsIdNotificationsRoute: AppFormsIdNotificationsRoute,
   AppFormsIdSettingsRoute: AppFormsIdSettingsRoute,
   AppFormsIdSubmissionsRoute: AppFormsIdSubmissionsRoute,
