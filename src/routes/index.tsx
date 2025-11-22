@@ -6,7 +6,7 @@ import {
   JavaScriptIcon,
 } from "@hugeicons/core-free-icons";
 import { useState } from "react";
-import { CopyButton } from "../components/CopyButton";
+import { CopyButton } from "../components/copy-button";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/")({

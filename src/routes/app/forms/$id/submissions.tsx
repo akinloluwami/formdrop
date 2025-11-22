@@ -18,7 +18,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { CopyButton } from "@/components/CopyButton";
+import { CopyButton } from "@/components/copy-button";
 
 export const Route = createFileRoute("/app/forms/$id/submissions")({
   component: RouteComponent,

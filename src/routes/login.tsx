@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { AuthError } from "@/components/AuthError";
+import { AuthError } from "@/components/auth-error";
 
 export const Route = createFileRoute("/login")({
   component: RouteComponent,

@@ -9,7 +9,7 @@ import {
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import moment from "moment";
-import { CopyButton } from "@/components/CopyButton";
+import { CopyButton } from "@/components/copy-button";
 import { motion, AnimatePresence } from "motion/react";
 
 export const Route = createFileRoute("/app/api-keys")({

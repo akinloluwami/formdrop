@@ -10,7 +10,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appClient } from "@/lib/app-client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { CopyButton } from "@/components/CopyButton";
+import { CopyButton } from "@/components/copy-button";
 
 export const Route = createFileRoute("/app/forms/")({
   component: RouteComponent,
