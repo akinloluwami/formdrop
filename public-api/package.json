@@ -24,7 +24,8 @@
     "pg": "^8.16.3",
     "react": "^19.1.1",
     "react-serve-js": "^0.7.0",
-    "resend": "^6.5.2"
+    "resend": "^6.5.2",
+    "zeptomail": "^7.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.10",
