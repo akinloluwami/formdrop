@@ -40,6 +40,24 @@ export const buckets = pgTable(
       .default(true)
       .notNull(),
 
+    // Slack integration
+    slackWebhookUrl: text("slack_webhook_url"),
+    slackChannelId: text("slack_channel_id"),
+    slackChannelName: text("slack_channel_name"),
+    slackTeamName: text("slack_team_name"),
+    slackNotificationsEnabled: boolean("slack_notifications_enabled")
+      .default(false)
+      .notNull(),
+
+    // Discord integration
+    discordWebhookUrl: text("discord_webhook_url"),
+    discordChannelId: text("discord_channel_id"),
+    discordChannelName: text("discord_channel_name"),
+    discordGuildName: text("discord_guild_name"),
+    discordNotificationsEnabled: boolean("discord_notifications_enabled")
+      .default(false)
+      .notNull(),
+
     allowedDomains: jsonb("allowed_domains").$type<string[]>().default([]),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
