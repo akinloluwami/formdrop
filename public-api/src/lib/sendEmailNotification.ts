@@ -1,6 +1,5 @@
 import { db } from "../db";
-import { events, notificationUsage } from "../db/schema";
-import { sql } from "drizzle-orm";
+import { recordNotificationUsage } from "./recordNotificationUsage";
 
 // @ts-ignore - zeptomail package has type definition issues
 import { SendMailClient } from "zeptomail";
@@ -165,39 +164,15 @@ export async function sendEmailNotification({
       await sendViaPlunk(recipientEmail, bucketName, data, submissionId);
     }
 
-    // Record notification event
-    await db.insert(events).values({
+    // Record notification usage
+    await recordNotificationUsage({
       userId,
       bucketId,
-      eventType: "notification_sent",
-      details: {
-        type: "email",
-        target: recipientEmail,
-        submissionId,
-      },
+      submissionId,
+      period,
+      type: "email",
+      target: recipientEmail,
     });
-
-    // Track notification usage
-    await db
-      .insert(notificationUsage)
-      .values({
-        userId,
-        bucketId,
-        period,
-        type: "email",
-        count: 1,
-      })
-      .onConflictDoUpdate({
-        target: [
-          notificationUsage.userId,
-          notificationUsage.bucketId,
-          notificationUsage.period,
-          notificationUsage.type,
-        ],
-        set: {
-          count: sql`${notificationUsage.count} + 1`,
-        },
-      });
   } catch (error) {
     console.error("Failed to send email notification:", {
       error: error instanceof Error ? error.message : String(error),
