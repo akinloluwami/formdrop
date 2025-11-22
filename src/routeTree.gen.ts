@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRecipientRouteImport } from './routes/verify-recipient'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
@@ -16,6 +17,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppApiKeysRouteImport } from './routes/app/api-keys'
 import { Route as AppAnalyticsRouteImport } from './routes/app/analytics'
+import { Route as ApiVerifyRecipientRouteImport } from './routes/api/verify-recipient'
 import { Route as ApiBucketsRouteImport } from './routes/api/buckets'
 import { Route as ApiApiKeysRouteImport } from './routes/api/api-keys'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
@@ -32,7 +34,13 @@ import { Route as ApiBucketsBucketIdRecipientsRouteImport } from './routes/api/b
 import { Route as ApiBucketsBucketIdAnalyticsRouteImport } from './routes/api/buckets/$bucketId/analytics'
 import { Route as ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport } from './routes/api/buckets/$bucketId/submissions/$submissionId'
 import { Route as ApiBucketsBucketIdRecipientsRecipientIdRouteImport } from './routes/api/buckets/$bucketId/recipients/$recipientId'
+import { Route as ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRouteImport } from './routes/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
 
+const VerifyRecipientRoute = VerifyRecipientRouteImport.update({
+  id: '/verify-recipient',
+  path: '/verify-recipient',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
@@ -67,6 +75,11 @@ const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
   getParentRoute: () => AppRoute,
+} as any)
+const ApiVerifyRecipientRoute = ApiVerifyRecipientRouteImport.update({
+  id: '/api/verify-recipient',
+  path: '/api/verify-recipient',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBucketsRoute = ApiBucketsRouteImport.update({
   id: '/api/buckets',
@@ -153,6 +166,12 @@ const ApiBucketsBucketIdRecipientsRecipientIdRoute =
     path: '/$recipientId',
     getParentRoute: () => ApiBucketsBucketIdRecipientsRoute,
   } as any)
+const ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute =
+  ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRouteImport.update({
+    id: '/resend-verification',
+    path: '/resend-verification',
+    getParentRoute: () => ApiBucketsBucketIdRecipientsRecipientIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -160,9 +179,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/verify-recipient': typeof VerifyRecipientRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -176,8 +197,9 @@ export interface FileRoutesByFullPath {
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
-  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
+  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
+  '/api/buckets/$bucketId/recipients/$recipientId/resend-verification': typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -185,9 +207,11 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/verify-recipient': typeof VerifyRecipientRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -201,8 +225,9 @@ export interface FileRoutesByTo {
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
-  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
+  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
+  '/api/buckets/$bucketId/recipients/$recipientId/resend-verification': typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -211,9 +236,11 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/verify-recipient': typeof VerifyRecipientRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -227,8 +254,9 @@ export interface FileRoutesById {
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
-  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
+  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren
   '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
+  '/api/buckets/$bucketId/recipients/$recipientId/resend-verification': typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -238,9 +266,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/verify-email'
+    | '/verify-recipient'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
     | '/api/auth/$'
@@ -256,6 +286,7 @@ export interface FileRouteTypes {
     | '/app/forms/$id/submissions'
     | '/api/buckets/$bucketId/recipients/$recipientId'
     | '/api/buckets/$bucketId/submissions/$submissionId'
+    | '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -263,9 +294,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/verify-email'
+    | '/verify-recipient'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
     | '/api/auth/$'
@@ -281,6 +314,7 @@ export interface FileRouteTypes {
     | '/app/forms/$id/submissions'
     | '/api/buckets/$bucketId/recipients/$recipientId'
     | '/api/buckets/$bucketId/submissions/$submissionId'
+    | '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
   id:
     | '__root__'
     | '/'
@@ -288,9 +322,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/verify-email'
+    | '/verify-recipient'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
     | '/api/auth/$'
@@ -306,6 +342,7 @@ export interface FileRouteTypes {
     | '/app/forms/$id/submissions'
     | '/api/buckets/$bucketId/recipients/$recipientId'
     | '/api/buckets/$bucketId/submissions/$submissionId'
+    | '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -314,14 +351,23 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
+  VerifyRecipientRoute: typeof VerifyRecipientRoute
   ApiAnalyticsRoute: typeof ApiAnalyticsRoute
   ApiApiKeysRoute: typeof ApiApiKeysRoute
   ApiBucketsRoute: typeof ApiBucketsRouteWithChildren
+  ApiVerifyRecipientRoute: typeof ApiVerifyRecipientRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-recipient': {
+      id: '/verify-recipient'
+      path: '/verify-recipient'
+      fullPath: '/verify-recipient'
+      preLoaderRoute: typeof VerifyRecipientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify-email': {
       id: '/verify-email'
       path: '/verify-email'
@@ -370,6 +416,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/analytics'
       preLoaderRoute: typeof AppAnalyticsRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/api/verify-recipient': {
+      id: '/api/verify-recipient'
+      path: '/api/verify-recipient'
+      fullPath: '/api/verify-recipient'
+      preLoaderRoute: typeof ApiVerifyRecipientRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/buckets': {
       id: '/api/buckets'
@@ -483,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRouteImport
       parentRoute: typeof ApiBucketsBucketIdRecipientsRoute
     }
+    '/api/buckets/$bucketId/recipients/$recipientId/resend-verification': {
+      id: '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
+      path: '/resend-verification'
+      fullPath: '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
+      preLoaderRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRouteImport
+      parentRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
+    }
   }
 }
 
@@ -520,14 +580,29 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface ApiBucketsBucketIdRecipientsRecipientIdRouteChildren {
+  ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
+}
+
+const ApiBucketsBucketIdRecipientsRecipientIdRouteChildren: ApiBucketsBucketIdRecipientsRecipientIdRouteChildren =
+  {
+    ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute:
+      ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute,
+  }
+
+const ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren =
+  ApiBucketsBucketIdRecipientsRecipientIdRoute._addFileChildren(
+    ApiBucketsBucketIdRecipientsRecipientIdRouteChildren,
+  )
+
 interface ApiBucketsBucketIdRecipientsRouteChildren {
-  ApiBucketsBucketIdRecipientsRecipientIdRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
+  ApiBucketsBucketIdRecipientsRecipientIdRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren
 }
 
 const ApiBucketsBucketIdRecipientsRouteChildren: ApiBucketsBucketIdRecipientsRouteChildren =
   {
     ApiBucketsBucketIdRecipientsRecipientIdRoute:
-      ApiBucketsBucketIdRecipientsRecipientIdRoute,
+      ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren,
   }
 
 const ApiBucketsBucketIdRecipientsRouteWithChildren =
@@ -585,9 +660,11 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   VerifyEmailRoute: VerifyEmailRoute,
+  VerifyRecipientRoute: VerifyRecipientRoute,
   ApiAnalyticsRoute: ApiAnalyticsRoute,
   ApiApiKeysRoute: ApiApiKeysRoute,
   ApiBucketsRoute: ApiBucketsRouteWithChildren,
+  ApiVerifyRecipientRoute: ApiVerifyRecipientRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
