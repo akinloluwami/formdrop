@@ -104,6 +104,9 @@ export const emailNotificationRecipients = pgTable(
       .references(() => buckets.id, { onDelete: "cascade" }),
     email: text("email").notNull(),
     enabled: boolean("enabled").default(true).notNull(),
+    verifiedAt: timestamp("verified_at"),
+    verificationToken: text("verification_token"),
+    verificationTokenExpiresAt: timestamp("verification_token_expires_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
