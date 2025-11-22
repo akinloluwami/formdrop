@@ -32,6 +32,11 @@ import { Route as AppFormsIdIntegrationsRouteImport } from './routes/app/forms/$
 import { Route as AppFormsIdAnalyticsRouteImport } from './routes/app/forms/$id/analytics'
 import { Route as ApiIntegrationsSlackCallbackRouteImport } from './routes/api/integrations/slack/callback'
 import { Route as ApiIntegrationsSlackAuthorizeRouteImport } from './routes/api/integrations/slack/authorize'
+import { Route as ApiIntegrationsGoogleSheetsSpreadsheetsRouteImport } from './routes/api/integrations/google-sheets/spreadsheets'
+import { Route as ApiIntegrationsGoogleSheetsDisconnectRouteImport } from './routes/api/integrations/google-sheets/disconnect'
+import { Route as ApiIntegrationsGoogleSheetsConfigureRouteImport } from './routes/api/integrations/google-sheets/configure'
+import { Route as ApiIntegrationsGoogleSheetsCallbackRouteImport } from './routes/api/integrations/google-sheets/callback'
+import { Route as ApiIntegrationsGoogleSheetsAuthorizeRouteImport } from './routes/api/integrations/google-sheets/authorize'
 import { Route as ApiIntegrationsDiscordCallbackRouteImport } from './routes/api/integrations/discord/callback'
 import { Route as ApiIntegrationsDiscordAuthorizeRouteImport } from './routes/api/integrations/discord/authorize'
 import { Route as ApiBucketsBucketIdSubmissionsRouteImport } from './routes/api/buckets/$bucketId/submissions'
@@ -160,6 +165,36 @@ const ApiIntegrationsSlackAuthorizeRoute =
     path: '/api/integrations/slack/authorize',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiIntegrationsGoogleSheetsSpreadsheetsRoute =
+  ApiIntegrationsGoogleSheetsSpreadsheetsRouteImport.update({
+    id: '/api/integrations/google-sheets/spreadsheets',
+    path: '/api/integrations/google-sheets/spreadsheets',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsGoogleSheetsDisconnectRoute =
+  ApiIntegrationsGoogleSheetsDisconnectRouteImport.update({
+    id: '/api/integrations/google-sheets/disconnect',
+    path: '/api/integrations/google-sheets/disconnect',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsGoogleSheetsConfigureRoute =
+  ApiIntegrationsGoogleSheetsConfigureRouteImport.update({
+    id: '/api/integrations/google-sheets/configure',
+    path: '/api/integrations/google-sheets/configure',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsGoogleSheetsCallbackRoute =
+  ApiIntegrationsGoogleSheetsCallbackRouteImport.update({
+    id: '/api/integrations/google-sheets/callback',
+    path: '/api/integrations/google-sheets/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsGoogleSheetsAuthorizeRoute =
+  ApiIntegrationsGoogleSheetsAuthorizeRouteImport.update({
+    id: '/api/integrations/google-sheets/authorize',
+    path: '/api/integrations/google-sheets/authorize',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiIntegrationsDiscordCallbackRoute =
   ApiIntegrationsDiscordCallbackRouteImport.update({
     id: '/api/integrations/discord/callback',
@@ -245,6 +280,11 @@ export interface FileRoutesByFullPath {
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
   '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
+  '/api/integrations/google-sheets/authorize': typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
+  '/api/integrations/google-sheets/callback': typeof ApiIntegrationsGoogleSheetsCallbackRoute
+  '/api/integrations/google-sheets/configure': typeof ApiIntegrationsGoogleSheetsConfigureRoute
+  '/api/integrations/google-sheets/disconnect': typeof ApiIntegrationsGoogleSheetsDisconnectRoute
+  '/api/integrations/google-sheets/spreadsheets': typeof ApiIntegrationsGoogleSheetsSpreadsheetsRoute
   '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
   '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
@@ -280,6 +320,11 @@ export interface FileRoutesByTo {
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
   '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
+  '/api/integrations/google-sheets/authorize': typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
+  '/api/integrations/google-sheets/callback': typeof ApiIntegrationsGoogleSheetsCallbackRoute
+  '/api/integrations/google-sheets/configure': typeof ApiIntegrationsGoogleSheetsConfigureRoute
+  '/api/integrations/google-sheets/disconnect': typeof ApiIntegrationsGoogleSheetsDisconnectRoute
+  '/api/integrations/google-sheets/spreadsheets': typeof ApiIntegrationsGoogleSheetsSpreadsheetsRoute
   '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
   '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
@@ -316,6 +361,11 @@ export interface FileRoutesById {
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
   '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
+  '/api/integrations/google-sheets/authorize': typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
+  '/api/integrations/google-sheets/callback': typeof ApiIntegrationsGoogleSheetsCallbackRoute
+  '/api/integrations/google-sheets/configure': typeof ApiIntegrationsGoogleSheetsConfigureRoute
+  '/api/integrations/google-sheets/disconnect': typeof ApiIntegrationsGoogleSheetsDisconnectRoute
+  '/api/integrations/google-sheets/spreadsheets': typeof ApiIntegrationsGoogleSheetsSpreadsheetsRoute
   '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
   '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
@@ -353,6 +403,11 @@ export interface FileRouteTypes {
     | '/api/buckets/$bucketId/submissions'
     | '/api/integrations/discord/authorize'
     | '/api/integrations/discord/callback'
+    | '/api/integrations/google-sheets/authorize'
+    | '/api/integrations/google-sheets/callback'
+    | '/api/integrations/google-sheets/configure'
+    | '/api/integrations/google-sheets/disconnect'
+    | '/api/integrations/google-sheets/spreadsheets'
     | '/api/integrations/slack/authorize'
     | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
@@ -388,6 +443,11 @@ export interface FileRouteTypes {
     | '/api/buckets/$bucketId/submissions'
     | '/api/integrations/discord/authorize'
     | '/api/integrations/discord/callback'
+    | '/api/integrations/google-sheets/authorize'
+    | '/api/integrations/google-sheets/callback'
+    | '/api/integrations/google-sheets/configure'
+    | '/api/integrations/google-sheets/disconnect'
+    | '/api/integrations/google-sheets/spreadsheets'
     | '/api/integrations/slack/authorize'
     | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
@@ -423,6 +483,11 @@ export interface FileRouteTypes {
     | '/api/buckets/$bucketId/submissions'
     | '/api/integrations/discord/authorize'
     | '/api/integrations/discord/callback'
+    | '/api/integrations/google-sheets/authorize'
+    | '/api/integrations/google-sheets/callback'
+    | '/api/integrations/google-sheets/configure'
+    | '/api/integrations/google-sheets/disconnect'
+    | '/api/integrations/google-sheets/spreadsheets'
     | '/api/integrations/slack/authorize'
     | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
@@ -449,6 +514,11 @@ export interface RootRouteChildren {
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiIntegrationsDiscordAuthorizeRoute: typeof ApiIntegrationsDiscordAuthorizeRoute
   ApiIntegrationsDiscordCallbackRoute: typeof ApiIntegrationsDiscordCallbackRoute
+  ApiIntegrationsGoogleSheetsAuthorizeRoute: typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
+  ApiIntegrationsGoogleSheetsCallbackRoute: typeof ApiIntegrationsGoogleSheetsCallbackRoute
+  ApiIntegrationsGoogleSheetsConfigureRoute: typeof ApiIntegrationsGoogleSheetsConfigureRoute
+  ApiIntegrationsGoogleSheetsDisconnectRoute: typeof ApiIntegrationsGoogleSheetsDisconnectRoute
+  ApiIntegrationsGoogleSheetsSpreadsheetsRoute: typeof ApiIntegrationsGoogleSheetsSpreadsheetsRoute
   ApiIntegrationsSlackAuthorizeRoute: typeof ApiIntegrationsSlackAuthorizeRoute
   ApiIntegrationsSlackCallbackRoute: typeof ApiIntegrationsSlackCallbackRoute
 }
@@ -614,6 +684,41 @@ declare module '@tanstack/react-router' {
       path: '/api/integrations/slack/authorize'
       fullPath: '/api/integrations/slack/authorize'
       preLoaderRoute: typeof ApiIntegrationsSlackAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/google-sheets/spreadsheets': {
+      id: '/api/integrations/google-sheets/spreadsheets'
+      path: '/api/integrations/google-sheets/spreadsheets'
+      fullPath: '/api/integrations/google-sheets/spreadsheets'
+      preLoaderRoute: typeof ApiIntegrationsGoogleSheetsSpreadsheetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/google-sheets/disconnect': {
+      id: '/api/integrations/google-sheets/disconnect'
+      path: '/api/integrations/google-sheets/disconnect'
+      fullPath: '/api/integrations/google-sheets/disconnect'
+      preLoaderRoute: typeof ApiIntegrationsGoogleSheetsDisconnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/google-sheets/configure': {
+      id: '/api/integrations/google-sheets/configure'
+      path: '/api/integrations/google-sheets/configure'
+      fullPath: '/api/integrations/google-sheets/configure'
+      preLoaderRoute: typeof ApiIntegrationsGoogleSheetsConfigureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/google-sheets/callback': {
+      id: '/api/integrations/google-sheets/callback'
+      path: '/api/integrations/google-sheets/callback'
+      fullPath: '/api/integrations/google-sheets/callback'
+      preLoaderRoute: typeof ApiIntegrationsGoogleSheetsCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/google-sheets/authorize': {
+      id: '/api/integrations/google-sheets/authorize'
+      path: '/api/integrations/google-sheets/authorize'
+      fullPath: '/api/integrations/google-sheets/authorize'
+      preLoaderRoute: typeof ApiIntegrationsGoogleSheetsAuthorizeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/integrations/discord/callback': {
@@ -819,6 +924,16 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiIntegrationsDiscordAuthorizeRoute: ApiIntegrationsDiscordAuthorizeRoute,
   ApiIntegrationsDiscordCallbackRoute: ApiIntegrationsDiscordCallbackRoute,
+  ApiIntegrationsGoogleSheetsAuthorizeRoute:
+    ApiIntegrationsGoogleSheetsAuthorizeRoute,
+  ApiIntegrationsGoogleSheetsCallbackRoute:
+    ApiIntegrationsGoogleSheetsCallbackRoute,
+  ApiIntegrationsGoogleSheetsConfigureRoute:
+    ApiIntegrationsGoogleSheetsConfigureRoute,
+  ApiIntegrationsGoogleSheetsDisconnectRoute:
+    ApiIntegrationsGoogleSheetsDisconnectRoute,
+  ApiIntegrationsGoogleSheetsSpreadsheetsRoute:
+    ApiIntegrationsGoogleSheetsSpreadsheetsRoute,
   ApiIntegrationsSlackAuthorizeRoute: ApiIntegrationsSlackAuthorizeRoute,
   ApiIntegrationsSlackCallbackRoute: ApiIntegrationsSlackCallbackRoute,
 }
