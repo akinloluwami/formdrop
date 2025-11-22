@@ -70,7 +70,7 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md p-8">
+      <div className="bg-white rounded-3xl border border-gray-200 w-full max-w-md p-8">
         {status === "loading" && (
           <div className="text-center">
             <div className="inline-flex p-4 bg-gray-100 rounded-full mb-4">
