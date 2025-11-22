@@ -48,7 +48,7 @@ function RouteComponent() {
     }
 
     if (data) {
-      navigate({ to: "/app/forms" });
+      navigate({ to: "/login" });
     }
   };
 
