@@ -30,8 +30,8 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="bg-white w-72 p-2 border border-gray-200 rounded-2xl flex flex-col gap-4 justify-between">
-      <div className="">
+    <div className="bg-white w-72 p-2 border border-gray-200 rounded-2xl flex flex-col gap-4 justify-between h-full">
+      <div className="flex-1">
         <div className="">
           <h1 className="">FormDrop</h1>
         </div>
@@ -57,6 +57,20 @@ export function Sidebar() {
               </Link>
             );
           })}
+        </div>
+      </div>
+      <div className="px-2">
+        <div className="bg-linear-to-br from-accent/5 to-accent/10 p-4 rounded-xl border border-accent/10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl"></div>
+          <h3 className="font-semibold text-sm text-gray-900 relative z-10">
+            Upgrade to Pro
+          </h3>
+          <p className="text-xs text-gray-500 mt-1 mb-3 relative z-10">
+            Unlock powerful integrations and advanced analytics.
+          </p>
+          <button className="w-full bg-accent text-white text-xs font-medium py-2 rounded-lg hover:bg-accent/90 transition-colors cursor-pointer shadow-sm shadow-accent/20 relative z-10">
+            Upgrade Plan
+          </button>
         </div>
       </div>
       <div className="p-4 border-t border-gray-100">
