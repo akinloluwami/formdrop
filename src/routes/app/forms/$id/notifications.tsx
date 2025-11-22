@@ -11,11 +11,14 @@ import {
   ReloadIcon,
   Tick02Icon,
   Cancel01Icon,
+  LinkSquare02Icon,
+  GameIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { Tooltip } from "@/components/tooltip";
 import { motion, AnimatePresence } from "motion/react";
+import { Discord, Slack } from "@ridemountainpig/svgl-react";
 
 export const Route = createFileRoute("/app/forms/$id/notifications")({
   component: RouteComponent,
@@ -49,7 +52,11 @@ function RouteComponent() {
   });
 
   const updateBucketMutation = useMutation({
-    mutationFn: async (data: { emailNotificationsEnabled: boolean }) => {
+    mutationFn: async (data: {
+      emailNotificationsEnabled?: boolean;
+      slackNotificationsEnabled?: boolean;
+      discordNotificationsEnabled?: boolean;
+    }) => {
       const response = await appClient.buckets.update(id, data);
       if ("error" in response) throw new Error(response.error);
       return response.bucket;
@@ -115,6 +122,28 @@ function RouteComponent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recipients", id] });
+    },
+  });
+
+  const disconnectSlackMutation = useMutation({
+    mutationFn: async () => {
+      const response = await appClient.recipients.disconnectSlack(id);
+      if ("error" in response) throw new Error(response.error);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bucket", id] });
+    },
+  });
+
+  const disconnectDiscordMutation = useMutation({
+    mutationFn: async () => {
+      const response = await appClient.recipients.disconnectDiscord(id);
+      if ("error" in response) throw new Error(response.error);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bucket", id] });
     },
   });
 
@@ -211,6 +240,132 @@ function RouteComponent() {
               }`}
             />
           </button>
+        </div>
+      </div>
+
+      {/* Slack Notifications */}
+      <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden mb-8">
+        <div className="p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+              <Slack className="size-7" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-900">
+                Slack Notifications
+              </h3>
+              <p className="text-sm text-gray-500">
+                {bucket?.slackWebhookUrl
+                  ? `Connected to #${bucket.slackChannelName} (${bucket.slackTeamName})`
+                  : "Send notifications to a Slack channel"}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {bucket?.slackWebhookUrl ? (
+              <>
+                <button
+                  onClick={() =>
+                    updateBucketMutation.mutate({
+                      slackNotificationsEnabled:
+                        !bucket?.slackNotificationsEnabled,
+                    })
+                  }
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                    bucket?.slackNotificationsEnabled
+                      ? "bg-accent"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      bucket?.slackNotificationsEnabled
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    }`}
+                  />
+                </button>
+                <button
+                  onClick={() => disconnectSlackMutation.mutate()}
+                  disabled={disconnectSlackMutation.isPending}
+                  className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  Disconnect
+                </button>
+              </>
+            ) : (
+              <a
+                href={`/api/integrations/slack/authorize?bucketId=${id}`}
+                className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors inline-flex items-center gap-2"
+              >
+                <HugeiconsIcon icon={LinkSquare02Icon} size={16} />
+                Connect Slack
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Discord Notifications */}
+      <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden mb-8">
+        <div className="p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+              <Discord className="size-7" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-900">
+                Discord Notifications
+              </h3>
+              <p className="text-sm text-gray-500">
+                {bucket?.discordWebhookUrl
+                  ? `Connected to #${bucket.discordChannelName} (${bucket.discordGuildName})`
+                  : "Send notifications to a Discord channel"}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {bucket?.discordWebhookUrl ? (
+              <>
+                <button
+                  onClick={() =>
+                    updateBucketMutation.mutate({
+                      discordNotificationsEnabled:
+                        !bucket?.discordNotificationsEnabled,
+                    })
+                  }
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
+                    bucket?.discordNotificationsEnabled
+                      ? "bg-accent"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      bucket?.discordNotificationsEnabled
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    }`}
+                  />
+                </button>
+                <button
+                  onClick={() => disconnectDiscordMutation.mutate()}
+                  disabled={disconnectDiscordMutation.isPending}
+                  className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  Disconnect
+                </button>
+              </>
+            ) : (
+              <a
+                href={`/api/integrations/discord/authorize?bucketId=${id}`}
+                className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors inline-flex items-center gap-2"
+              >
+                <HugeiconsIcon icon={GameIcon} size={16} />
+                Connect Discord
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
