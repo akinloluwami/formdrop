@@ -3,6 +3,11 @@ import { db } from "@/db";
 import { buckets, emailNotificationRecipients } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
+import { Resend } from "resend";
+import { RecipientVerificationEmail } from "@/emails/RecipientVerificationEmail";
+import crypto from "crypto";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const Route = createFileRoute("/api/buckets/$bucketId/recipients")({
   server: {
@@ -110,13 +115,49 @@ export const Route = createFileRoute("/api/buckets/$bucketId/recipients")({
             );
           }
 
+          // Generate verification token
+          const verificationToken = crypto.randomBytes(32).toString("hex");
+          const verificationTokenExpiresAt = new Date(
+            Date.now() + 24 * 60 * 60 * 1000,
+          ); // 24 hours
+
           const [recipient] = await db
             .insert(emailNotificationRecipients)
             .values({
               bucketId,
               email,
+              verificationToken,
+              verificationTokenExpiresAt,
             })
             .returning();
+
+          // Send verification email
+          const baseUrl =
+            process.env.BETTER_AUTH_URL || "http://localhost:1200";
+          const verificationUrl = `${baseUrl}/verify-recipient?token=${verificationToken}`;
+
+          try {
+            const { error, data } = await resend.emails.send({
+              from: "FormDrop <onboarding@mail.formdrop.co>",
+              to: email,
+              subject: `Verify your email for ${bucket.name} notifications`,
+              react: RecipientVerificationEmail({
+                verificationUrl,
+                bucketName: bucket.name,
+              }),
+            });
+
+            if (data) {
+              console.log("Resend response data:", data);
+            }
+
+            if (error) {
+              throw new Error(`Resend error: ${error.message}`);
+            }
+          } catch (emailError) {
+            console.error("Failed to send verification email:", emailError);
+            // Don't fail the request if email fails, recipient can be re-sent verification later
+          }
 
           return Response.json({ recipient });
         } catch (error: any) {
