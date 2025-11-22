@@ -23,6 +23,10 @@ function RouteComponent() {
       to: "/app/forms/$id/analytics",
     },
     {
+      name: "Notifications",
+      to: "/app/forms/$id/notifications",
+    },
+    {
       name: "Settings",
       to: "/app/forms/$id/settings",
     },
