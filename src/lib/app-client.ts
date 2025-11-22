@@ -13,6 +13,16 @@ interface Bucket {
   name: string;
   description: string | null;
   emailNotificationsEnabled: boolean;
+  slackWebhookUrl: string | null;
+  slackChannelId: string | null;
+  slackChannelName: string | null;
+  slackTeamName: string | null;
+  slackNotificationsEnabled: boolean;
+  discordWebhookUrl: string | null;
+  discordChannelId: string | null;
+  discordChannelName: string | null;
+  discordGuildName: string | null;
+  discordNotificationsEnabled: boolean;
   allowedDomains: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -59,6 +69,8 @@ interface UpdateBucketParams {
   name?: string;
   description?: string;
   emailNotificationsEnabled?: boolean;
+  slackNotificationsEnabled?: boolean;
+  discordNotificationsEnabled?: boolean;
   allowedDomains?: string[];
 }
 
@@ -230,6 +242,38 @@ export const appClient = {
       try {
         const response = await apiClient.post<{ success: boolean }>(
           `/api/buckets/${bucketId}/recipients/${recipientId}/resend-verification`,
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    disconnectSlack: async (
+      bucketId: string,
+    ): Promise<ApiResponse<{ success: boolean }>> => {
+      try {
+        const response = await apiClient.delete<{ success: boolean }>(
+          `/api/buckets/${bucketId}/disconnect-slack`,
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    disconnectDiscord: async (
+      bucketId: string,
+    ): Promise<ApiResponse<{ success: boolean }>> => {
+      try {
+        const response = await apiClient.delete<{ success: boolean }>(
+          `/api/buckets/${bucketId}/disconnect-discord`,
         );
         return response.data;
       } catch (error) {
