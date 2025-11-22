@@ -24,6 +24,9 @@ interface Recipient {
   bucketId: string;
   email: string;
   enabled: boolean;
+  verifiedAt: Date | null;
+  verificationToken: string | null;
+  verificationTokenExpiresAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -210,6 +213,23 @@ export const appClient = {
         const response = await apiClient.patch<{ recipient: Recipient }>(
           `/api/buckets/${bucketId}/recipients/${recipientId}`,
           { enabled },
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    resendVerification: async (
+      bucketId: string,
+      recipientId: string,
+    ): Promise<ApiResponse<{ success: boolean }>> => {
+      try {
+        const response = await apiClient.post<{ success: boolean }>(
+          `/api/buckets/${bucketId}/recipients/${recipientId}/resend-verification`,
         );
         return response.data;
       } catch (error) {
