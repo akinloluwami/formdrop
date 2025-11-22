@@ -9,10 +9,13 @@ import {
   Notification01Icon,
   ArrowLeft01Icon,
   ReloadIcon,
+  Tick02Icon,
+  Cancel01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { Tooltip } from "@/components/tooltip";
+import { motion, AnimatePresence } from "motion/react";
 
 export const Route = createFileRoute("/app/forms/$id/notifications")({
   component: RouteComponent,
@@ -23,6 +26,9 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const [newRecipientEmail, setNewRecipientEmail] = useState("");
+  const [deletingRecipientId, setDeletingRecipientId] = useState<string | null>(
+    null,
+  );
 
   const { data: bucket, isLoading: isBucketLoading } = useQuery({
     queryKey: ["bucket", id],
@@ -73,6 +79,7 @@ function RouteComponent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recipients", id] });
+      setDeletingRecipientId(null);
     },
   });
 
@@ -332,36 +339,78 @@ function RouteComponent() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button
-                      onClick={() =>
-                        updateRecipientMutation.mutate({
-                          recipientId: recipient.id,
-                          enabled: !recipient.enabled,
-                        })
-                      }
-                      disabled={!recipient.verifiedAt}
-                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
-                        recipient.enabled && recipient.verifiedAt
-                          ? "bg-accent"
-                          : "bg-gray-200"
-                      } ${!recipient.verifiedAt ? "opacity-50 cursor-not-allowed" : ""}`}
-                    >
-                      <span
-                        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                          recipient.enabled && recipient.verifiedAt
-                            ? "translate-x-5"
-                            : "translate-x-1"
-                        }`}
-                      />
-                    </button>
-                    <button
-                      onClick={() =>
-                        removeRecipientMutation.mutate(recipient.id)
-                      }
-                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <HugeiconsIcon icon={Delete02Icon} size={16} />
-                    </button>
+                    <AnimatePresence mode="wait">
+                      {deletingRecipientId === recipient.id ? (
+                        <motion.div
+                          key="confirm"
+                          initial={{ opacity: 0, x: 10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 10 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-center gap-2"
+                        >
+                          <span className="text-xs text-gray-600 font-medium whitespace-nowrap">
+                            Confirm Deletion?
+                          </span>
+                          <button
+                            onClick={() =>
+                              removeRecipientMutation.mutate(recipient.id)
+                            }
+                            disabled={removeRecipientMutation.isPending}
+                            className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+                            title="Confirm delete"
+                          >
+                            <HugeiconsIcon icon={Tick02Icon} size={16} />
+                          </button>
+                          <button
+                            onClick={() => setDeletingRecipientId(null)}
+                            disabled={removeRecipientMutation.isPending}
+                            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                            title="Cancel"
+                          >
+                            <HugeiconsIcon icon={Cancel01Icon} size={16} />
+                          </button>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="actions"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -10 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-center gap-3"
+                        >
+                          <button
+                            onClick={() =>
+                              updateRecipientMutation.mutate({
+                                recipientId: recipient.id,
+                                enabled: !recipient.enabled,
+                              })
+                            }
+                            disabled={!recipient.verifiedAt}
+                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+                              recipient.enabled && recipient.verifiedAt
+                                ? "bg-accent"
+                                : "bg-gray-200"
+                            } ${!recipient.verifiedAt ? "opacity-50 cursor-not-allowed" : ""}`}
+                          >
+                            <span
+                              className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                                recipient.enabled && recipient.verifiedAt
+                                  ? "translate-x-5"
+                                  : "translate-x-1"
+                              }`}
+                            />
+                          </button>
+                          <button
+                            onClick={() => setDeletingRecipientId(recipient.id)}
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <HugeiconsIcon icon={Delete02Icon} size={16} />
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               );
