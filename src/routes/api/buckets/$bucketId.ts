@@ -82,6 +82,8 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
             description,
             allowedDomains,
             emailNotificationsEnabled,
+            slackNotificationsEnabled,
+            discordNotificationsEnabled,
           } = body;
 
           // Verify bucket belongs to user
@@ -113,6 +115,12 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
               emailNotificationsEnabled:
                 emailNotificationsEnabled ??
                 existingBucket.emailNotificationsEnabled,
+              slackNotificationsEnabled:
+                slackNotificationsEnabled ??
+                existingBucket.slackNotificationsEnabled,
+              discordNotificationsEnabled:
+                discordNotificationsEnabled ??
+                existingBucket.discordNotificationsEnabled,
               updatedAt: new Date(),
             })
             .where(eq(buckets.id, bucketId))
