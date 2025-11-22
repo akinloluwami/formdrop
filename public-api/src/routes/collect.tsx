@@ -1,6 +1,13 @@
 import { Response, useRoute, Route } from "react-serve-js";
 import { db } from "../db";
-import { buckets, submissions, apiKeys, usage, user } from "../db/schema";
+import {
+  buckets,
+  submissions,
+  apiKeys,
+  usage,
+  user,
+  emailNotificationRecipients,
+} from "../db/schema";
 import { eq, and, sql } from "drizzle-orm";
 import { config } from "dotenv";
 import { sendEmailNotification } from "../lib/sendEmailNotification";
@@ -148,26 +155,51 @@ export const CollectRoute = () => (
 
         // Send email notification
         if (bucket.emailNotificationsEnabled) {
+          const recipients = await db
+            .select()
+            .from(emailNotificationRecipients)
+            .where(
+              and(
+                eq(emailNotificationRecipients.bucketId, bucket.id),
+                eq(emailNotificationRecipients.enabled, true),
+              ),
+            );
+
+          const allRecipients = [
+            { email: owner.email }, // Owner always receives email if enabled (handled by bucket.emailNotificationsEnabled)
+            ...recipients,
+          ];
+
+          // Deduplicate emails
+          const uniqueEmails = [...new Set(allRecipients.map((r) => r.email))];
+
           console.log("Attempting to send email notification to:", {
-            email: owner.email,
+            emails: uniqueEmails,
             bucketName,
             userId: key.userId,
           });
 
-          try {
-            await sendEmailNotification({
-              recipientEmail: owner.email,
-              bucketName,
-              data,
-              userId: key.userId,
-              bucketId: bucket.id,
-              submissionId: submission.id,
-              period,
-            });
-          } catch (error) {
-            console.error("Failed to send email notification:", error);
-            // Don't fail the request if email fails
-          }
+          // Non-blocking email sending
+          Promise.all(
+            uniqueEmails.map(async (email) => {
+              try {
+                await sendEmailNotification({
+                  recipientEmail: email,
+                  bucketName,
+                  data,
+                  userId: key.userId,
+                  bucketId: bucket.id,
+                  submissionId: submission.id,
+                  period,
+                });
+              } catch (error) {
+                console.error(
+                  `Failed to send email notification to ${email}:`,
+                  error,
+                );
+              }
+            }),
+          );
         }
 
         // Track usage
