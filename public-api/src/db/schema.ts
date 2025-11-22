@@ -8,6 +8,7 @@ import {
   index,
   pgEnum,
   integer,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { account, session, user, verification } from "./auth-schema";
 
@@ -89,6 +90,26 @@ export const notifications = pgTable(
       .notNull(),
   },
   (table: any) => [index("notifications_bucket_id_idx").on(table.bucketId)],
+);
+
+export const emailNotificationRecipients = pgTable(
+  "email_notification_recipients",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    bucketId: uuid("bucket_id")
+      .notNull()
+      .references(() => buckets.id, { onDelete: "cascade" }),
+    email: text("email").notNull(),
+    enabled: boolean("enabled").default(true).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table: any) => [
+    index("email_notification_recipients_bucket_id_idx").on(table.bucketId),
+  ],
 );
 
 export const events = pgTable(
