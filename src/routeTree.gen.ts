@@ -29,8 +29,14 @@ import { Route as AppFormsIdSubmissionsRouteImport } from './routes/app/forms/$i
 import { Route as AppFormsIdSettingsRouteImport } from './routes/app/forms/$id/settings'
 import { Route as AppFormsIdNotificationsRouteImport } from './routes/app/forms/$id/notifications'
 import { Route as AppFormsIdAnalyticsRouteImport } from './routes/app/forms/$id/analytics'
+import { Route as ApiIntegrationsSlackCallbackRouteImport } from './routes/api/integrations/slack/callback'
+import { Route as ApiIntegrationsSlackAuthorizeRouteImport } from './routes/api/integrations/slack/authorize'
+import { Route as ApiIntegrationsDiscordCallbackRouteImport } from './routes/api/integrations/discord/callback'
+import { Route as ApiIntegrationsDiscordAuthorizeRouteImport } from './routes/api/integrations/discord/authorize'
 import { Route as ApiBucketsBucketIdSubmissionsRouteImport } from './routes/api/buckets/$bucketId/submissions'
 import { Route as ApiBucketsBucketIdRecipientsRouteImport } from './routes/api/buckets/$bucketId/recipients'
+import { Route as ApiBucketsBucketIdDisconnectSlackRouteImport } from './routes/api/buckets/$bucketId/disconnect-slack'
+import { Route as ApiBucketsBucketIdDisconnectDiscordRouteImport } from './routes/api/buckets/$bucketId/disconnect-discord'
 import { Route as ApiBucketsBucketIdAnalyticsRouteImport } from './routes/api/buckets/$bucketId/analytics'
 import { Route as ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport } from './routes/api/buckets/$bucketId/submissions/$submissionId'
 import { Route as ApiBucketsBucketIdRecipientsRecipientIdRouteImport } from './routes/api/buckets/$bucketId/recipients/$recipientId'
@@ -136,6 +142,30 @@ const AppFormsIdAnalyticsRoute = AppFormsIdAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AppFormsIdRoute,
 } as any)
+const ApiIntegrationsSlackCallbackRoute =
+  ApiIntegrationsSlackCallbackRouteImport.update({
+    id: '/api/integrations/slack/callback',
+    path: '/api/integrations/slack/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsSlackAuthorizeRoute =
+  ApiIntegrationsSlackAuthorizeRouteImport.update({
+    id: '/api/integrations/slack/authorize',
+    path: '/api/integrations/slack/authorize',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsDiscordCallbackRoute =
+  ApiIntegrationsDiscordCallbackRouteImport.update({
+    id: '/api/integrations/discord/callback',
+    path: '/api/integrations/discord/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsDiscordAuthorizeRoute =
+  ApiIntegrationsDiscordAuthorizeRouteImport.update({
+    id: '/api/integrations/discord/authorize',
+    path: '/api/integrations/discord/authorize',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiBucketsBucketIdSubmissionsRoute =
   ApiBucketsBucketIdSubmissionsRouteImport.update({
     id: '/submissions',
@@ -146,6 +176,18 @@ const ApiBucketsBucketIdRecipientsRoute =
   ApiBucketsBucketIdRecipientsRouteImport.update({
     id: '/recipients',
     path: '/recipients',
+    getParentRoute: () => ApiBucketsBucketIdRoute,
+  } as any)
+const ApiBucketsBucketIdDisconnectSlackRoute =
+  ApiBucketsBucketIdDisconnectSlackRouteImport.update({
+    id: '/disconnect-slack',
+    path: '/disconnect-slack',
+    getParentRoute: () => ApiBucketsBucketIdRoute,
+  } as any)
+const ApiBucketsBucketIdDisconnectDiscordRoute =
+  ApiBucketsBucketIdDisconnectDiscordRouteImport.update({
+    id: '/disconnect-discord',
+    path: '/disconnect-discord',
     getParentRoute: () => ApiBucketsBucketIdRoute,
   } as any)
 const ApiBucketsBucketIdAnalyticsRoute =
@@ -191,8 +233,14 @@ export interface FileRoutesByFullPath {
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
+  '/api/buckets/$bucketId/disconnect-discord': typeof ApiBucketsBucketIdDisconnectDiscordRoute
+  '/api/buckets/$bucketId/disconnect-slack': typeof ApiBucketsBucketIdDisconnectSlackRoute
   '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
+  '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
+  '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
+  '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
+  '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
@@ -219,8 +267,14 @@ export interface FileRoutesByTo {
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
+  '/api/buckets/$bucketId/disconnect-discord': typeof ApiBucketsBucketIdDisconnectDiscordRoute
+  '/api/buckets/$bucketId/disconnect-slack': typeof ApiBucketsBucketIdDisconnectSlackRoute
   '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
+  '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
+  '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
+  '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
+  '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
@@ -248,8 +302,14 @@ export interface FileRoutesById {
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms/': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
+  '/api/buckets/$bucketId/disconnect-discord': typeof ApiBucketsBucketIdDisconnectDiscordRoute
+  '/api/buckets/$bucketId/disconnect-slack': typeof ApiBucketsBucketIdDisconnectSlackRoute
   '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
   '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
+  '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
+  '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
+  '/api/integrations/slack/authorize': typeof ApiIntegrationsSlackAuthorizeRoute
+  '/api/integrations/slack/callback': typeof ApiIntegrationsSlackCallbackRoute
   '/app/forms/$id/analytics': typeof AppFormsIdAnalyticsRoute
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
@@ -278,8 +338,14 @@ export interface FileRouteTypes {
     | '/app/forms/$id'
     | '/app/forms'
     | '/api/buckets/$bucketId/analytics'
+    | '/api/buckets/$bucketId/disconnect-discord'
+    | '/api/buckets/$bucketId/disconnect-slack'
     | '/api/buckets/$bucketId/recipients'
     | '/api/buckets/$bucketId/submissions'
+    | '/api/integrations/discord/authorize'
+    | '/api/integrations/discord/callback'
+    | '/api/integrations/slack/authorize'
+    | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
@@ -306,8 +372,14 @@ export interface FileRouteTypes {
     | '/app/forms/$id'
     | '/app/forms'
     | '/api/buckets/$bucketId/analytics'
+    | '/api/buckets/$bucketId/disconnect-discord'
+    | '/api/buckets/$bucketId/disconnect-slack'
     | '/api/buckets/$bucketId/recipients'
     | '/api/buckets/$bucketId/submissions'
+    | '/api/integrations/discord/authorize'
+    | '/api/integrations/discord/callback'
+    | '/api/integrations/slack/authorize'
+    | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
@@ -334,8 +406,14 @@ export interface FileRouteTypes {
     | '/app/forms/$id'
     | '/app/forms/'
     | '/api/buckets/$bucketId/analytics'
+    | '/api/buckets/$bucketId/disconnect-discord'
+    | '/api/buckets/$bucketId/disconnect-slack'
     | '/api/buckets/$bucketId/recipients'
     | '/api/buckets/$bucketId/submissions'
+    | '/api/integrations/discord/authorize'
+    | '/api/integrations/discord/callback'
+    | '/api/integrations/slack/authorize'
+    | '/api/integrations/slack/callback'
     | '/app/forms/$id/analytics'
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
@@ -357,6 +435,10 @@ export interface RootRouteChildren {
   ApiBucketsRoute: typeof ApiBucketsRouteWithChildren
   ApiVerifyRecipientRoute: typeof ApiVerifyRecipientRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiIntegrationsDiscordAuthorizeRoute: typeof ApiIntegrationsDiscordAuthorizeRoute
+  ApiIntegrationsDiscordCallbackRoute: typeof ApiIntegrationsDiscordCallbackRoute
+  ApiIntegrationsSlackAuthorizeRoute: typeof ApiIntegrationsSlackAuthorizeRoute
+  ApiIntegrationsSlackCallbackRoute: typeof ApiIntegrationsSlackCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -501,6 +583,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFormsIdAnalyticsRouteImport
       parentRoute: typeof AppFormsIdRoute
     }
+    '/api/integrations/slack/callback': {
+      id: '/api/integrations/slack/callback'
+      path: '/api/integrations/slack/callback'
+      fullPath: '/api/integrations/slack/callback'
+      preLoaderRoute: typeof ApiIntegrationsSlackCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/slack/authorize': {
+      id: '/api/integrations/slack/authorize'
+      path: '/api/integrations/slack/authorize'
+      fullPath: '/api/integrations/slack/authorize'
+      preLoaderRoute: typeof ApiIntegrationsSlackAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/discord/callback': {
+      id: '/api/integrations/discord/callback'
+      path: '/api/integrations/discord/callback'
+      fullPath: '/api/integrations/discord/callback'
+      preLoaderRoute: typeof ApiIntegrationsDiscordCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/discord/authorize': {
+      id: '/api/integrations/discord/authorize'
+      path: '/api/integrations/discord/authorize'
+      fullPath: '/api/integrations/discord/authorize'
+      preLoaderRoute: typeof ApiIntegrationsDiscordAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/buckets/$bucketId/submissions': {
       id: '/api/buckets/$bucketId/submissions'
       path: '/submissions'
@@ -513,6 +623,20 @@ declare module '@tanstack/react-router' {
       path: '/recipients'
       fullPath: '/api/buckets/$bucketId/recipients'
       preLoaderRoute: typeof ApiBucketsBucketIdRecipientsRouteImport
+      parentRoute: typeof ApiBucketsBucketIdRoute
+    }
+    '/api/buckets/$bucketId/disconnect-slack': {
+      id: '/api/buckets/$bucketId/disconnect-slack'
+      path: '/disconnect-slack'
+      fullPath: '/api/buckets/$bucketId/disconnect-slack'
+      preLoaderRoute: typeof ApiBucketsBucketIdDisconnectSlackRouteImport
+      parentRoute: typeof ApiBucketsBucketIdRoute
+    }
+    '/api/buckets/$bucketId/disconnect-discord': {
+      id: '/api/buckets/$bucketId/disconnect-discord'
+      path: '/disconnect-discord'
+      fullPath: '/api/buckets/$bucketId/disconnect-discord'
+      preLoaderRoute: typeof ApiBucketsBucketIdDisconnectDiscordRouteImport
       parentRoute: typeof ApiBucketsBucketIdRoute
     }
     '/api/buckets/$bucketId/analytics': {
@@ -627,12 +751,18 @@ const ApiBucketsBucketIdSubmissionsRouteWithChildren =
 
 interface ApiBucketsBucketIdRouteChildren {
   ApiBucketsBucketIdAnalyticsRoute: typeof ApiBucketsBucketIdAnalyticsRoute
+  ApiBucketsBucketIdDisconnectDiscordRoute: typeof ApiBucketsBucketIdDisconnectDiscordRoute
+  ApiBucketsBucketIdDisconnectSlackRoute: typeof ApiBucketsBucketIdDisconnectSlackRoute
   ApiBucketsBucketIdRecipientsRoute: typeof ApiBucketsBucketIdRecipientsRouteWithChildren
   ApiBucketsBucketIdSubmissionsRoute: typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
 }
 
 const ApiBucketsBucketIdRouteChildren: ApiBucketsBucketIdRouteChildren = {
   ApiBucketsBucketIdAnalyticsRoute: ApiBucketsBucketIdAnalyticsRoute,
+  ApiBucketsBucketIdDisconnectDiscordRoute:
+    ApiBucketsBucketIdDisconnectDiscordRoute,
+  ApiBucketsBucketIdDisconnectSlackRoute:
+    ApiBucketsBucketIdDisconnectSlackRoute,
   ApiBucketsBucketIdRecipientsRoute:
     ApiBucketsBucketIdRecipientsRouteWithChildren,
   ApiBucketsBucketIdSubmissionsRoute:
@@ -666,6 +796,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBucketsRoute: ApiBucketsRouteWithChildren,
   ApiVerifyRecipientRoute: ApiVerifyRecipientRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiIntegrationsDiscordAuthorizeRoute: ApiIntegrationsDiscordAuthorizeRoute,
+  ApiIntegrationsDiscordCallbackRoute: ApiIntegrationsDiscordCallbackRoute,
+  ApiIntegrationsSlackAuthorizeRoute: ApiIntegrationsSlackAuthorizeRoute,
+  ApiIntegrationsSlackCallbackRoute: ApiIntegrationsSlackCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
