@@ -8,7 +8,7 @@ import {
   user,
   emailNotificationRecipients,
 } from "../db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, isNotNull } from "drizzle-orm";
 import { config } from "dotenv";
 import { sendEmailNotification } from "../lib/sendEmailNotification";
 
@@ -162,6 +162,7 @@ export const CollectRoute = () => (
               and(
                 eq(emailNotificationRecipients.bucketId, bucket.id),
                 eq(emailNotificationRecipients.enabled, true),
+                isNotNull(emailNotificationRecipients.verifiedAt),
               ),
             );
 
