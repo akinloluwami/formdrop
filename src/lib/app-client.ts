@@ -12,10 +12,20 @@ interface Bucket {
   userId: string;
   name: string;
   description: string | null;
+  emailNotificationsEnabled: boolean;
   allowedDomains: string[];
   createdAt: Date;
   updatedAt: Date;
   submissionCount: number;
+}
+
+interface Recipient {
+  id: string;
+  bucketId: string;
+  email: string;
+  enabled: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface Submission {
@@ -45,6 +55,7 @@ interface CreateBucketParams {
 interface UpdateBucketParams {
   name?: string;
   description?: string;
+  emailNotificationsEnabled?: boolean;
   allowedDomains?: string[];
 }
 
@@ -127,6 +138,78 @@ export const appClient = {
       try {
         const response = await apiClient.delete<{ message: string }>(
           `/api/buckets/${bucketId}`,
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+  },
+
+  recipients: {
+    list: async (
+      bucketId: string,
+    ): Promise<ApiResponse<{ recipients: Recipient[] }>> => {
+      try {
+        const response = await apiClient.get<{ recipients: Recipient[] }>(
+          `/api/buckets/${bucketId}/recipients`,
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    add: async (
+      bucketId: string,
+      email: string,
+    ): Promise<ApiResponse<{ recipient: Recipient }>> => {
+      try {
+        const response = await apiClient.post<{ recipient: Recipient }>(
+          `/api/buckets/${bucketId}/recipients`,
+          { email },
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    remove: async (
+      bucketId: string,
+      recipientId: string,
+    ): Promise<ApiResponse<{ success: boolean }>> => {
+      try {
+        const response = await apiClient.delete<{ success: boolean }>(
+          `/api/buckets/${bucketId}/recipients/${recipientId}`,
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          return error.response.data;
+        }
+        return { error: "An unexpected error occurred" };
+      }
+    },
+
+    update: async (
+      bucketId: string,
+      recipientId: string,
+      enabled: boolean,
+    ): Promise<ApiResponse<{ recipient: Recipient }>> => {
+      try {
+        const response = await apiClient.patch<{ recipient: Recipient }>(
+          `/api/buckets/${bucketId}/recipients/${recipientId}`,
+          { enabled },
         );
         return response.data;
       } catch (error) {
