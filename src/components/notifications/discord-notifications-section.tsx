@@ -79,7 +79,7 @@ export function DiscordNotificationsSection({
           ) : (
             <a
               href={`/api/integrations/discord/authorize?bucketId=${bucketId}`}
-              className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition-colors inline-flex items-center gap-2"
+              className="px-4 py-3 bg-indigo-600 text-white text-sm font-medium rounded-3xl hover:bg-indigo-700 transition-colors inline-flex items-center gap-2"
             >
               <HugeiconsIcon icon={GameIcon} size={16} />
               Connect Discord
