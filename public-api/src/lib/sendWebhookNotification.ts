@@ -1,13 +1,23 @@
+import { recordNotificationUsage } from "./recordNotificationUsage";
+
 export async function sendSlackNotification({
   webhookUrl,
   bucketName,
   data,
   submissionId,
+  userId,
+  bucketId,
+  period,
+  channelName,
 }: {
   webhookUrl: string;
   bucketName: string;
   data: Record<string, any>;
   submissionId: string;
+  userId: string;
+  bucketId: string;
+  period: string;
+  channelName?: string | null;
 }) {
   const fields = Object.entries(data).map(([key, value]) => ({
     type: "mrkdwn",
@@ -50,6 +60,16 @@ export async function sendSlackNotification({
     throw new Error(`Slack webhook failed: ${response.statusText}`);
   }
 
+  // Record notification usage
+  await recordNotificationUsage({
+    userId,
+    bucketId,
+    submissionId,
+    period,
+    type: "slack",
+    target: channelName || "Unknown channel",
+  });
+
   return response;
 }
 
@@ -58,11 +78,19 @@ export async function sendDiscordNotification({
   bucketName,
   data,
   submissionId,
+  userId,
+  bucketId,
+  period,
+  channelName,
 }: {
   webhookUrl: string;
   bucketName: string;
   data: Record<string, any>;
   submissionId: string;
+  userId: string;
+  bucketId: string;
+  period: string;
+  channelName?: string | null;
 }) {
   const fields = Object.entries(data)
     .slice(0, 25) // Discord limits to 25 fields
@@ -96,6 +124,16 @@ export async function sendDiscordNotification({
   if (!response.ok) {
     throw new Error(`Discord webhook failed: ${response.statusText}`);
   }
+
+  // Record notification usage
+  await recordNotificationUsage({
+    userId,
+    bucketId,
+    submissionId,
+    period,
+    type: "discord",
+    target: channelName || "Unknown channel",
+  });
 
   return response;
 }
