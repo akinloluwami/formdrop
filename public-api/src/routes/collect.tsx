@@ -11,6 +11,10 @@ import {
 import { eq, and, sql, isNotNull } from "drizzle-orm";
 import { config } from "dotenv";
 import { sendEmailNotification } from "../lib/sendEmailNotification";
+import {
+  sendSlackNotification,
+  sendDiscordNotification,
+} from "../lib/sendWebhookNotification";
 
 config();
 
@@ -201,6 +205,38 @@ export const CollectRoute = () => (
               }
             }),
           );
+        }
+
+        // Send Slack notification
+        if (bucket.slackNotificationsEnabled && bucket.slackWebhookUrl) {
+          Promise.resolve().then(async () => {
+            try {
+              await sendSlackNotification({
+                webhookUrl: bucket.slackWebhookUrl!,
+                bucketName,
+                data,
+                submissionId: submission.id,
+              });
+            } catch (error) {
+              console.error("Failed to send Slack notification:", error);
+            }
+          });
+        }
+
+        // Send Discord notification
+        if (bucket.discordNotificationsEnabled && bucket.discordWebhookUrl) {
+          Promise.resolve().then(async () => {
+            try {
+              await sendDiscordNotification({
+                webhookUrl: bucket.discordWebhookUrl!,
+                bucketName,
+                data,
+                submissionId: submission.id,
+              });
+            } catch (error) {
+              console.error("Failed to send Discord notification:", error);
+            }
+          });
         }
 
         // Track usage
