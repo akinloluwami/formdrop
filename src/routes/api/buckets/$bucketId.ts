@@ -77,7 +77,12 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
           const { bucketId } = params;
 
           const body = await request.json();
-          const { name, description, allowedDomains } = body;
+          const {
+            name,
+            description,
+            allowedDomains,
+            emailNotificationsEnabled,
+          } = body;
 
           // Verify bucket belongs to user
           const [existingBucket] = await db
@@ -105,6 +110,9 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
               name: name ?? existingBucket.name,
               description: description ?? existingBucket.description,
               allowedDomains: allowedDomains ?? existingBucket.allowedDomains,
+              emailNotificationsEnabled:
+                emailNotificationsEnabled ??
+                existingBucket.emailNotificationsEnabled,
               updatedAt: new Date(),
             })
             .where(eq(buckets.id, bucketId))
