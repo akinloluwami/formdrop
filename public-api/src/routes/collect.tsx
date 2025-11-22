@@ -216,6 +216,10 @@ export const CollectRoute = () => (
                 bucketName,
                 data,
                 submissionId: submission.id,
+                userId: key.userId,
+                bucketId: bucket.id,
+                period,
+                channelName: bucket.slackChannelName,
               });
             } catch (error) {
               console.error("Failed to send Slack notification:", error);
@@ -232,6 +236,10 @@ export const CollectRoute = () => (
                 bucketName,
                 data,
                 submissionId: submission.id,
+                userId: key.userId,
+                bucketId: bucket.id,
+                period,
+                channelName: bucket.discordChannelName,
               });
             } catch (error) {
               console.error("Failed to send Discord notification:", error);
