@@ -57,6 +57,13 @@
       "when": 1763825739534,
       "tag": "0007_plain_multiple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1763829714890,
+      "tag": "0008_third_gauntlet",
+      "breakpoints": true
     }
   ]
 }

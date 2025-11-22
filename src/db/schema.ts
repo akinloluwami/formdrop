@@ -60,6 +60,27 @@ export const buckets = pgTable(
       .default(false)
       .notNull(),
 
+    // Google Sheets integration
+    googleSheetsAccessToken: text("google_sheets_access_token"),
+    googleSheetsRefreshToken: text("google_sheets_refresh_token"),
+    googleSheetsTokenExpiry: timestamp("google_sheets_token_expiry"),
+    googleSheetsSpreadsheetId: text("google_sheets_spreadsheet_id"),
+    googleSheetsSpreadsheetName: text("google_sheets_spreadsheet_name"),
+    googleSheetsSheetId: text("google_sheets_sheet_id"),
+    googleSheetsEnabled: boolean("google_sheets_enabled")
+      .default(false)
+      .notNull(),
+
+    // Airtable integration
+    airtableAccessToken: text("airtable_access_token"),
+    airtableRefreshToken: text("airtable_refresh_token"),
+    airtableTokenExpiry: timestamp("airtable_token_expiry"),
+    airtableBaseId: text("airtable_base_id"),
+    airtableBaseName: text("airtable_base_name"),
+    airtableTableId: text("airtable_table_id"),
+    airtableTableName: text("airtable_table_name"),
+    airtableEnabled: boolean("airtable_enabled").default(false).notNull(),
+
     allowedDomains: jsonb("allowed_domains").$type<string[]>().default([]),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
