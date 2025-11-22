@@ -1,0 +1,1 @@
+ALTER TABLE "buckets" ADD COLUMN "email_notifications_enabled" boolean DEFAULT true NOT NULL;

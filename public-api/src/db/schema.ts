@@ -36,6 +36,9 @@ export const buckets = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     description: text("description"),
+    emailNotificationsEnabled: boolean("email_notifications_enabled")
+      .default(true)
+      .notNull(),
 
     allowedDomains: jsonb("allowed_domains").$type<string[]>().default([]),
 

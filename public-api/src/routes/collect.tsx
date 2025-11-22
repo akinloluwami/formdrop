@@ -147,25 +147,27 @@ export const CollectRoute = () => (
         const period = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
         // Send email notification
-        console.log("Attempting to send email notification to:", {
-          email: owner.email,
-          bucketName,
-          userId: key.userId,
-        });
-
-        try {
-          await sendEmailNotification({
-            recipientEmail: owner.email,
+        if (bucket.emailNotificationsEnabled) {
+          console.log("Attempting to send email notification to:", {
+            email: owner.email,
             bucketName,
-            data,
             userId: key.userId,
-            bucketId: bucket.id,
-            submissionId: submission.id,
-            period,
           });
-        } catch (error) {
-          console.error("Failed to send email notification:", error);
-          // Don't fail the request if email fails
+
+          try {
+            await sendEmailNotification({
+              recipientEmail: owner.email,
+              bucketName,
+              data,
+              userId: key.userId,
+              bucketId: bucket.id,
+              submissionId: submission.id,
+              period,
+            });
+          } catch (error) {
+            console.error("Failed to send email notification:", error);
+            // Don't fail the request if email fails
+          }
         }
 
         // Track usage
