@@ -11,7 +11,7 @@ import { useSession, signOut } from "@/lib/auth-client";
 export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
 
   const handleSignOut = async () => {
     await signOut({
@@ -30,8 +30,8 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="bg-white w-72 p-2 border border-gray-200 rounded-2xl flex flex-col gap-4 justify-between h-full">
-      <div className="flex-1">
+    <div className="bg-white w-72 min-w-72 max-w-72 p-2 border border-gray-200 rounded-2xl flex flex-col gap-4 justify-between h-full">
+      <div className="flex-1 min-w-0">
         <div className="">
           <h1 className="">FormDrop</h1>
         </div>
@@ -73,10 +73,18 @@ export function Sidebar() {
           </button>
         </div>
       </div>
-      <div className="p-4 border-t border-gray-100">
-        {session?.user && (
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 overflow-hidden">
+      <div className="p-4 border-t border-gray-100 w-full">
+        {isPending ? (
+          <div className="flex items-center gap-3 w-full">
+            <div className="h-8 w-8 rounded-full bg-gray-100 animate-pulse shrink-0" />
+            <div className="flex flex-col min-w-0 flex-1">
+              <div className="h-5 w-24 bg-gray-100 rounded animate-pulse" />
+              <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
+            </div>
+          </div>
+        ) : session?.user ? (
+          <div className="flex items-center justify-between gap-3 w-full">
+            <div className="flex items-center gap-3 overflow-hidden min-w-0">
               <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center text-accent font-medium shrink-0">
                 {session.user.name?.charAt(0).toUpperCase() ||
                   session.user.email?.charAt(0).toUpperCase()}
@@ -98,7 +106,7 @@ export function Sidebar() {
               <HugeiconsIcon icon={Logout01Icon} size={20} />
             </button>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
