@@ -8,9 +8,11 @@ import {
   Mail01Icon,
   Notification01Icon,
   ArrowLeft01Icon,
+  ReloadIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
+import { Tooltip } from "@/components/tooltip";
 
 export const Route = createFileRoute("/app/forms/$id/notifications")({
   component: RouteComponent,
@@ -95,11 +97,51 @@ function RouteComponent() {
     },
   });
 
+  const resendVerificationMutation = useMutation({
+    mutationFn: async (recipientId: string) => {
+      const response = await appClient.recipients.resendVerification(
+        id,
+        recipientId,
+      );
+      if ("error" in response) throw new Error(response.error);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["recipients", id] });
+    },
+  });
+
   const handleAddRecipient = (e: React.FormEvent) => {
     e.preventDefault();
     if (newRecipientEmail) {
       addRecipientMutation.mutate(newRecipientEmail);
     }
+  };
+
+  const getRecipientStatus = (recipient: {
+    verifiedAt: Date | null;
+    verificationTokenExpiresAt: Date | null;
+  }) => {
+    if (recipient.verifiedAt) {
+      return "verified";
+    }
+    if (
+      recipient.verificationTokenExpiresAt &&
+      new Date(recipient.verificationTokenExpiresAt) < new Date()
+    ) {
+      return "expired";
+    }
+    return "pending";
+  };
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   if (isBucketLoading || isRecipientsLoading) {
@@ -198,46 +240,132 @@ function RouteComponent() {
             </div>
 
             {/* Other Recipients */}
-            {recipients?.map((recipient) => (
-              <div
-                key={recipient.id}
-                className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                    <HugeiconsIcon icon={Mail01Icon} size={16} />
+            {recipients?.map((recipient) => {
+              const status = getRecipientStatus(recipient);
+
+              return (
+                <div
+                  key={recipient.id}
+                  className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                      <HugeiconsIcon icon={Mail01Icon} size={16} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-gray-900">
+                        {recipient.email}
+                      </span>
+
+                      {status === "pending" && (
+                        <Tooltip
+                          content={
+                            <div className="text-center">
+                              <div className="font-medium">
+                                Pending Verification
+                              </div>
+                              <div className="text-gray-300 text-xs mt-1">
+                                Expires:{" "}
+                                {recipient.verificationTokenExpiresAt &&
+                                  formatDate(
+                                    recipient.verificationTokenExpiresAt,
+                                  )}
+                              </div>
+                            </div>
+                          }
+                        >
+                          <span className="px-2 py-0.5 rounded-full bg-amber-100 text-xs font-medium text-amber-700">
+                            Pending Verification
+                          </span>
+                        </Tooltip>
+                      )}
+
+                      {status === "expired" && (
+                        <Tooltip
+                          content={
+                            <div className="text-center">
+                              <div className="font-medium">
+                                Invitation Expired
+                              </div>
+                              <div className="text-gray-300 text-xs mt-1">
+                                Click the resend button to send a new invitation
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <span className="px-2 py-0.5 rounded-full bg-red-100 text-xs font-medium text-red-700">
+                              Invitation Expired
+                            </span>
+                            <button
+                              onClick={() =>
+                                resendVerificationMutation.mutate(recipient.id)
+                              }
+                              disabled={resendVerificationMutation.isPending}
+                              className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                              title="Resend invitation"
+                            >
+                              <HugeiconsIcon icon={ReloadIcon} size={14} />
+                            </button>
+                          </div>
+                        </Tooltip>
+                      )}
+
+                      {status === "verified" && (
+                        <Tooltip
+                          content={
+                            <div className="text-center">
+                              <div className="font-medium">Verified</div>
+                              <div className="text-gray-300 text-xs mt-1">
+                                Verified on:{" "}
+                                {recipient.verifiedAt &&
+                                  formatDate(recipient.verifiedAt)}
+                              </div>
+                            </div>
+                          }
+                        >
+                          <span className="px-2 py-0.5 rounded-full bg-green-100 text-xs font-medium text-green-700">
+                            Verified
+                          </span>
+                        </Tooltip>
+                      )}
+                    </div>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">
-                    {recipient.email}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() =>
+                        updateRecipientMutation.mutate({
+                          recipientId: recipient.id,
+                          enabled: !recipient.enabled,
+                        })
+                      }
+                      disabled={!recipient.verifiedAt}
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+                        recipient.enabled && recipient.verifiedAt
+                          ? "bg-accent"
+                          : "bg-gray-200"
+                      } ${!recipient.verifiedAt ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      <span
+                        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                          recipient.enabled && recipient.verifiedAt
+                            ? "translate-x-5"
+                            : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                    <button
+                      onClick={() =>
+                        removeRecipientMutation.mutate(recipient.id)
+                      }
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <HugeiconsIcon icon={Delete02Icon} size={16} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() =>
-                      updateRecipientMutation.mutate({
-                        recipientId: recipient.id,
-                        enabled: !recipient.enabled,
-                      })
-                    }
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
-                      recipient.enabled ? "bg-accent" : "bg-gray-200"
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                        recipient.enabled ? "translate-x-5" : "translate-x-1"
-                      }`}
-                    />
-                  </button>
-                  <button
-                    onClick={() => removeRecipientMutation.mutate(recipient.id)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    <HugeiconsIcon icon={Delete02Icon} size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="p-4 bg-gray-50 border-t border-gray-100">
