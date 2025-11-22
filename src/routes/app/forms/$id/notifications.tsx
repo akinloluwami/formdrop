@@ -103,7 +103,18 @@ function RouteComponent() {
   };
 
   if (isBucketLoading || isRecipientsLoading) {
-    return <div className="p-8 text-center text-gray-500">Loading...</div>;
+    return (
+      <div className="max-w-3xl mx-auto animate-pulse">
+        <div className="flex items-center gap-x-3 py-2 mb-6">
+          <div className="h-10 w-10 bg-gray-200 rounded-lg"></div>
+          <div className="h-6 w-32 bg-gray-200 rounded"></div>
+        </div>
+        <div className="space-y-8">
+          <div className="h-32 w-full bg-gray-200 rounded-3xl"></div>
+          <div className="h-64 w-full bg-gray-200 rounded-3xl"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
