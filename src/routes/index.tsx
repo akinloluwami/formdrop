@@ -155,7 +155,10 @@ function RouteComponent() {
       </div>
 
       {/* Hero Section */}
-      <div className="max-w-5xl mx-auto mt-20 px-4 text-center">
+      <div className="max-w-5xl mx-auto mt-20 px-4 text-center relative">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[16px_16px] mask-[radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-50"></div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -200,8 +203,9 @@ function RouteComponent() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="border rounded-3xl border-gray-200 bg-white shadow-xl shadow-gray-200/50 max-w-4xl mx-auto mt-20 p-2"
+          className="border rounded-3xl border-gray-200 bg-white shadow-2xl shadow-gray-200/50 max-w-4xl mx-auto mt-20 p-2 relative"
         >
+          <div className="absolute -inset-1 bg-linear-to-r from-accent/30 to-purple-600/30 rounded-4xl blur-xl opacity-20 -z-10"></div>
           <div className="bg-gray-50/50 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-x-2 bg-white p-1 rounded-xl border border-gray-200 shadow-sm">
@@ -265,32 +269,129 @@ function RouteComponent() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
-              >
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Analytics - Spans 2 cols */}
+            <div className="md:col-span-2 bg-white rounded-4xl border border-gray-200 p-8 overflow-hidden relative group hover:border-accent/20 transition-colors">
+              <div className="relative z-10">
                 <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent mb-6">
-                  <feature.icon size={24} />
+                  <BarChart3 size={24} />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {feature.title}
+                  Real-time Analytics
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {feature.description}
+                <p className="text-gray-600 leading-relaxed max-w-md">
+                  Track form views, submissions, and conversion rates in
+                  real-time. Get insights into how your forms are performing.
                 </p>
               </div>
-            ))}
+
+              {/* Visual */}
+              <div className="absolute right-0 bottom-0 w-1/2 h-48 bg-gray-50 rounded-tl-3xl border-t border-l border-gray-100 p-4 flex items-end gap-2 group-hover:scale-105 transition-transform origin-bottom-right">
+                {/* Fake bars */}
+                <div className="w-full bg-accent/10 rounded-t-lg h-[40%] relative group-hover:h-[50%] transition-all duration-500"></div>
+                <div className="w-full bg-accent/20 rounded-t-lg h-[70%] relative group-hover:h-[80%] transition-all duration-500 delay-75"></div>
+                <div className="w-full bg-accent/30 rounded-t-lg h-[50%] relative group-hover:h-[60%] transition-all duration-500 delay-100"></div>
+                <div className="w-full bg-accent/40 rounded-t-lg h-[85%] relative group-hover:h-[95%] transition-all duration-500 delay-150"></div>
+                <div className="w-full bg-accent rounded-t-lg h-[65%] relative group-hover:h-[75%] transition-all duration-500 delay-200"></div>
+              </div>
+            </div>
+
+            {/* Notifications */}
+            <div className="bg-white rounded-4xl border border-gray-200 p-8 relative overflow-hidden group hover:border-accent/20 transition-colors">
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 mb-6">
+                  <Bell size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Instant Alerts
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Get notified immediately via Email, Slack, or Discord.
+                </p>
+              </div>
+
+              {/* Visual */}
+              <div className="absolute -right-4 top-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Bell size={120} />
+              </div>
+            </div>
+
+            {/* Integrations */}
+            <div className="bg-white rounded-4xl border border-gray-200 p-8 relative overflow-hidden group hover:border-accent/20 transition-colors">
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6">
+                  <Workflow size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Integrations
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Connect to Google Sheets, Webhooks, and more.
+                </p>
+              </div>
+              {/* Visual */}
+              <div className="absolute bottom-4 right-4 flex -space-x-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                <div className="w-8 h-8 rounded-full bg-green-100 border-2 border-white flex items-center justify-center text-green-600">
+                  <Table size={14} />
+                </div>
+                <div className="w-8 h-8 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-purple-600">
+                  <Hash size={14} />
+                </div>
+                <div className="w-8 h-8 rounded-full bg-indigo-100 border-2 border-white flex items-center justify-center text-indigo-600">
+                  <MessageSquare size={14} />
+                </div>
+              </div>
+            </div>
+
+            {/* Security - Spans 2 cols */}
+            <div className="md:col-span-2 bg-white rounded-4xl border border-gray-200 p-8 overflow-hidden relative group hover:border-accent/20 transition-colors">
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 mb-6">
+                  <ShieldCheck size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Spam Protection & Security
+                </h3>
+                <p className="text-gray-600 leading-relaxed max-w-md">
+                  Built-in spam filtering keeps your inbox clean. Secure your
+                  forms with rolling API keys and allowed domains.
+                </p>
+              </div>
+
+              {/* Visual */}
+              <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden md:block">
+                <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-3 shadow-sm rotate-3 group-hover:rotate-0 transition-transform duration-300">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                    <CheckCircle2 size={16} />
+                  </div>
+                  <div>
+                    <div className="text-xs text-green-800 font-medium">
+                      Spam Check Passed
+                    </div>
+                    <div className="text-[10px] text-green-600">
+                      Score: 98/100
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Integrations Section */}
-      <div className="py-32 bg-white">
+      <div className="py-32 bg-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-3xl -z-10"></div>
+
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               <h2 className="text-3xl font-bold text-gray-900 mb-6">
                 Connect with your favorite tools
               </h2>
@@ -307,27 +408,71 @@ function RouteComponent() {
                   "Webhooks for custom integrations",
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <CheckCircle2
-                      className="text-green-500 shrink-0"
-                      size={20}
-                    />
+                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="text-green-600" size={14} />
+                    </div>
                     <span className="text-gray-700">{item}</span>
                   </div>
                 ))}
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              {integrations.map((item, i) => (
-                <div
-                  key={i}
-                  className={`p-6 rounded-3xl border border-gray-100 ${item.bg} flex flex-col items-center justify-center text-center gap-4 aspect-square transition-transform hover:scale-105`}
-                >
-                  <item.icon size={40} className={item.color} />
-                  <span className="font-semibold text-gray-900">
-                    {item.name}
-                  </span>
+            </motion.div>
+
+            <div className="relative">
+              {/* Central Hub Visualization */}
+              <div className="relative w-full aspect-square max-w-md mx-auto">
+                {/* Center Node */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                  <div className="w-24 h-24 bg-white rounded-3xl shadow-xl flex items-center justify-center border border-gray-100 relative">
+                    <div className="absolute inset-0 bg-accent/5 rounded-3xl animate-pulse"></div>
+                    <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center text-white relative z-10">
+                      <Zap size={24} fill="currentColor" />
+                    </div>
+                  </div>
                 </div>
-              ))}
+
+                {/* Orbiting Nodes */}
+                {integrations.map((item, i) => {
+                  const angle = (i * 360) / integrations.length;
+                  const radius = 140; // Distance from center
+                  const x = Math.cos((angle * Math.PI) / 180) * radius;
+                  const y = Math.sin((angle * Math.PI) / 180) * radius;
+
+                  return (
+                    <motion.div
+                      key={i}
+                      className="absolute top-1/2 left-1/2"
+                      initial={{ x: 0, y: 0, opacity: 0 }}
+                      whileInView={{ x, y, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        delay: i * 0.1,
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 15,
+                      }}
+                    >
+                      {/* Connecting Line */}
+                      <div
+                        className="absolute top-1/2 left-1/2 h-0.5 bg-linear-to-r from-accent/20 to-transparent origin-left -z-10"
+                        style={{
+                          width: radius,
+                          transform: `translate(-50%, -50%) rotate(${angle}deg) translate(${radius / 2}px, 0)`,
+                        }}
+                      />
+
+                      <div
+                        className={`-translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center ${item.color} hover:scale-110 transition-transform cursor-pointer`}
+                      >
+                        <item.icon size={24} />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+
+                {/* Orbit Rings */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] border border-dashed border-gray-200 rounded-full -z-10 animate-[spin_60s_linear_infinite]"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] border border-gray-100 rounded-full -z-20"></div>
+              </div>
             </div>
           </div>
         </div>
