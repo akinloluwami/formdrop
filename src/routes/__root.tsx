@@ -12,6 +12,8 @@ import appCss from "../styles.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
 
+import { FlagProvider, FlagClient } from "@flagswift/react-client";
+
 interface MyRouterContext {
   queryClient: QueryClient;
 }
@@ -42,13 +44,19 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const client = new FlagClient({
+    apiKey: import.meta.env.VITE_FLAGSWIFT_CLIENT_API_KEY,
+    environment: import.meta.env.MODE,
+    userIdentifier: "localhost-user",
+  });
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        {children}
+        <FlagProvider client={client}>{children}</FlagProvider>
         <TanStackDevtools
           config={{
             position: "bottom-right",
