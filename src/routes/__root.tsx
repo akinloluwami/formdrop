@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import type { QueryClient } from "@tanstack/react-query";
 
 import { FlagProvider, FlagClient } from "@flagswift/react-client";
+import { useSession } from "@/lib/auth-client";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -44,10 +45,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { data } = useSession();
+
   const client = new FlagClient({
-    apiKey: import.meta.env.VITE_FLAGSWIFT_CLIENT_API_KEY,
+    apiKey: import.meta.env.VITE_FLAGSWIFT_CLIENT_API_KEY!,
     environment: import.meta.env.MODE,
-    userIdentifier: "localhost-user",
+    userIdentifier: data?.user?.id,
   });
 
   return (
