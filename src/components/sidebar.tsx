@@ -6,6 +6,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Sparkles } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 
 export function Sidebar() {
@@ -60,15 +61,23 @@ export function Sidebar() {
         </div>
       </div>
       <div className="px-2">
-        <div className="bg-linear-to-br from-accent/5 to-accent/10 p-4 rounded-xl border border-accent/10 relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl"></div>
-          <h3 className="font-semibold text-sm text-gray-900 relative z-10">
-            Upgrade to Pro
-          </h3>
-          <p className="text-xs text-gray-500 mt-1 mb-3 relative z-10">
+        <div className="bg-linear-to-br from-accent/5 to-accent/20 p-4 rounded-xl border border-accent/10 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/15 transition-colors duration-500"></div>
+
+          <div className="flex items-center gap-2 mb-2 relative z-10">
+            <div className="p-1.5 bg-accent/10 rounded-lg text-accent">
+              <Sparkles size={14} className="fill-accent/20" />
+            </div>
+            <h3 className="font-semibold text-sm text-gray-900">
+              Upgrade to Pro
+            </h3>
+          </div>
+
+          <p className="text-xs text-gray-500 mb-3 relative z-10 leading-relaxed">
             Unlock powerful integrations and advanced analytics.
           </p>
-          <button className="w-full bg-accent text-white text-xs font-medium py-2 rounded-lg hover:bg-accent/90 transition-colors cursor-pointer shadow-sm shadow-accent/20 relative z-10">
+
+          <button className="w-full bg-accent hover:bg-accent/90 text-white text-xs font-medium py-3 rounded-3xl transition-all cursor-pointer shadow-sm shadow-accent/20 hover:shadow-accent/30 active:scale-[0.98] relative z-10">
             Upgrade Plan
           </button>
         </div>
