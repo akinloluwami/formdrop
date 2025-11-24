@@ -64,6 +64,13 @@
       "when": 1763829714890,
       "tag": "0008_third_gauntlet",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1763955049922,
+      "tag": "0009_eager_boomerang",
+      "breakpoints": true
     }
   ]
 }
