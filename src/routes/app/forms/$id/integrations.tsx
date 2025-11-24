@@ -156,7 +156,7 @@ function RouteComponent() {
         <div className="space-y-4">
           <GoogleSheetsSection
             bucketId={id}
-            isConnected={!!bucket?.googleSheetsAccessToken}
+            isConnected={bucket?.googleSheetsConnected ?? false}
             isEnabled={bucket?.googleSheetsEnabled}
             spreadsheetName={bucket?.googleSheetsSpreadsheetName}
             spreadsheetId={bucket?.googleSheetsSpreadsheetId}
