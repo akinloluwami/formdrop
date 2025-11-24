@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeToProRouteImport } from './routes/welcome-to-pro'
 import { Route as VerifyRecipientRouteImport } from './routes/verify-recipient'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -56,6 +57,11 @@ import { Route as ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport } from '.
 import { Route as ApiBucketsBucketIdRecipientsRecipientIdRouteImport } from './routes/api/buckets/$bucketId/recipients/$recipientId'
 import { Route as ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRouteImport } from './routes/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
 
+const WelcomeToProRoute = WelcomeToProRouteImport.update({
+  id: '/welcome-to-pro',
+  path: '/welcome-to-pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifyRecipientRoute = VerifyRecipientRouteImport.update({
   id: '/verify-recipient',
   path: '/verify-recipient',
@@ -313,6 +319,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-recipient': typeof VerifyRecipientRoute
+  '/welcome-to-pro': typeof WelcomeToProRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
@@ -360,6 +367,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-recipient': typeof VerifyRecipientRoute
+  '/welcome-to-pro': typeof WelcomeToProRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
@@ -409,6 +417,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-recipient': typeof VerifyRecipientRoute
+  '/welcome-to-pro': typeof WelcomeToProRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
@@ -459,6 +468,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/verify-recipient'
+    | '/welcome-to-pro'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
@@ -506,6 +516,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/verify-recipient'
+    | '/welcome-to-pro'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
@@ -554,6 +565,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify-email'
     | '/verify-recipient'
+    | '/welcome-to-pro'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
@@ -603,6 +615,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   VerifyRecipientRoute: typeof VerifyRecipientRoute
+  WelcomeToProRoute: typeof WelcomeToProRoute
   ApiAnalyticsRoute: typeof ApiAnalyticsRoute
   ApiApiKeysRoute: typeof ApiApiKeysRoute
   ApiBucketsRoute: typeof ApiBucketsRouteWithChildren
@@ -621,6 +634,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome-to-pro': {
+      id: '/welcome-to-pro'
+      path: '/welcome-to-pro'
+      fullPath: '/welcome-to-pro'
+      preLoaderRoute: typeof WelcomeToProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify-recipient': {
       id: '/verify-recipient'
       path: '/verify-recipient'
@@ -1091,6 +1111,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   VerifyRecipientRoute: VerifyRecipientRoute,
+  WelcomeToProRoute: WelcomeToProRoute,
   ApiAnalyticsRoute: ApiAnalyticsRoute,
   ApiApiKeysRoute: ApiApiKeysRoute,
   ApiBucketsRoute: ApiBucketsRouteWithChildren,
