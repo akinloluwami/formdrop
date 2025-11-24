@@ -3,6 +3,7 @@ import {
   AnalyticsUpIcon,
   Key01Icon,
   Logout01Icon,
+  Settings02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
@@ -28,6 +29,7 @@ export function Sidebar() {
     { name: "Forms", path: "/app/forms", icon: AddToListIcon },
     { name: "Analytics", path: "/app/analytics", icon: AnalyticsUpIcon },
     { name: "API Keys", path: "/app/api-keys", icon: Key01Icon },
+    { name: "Settings", path: "/app/settings", icon: Settings02Icon },
   ];
 
   return (
