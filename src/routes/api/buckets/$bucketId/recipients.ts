@@ -105,6 +105,13 @@ export const Route = createFileRoute("/api/buckets/$bucketId/recipients")({
             );
           }
 
+          if (email === session.user.email) {
+            return Response.json(
+              { error: "You cannot add yourself as a recipient" },
+              { status: 400 },
+            );
+          }
+
           // Verify bucket belongs to user
           const [bucket] = await db
             .select()
@@ -122,6 +129,24 @@ export const Route = createFileRoute("/api/buckets/$bucketId/recipients")({
             return Response.json(
               { error: "Bucket not found" },
               { status: 404 },
+            );
+          }
+
+          const [existingRecipient] = await db
+            .select()
+            .from(emailNotificationRecipients)
+            .where(
+              and(
+                eq(emailNotificationRecipients.bucketId, bucketId),
+                eq(emailNotificationRecipients.email, email),
+              ),
+            )
+            .limit(1);
+
+          if (existingRecipient) {
+            return Response.json(
+              { error: "Recipient already exists" },
+              { status: 400 },
             );
           }
 
