@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { buckets } from "@/db/schema";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/buckets/$bucketId")({
@@ -27,7 +27,32 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
           const { bucketId } = params;
 
           const [bucket] = await db
-            .select()
+            .select({
+              id: buckets.id,
+              userId: buckets.userId,
+              name: buckets.name,
+              description: buckets.description,
+              allowedDomains: buckets.allowedDomains,
+              emailNotificationsEnabled: buckets.emailNotificationsEnabled,
+              slackNotificationsEnabled: buckets.slackNotificationsEnabled,
+              slackChannelName: buckets.slackChannelName,
+              slackTeamName: buckets.slackTeamName,
+              discordNotificationsEnabled: buckets.discordNotificationsEnabled,
+              discordChannelName: buckets.discordChannelName,
+              discordGuildName: buckets.discordGuildName,
+              googleSheetsEnabled: buckets.googleSheetsEnabled,
+              googleSheetsSpreadsheetName: buckets.googleSheetsSpreadsheetName,
+              googleSheetsSpreadsheetId: buckets.googleSheetsSpreadsheetId,
+              googleSheetsConnected: sql<boolean>`${buckets.googleSheetsAccessToken} IS NOT NULL`,
+              airtableEnabled: buckets.airtableEnabled,
+              airtableBaseName: buckets.airtableBaseName,
+              airtableTableName: buckets.airtableTableName,
+              airtableConnected: sql<boolean>`${buckets.airtableAccessToken} IS NOT NULL`,
+              slackConnected: sql<boolean>`${buckets.slackWebhookUrl} IS NOT NULL`,
+              discordConnected: sql<boolean>`${buckets.discordWebhookUrl} IS NOT NULL`,
+              createdAt: buckets.createdAt,
+              updatedAt: buckets.updatedAt,
+            })
             .from(buckets)
             .where(
               and(
