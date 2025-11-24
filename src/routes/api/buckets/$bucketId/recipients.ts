@@ -52,7 +52,17 @@ export const Route = createFileRoute("/api/buckets/$bucketId/recipients")({
           }
 
           const recipients = await db
-            .select()
+            .select({
+              id: emailNotificationRecipients.id,
+              bucketId: emailNotificationRecipients.bucketId,
+              email: emailNotificationRecipients.email,
+              enabled: emailNotificationRecipients.enabled,
+              verifiedAt: emailNotificationRecipients.verifiedAt,
+              verificationTokenExpiresAt:
+                emailNotificationRecipients.verificationTokenExpiresAt,
+              createdAt: emailNotificationRecipients.createdAt,
+              updatedAt: emailNotificationRecipients.updatedAt,
+            })
             .from(emailNotificationRecipients)
             .where(eq(emailNotificationRecipients.bucketId, bucketId));
 
