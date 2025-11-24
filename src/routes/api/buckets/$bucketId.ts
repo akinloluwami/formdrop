@@ -84,6 +84,8 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
             emailNotificationsEnabled,
             slackNotificationsEnabled,
             discordNotificationsEnabled,
+            googleSheetsEnabled,
+            airtableEnabled,
           } = body;
 
           // Verify bucket belongs to user
@@ -121,6 +123,14 @@ export const Route = createFileRoute("/api/buckets/$bucketId")({
               discordNotificationsEnabled:
                 discordNotificationsEnabled ??
                 existingBucket.discordNotificationsEnabled,
+              googleSheetsEnabled:
+                googleSheetsEnabled !== undefined
+                  ? googleSheetsEnabled
+                  : existingBucket.googleSheetsEnabled,
+              airtableEnabled:
+                airtableEnabled !== undefined
+                  ? airtableEnabled
+                  : existingBucket.airtableEnabled,
               updatedAt: new Date(),
             })
             .where(eq(buckets.id, bucketId))
