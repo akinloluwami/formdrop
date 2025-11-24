@@ -14,8 +14,14 @@ import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DocsIndexRouteImport } from './routes/docs/index'
+import { Route as DocsIntegrationsRouteImport } from './routes/docs/integrations'
+import { Route as DocsGettingStartedRouteImport } from './routes/docs/getting-started'
+import { Route as DocsFormsRouteImport } from './routes/docs/forms'
+import { Route as DocsApiRouteImport } from './routes/docs/api'
 import { Route as AppApiKeysRouteImport } from './routes/app/api-keys'
 import { Route as AppAnalyticsRouteImport } from './routes/app/analytics'
 import { Route as ApiVerifyRecipientRouteImport } from './routes/api/verify-recipient'
@@ -74,6 +80,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -83,6 +94,31 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsIntegrationsRoute = DocsIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsGettingStartedRoute = DocsGettingStartedRouteImport.update({
+  id: '/getting-started',
+  path: '/getting-started',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsFormsRoute = DocsFormsRouteImport.update({
+  id: '/forms',
+  path: '/forms',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsApiRoute = DocsApiRouteImport.update({
+  id: '/api',
+  path: '/api',
+  getParentRoute: () => DocsRoute,
 } as any)
 const AppApiKeysRoute = AppApiKeysRouteImport.update({
   id: '/api-keys',
@@ -265,6 +301,7 @@ const ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/docs': typeof DocsRouteWithChildren
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/signup': typeof SignupRoute
@@ -276,6 +313,11 @@ export interface FileRoutesByFullPath {
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/forms': typeof DocsFormsRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/integrations': typeof DocsIntegrationsRoute
+  '/docs/': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
@@ -317,6 +359,11 @@ export interface FileRoutesByTo {
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/forms': typeof DocsFormsRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/integrations': typeof DocsIntegrationsRoute
+  '/docs': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
@@ -348,6 +395,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/docs': typeof DocsRouteWithChildren
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/signup': typeof SignupRoute
@@ -359,6 +407,11 @@ export interface FileRoutesById {
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
+  '/docs/api': typeof DocsApiRoute
+  '/docs/forms': typeof DocsFormsRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/integrations': typeof DocsIntegrationsRoute
+  '/docs/': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
@@ -391,6 +444,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/docs'
     | '/login'
     | '/pricing'
     | '/signup'
@@ -402,6 +456,11 @@ export interface FileRouteTypes {
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
+    | '/docs/api'
+    | '/docs/forms'
+    | '/docs/getting-started'
+    | '/docs/integrations'
+    | '/docs/'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
     | '/app/forms/$id'
@@ -443,6 +502,11 @@ export interface FileRouteTypes {
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
+    | '/docs/api'
+    | '/docs/forms'
+    | '/docs/getting-started'
+    | '/docs/integrations'
+    | '/docs'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
     | '/app/forms/$id'
@@ -473,6 +537,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/docs'
     | '/login'
     | '/pricing'
     | '/signup'
@@ -484,6 +549,11 @@ export interface FileRouteTypes {
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
+    | '/docs/api'
+    | '/docs/forms'
+    | '/docs/getting-started'
+    | '/docs/integrations'
+    | '/docs/'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
     | '/app/forms/$id'
@@ -515,6 +585,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  DocsRoute: typeof DocsRouteWithChildren
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   SignupRoute: typeof SignupRoute
@@ -573,6 +644,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
@@ -586,6 +664,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/docs/': {
+      id: '/docs/'
+      path: '/'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/integrations': {
+      id: '/docs/integrations'
+      path: '/integrations'
+      fullPath: '/docs/integrations'
+      preLoaderRoute: typeof DocsIntegrationsRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/getting-started': {
+      id: '/docs/getting-started'
+      path: '/getting-started'
+      fullPath: '/docs/getting-started'
+      preLoaderRoute: typeof DocsGettingStartedRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/forms': {
+      id: '/docs/forms'
+      path: '/forms'
+      fullPath: '/docs/forms'
+      preLoaderRoute: typeof DocsFormsRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/api': {
+      id: '/docs/api'
+      path: '/api'
+      fullPath: '/docs/api'
+      preLoaderRoute: typeof DocsApiRouteImport
+      parentRoute: typeof DocsRoute
     }
     '/app/api-keys': {
       id: '/app/api-keys'
@@ -850,6 +963,24 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface DocsRouteChildren {
+  DocsApiRoute: typeof DocsApiRoute
+  DocsFormsRoute: typeof DocsFormsRoute
+  DocsGettingStartedRoute: typeof DocsGettingStartedRoute
+  DocsIntegrationsRoute: typeof DocsIntegrationsRoute
+  DocsIndexRoute: typeof DocsIndexRoute
+}
+
+const DocsRouteChildren: DocsRouteChildren = {
+  DocsApiRoute: DocsApiRoute,
+  DocsFormsRoute: DocsFormsRoute,
+  DocsGettingStartedRoute: DocsGettingStartedRoute,
+  DocsIntegrationsRoute: DocsIntegrationsRoute,
+  DocsIndexRoute: DocsIndexRoute,
+}
+
+const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
+
 interface ApiBucketsBucketIdRecipientsRecipientIdRouteChildren {
   ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
 }
@@ -933,6 +1064,7 @@ const ApiBucketsRouteWithChildren = ApiBucketsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  DocsRoute: DocsRouteWithChildren,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   SignupRoute: SignupRoute,
