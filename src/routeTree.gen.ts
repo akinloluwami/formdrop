@@ -22,6 +22,7 @@ import { Route as DocsIntegrationsRouteImport } from './routes/docs/integrations
 import { Route as DocsGettingStartedRouteImport } from './routes/docs/getting-started'
 import { Route as DocsFormsRouteImport } from './routes/docs/forms'
 import { Route as DocsApiRouteImport } from './routes/docs/api'
+import { Route as AppSettingsRouteImport } from './routes/app/settings'
 import { Route as AppApiKeysRouteImport } from './routes/app/api-keys'
 import { Route as AppAnalyticsRouteImport } from './routes/app/analytics'
 import { Route as ApiVerifyRecipientRouteImport } from './routes/api/verify-recipient'
@@ -119,6 +120,11 @@ const DocsApiRoute = DocsApiRouteImport.update({
   id: '/api',
   path: '/api',
   getParentRoute: () => DocsRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppApiKeysRoute = AppApiKeysRouteImport.update({
   id: '/api-keys',
@@ -313,6 +319,7 @@ export interface FileRoutesByFullPath {
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
+  '/app/settings': typeof AppSettingsRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/forms': typeof DocsFormsRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
@@ -359,6 +366,7 @@ export interface FileRoutesByTo {
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
+  '/app/settings': typeof AppSettingsRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/forms': typeof DocsFormsRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
@@ -407,6 +415,7 @@ export interface FileRoutesById {
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
+  '/app/settings': typeof AppSettingsRoute
   '/docs/api': typeof DocsApiRoute
   '/docs/forms': typeof DocsFormsRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
@@ -456,6 +465,7 @@ export interface FileRouteTypes {
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
+    | '/app/settings'
     | '/docs/api'
     | '/docs/forms'
     | '/docs/getting-started'
@@ -502,6 +512,7 @@ export interface FileRouteTypes {
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
+    | '/app/settings'
     | '/docs/api'
     | '/docs/forms'
     | '/docs/getting-started'
@@ -549,6 +560,7 @@ export interface FileRouteTypes {
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
+    | '/app/settings'
     | '/docs/api'
     | '/docs/forms'
     | '/docs/getting-started'
@@ -699,6 +711,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/docs/api'
       preLoaderRoute: typeof DocsApiRouteImport
       parentRoute: typeof DocsRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/api-keys': {
       id: '/app/api-keys'
@@ -950,6 +969,7 @@ const AppFormsIdRouteWithChildren = AppFormsIdRoute._addFileChildren(
 interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppApiKeysRoute: typeof AppApiKeysRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppFormsIdRoute: typeof AppFormsIdRouteWithChildren
   AppFormsIndexRoute: typeof AppFormsIndexRoute
 }
@@ -957,6 +977,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
   AppApiKeysRoute: AppApiKeysRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppFormsIdRoute: AppFormsIdRouteWithChildren,
   AppFormsIndexRoute: AppFormsIndexRoute,
 }
