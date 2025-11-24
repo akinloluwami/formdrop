@@ -17,6 +17,9 @@ const config = defineConfig({
     tailwindcss(),
     viteReact(),
   ],
+  server: {
+    allowedHosts: true,
+  },
 });
 
 export default config;
