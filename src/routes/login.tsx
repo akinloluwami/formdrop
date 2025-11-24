@@ -84,7 +84,7 @@ function RouteComponent() {
           Or{" "}
           <Link
             to="/signup"
-            className="font-medium text-gray-900 hover:underline"
+            className="font-medium text-accent hover:text-accent/80 hover:underline"
           >
             create a new account
           </Link>
@@ -168,7 +168,7 @@ function RouteComponent() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-4xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-4xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                   placeholder="you@example.com"
                 />
               </div>
@@ -190,7 +190,7 @@ function RouteComponent() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-4xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-4xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                   placeholder="••••••••"
                 />
               </div>
@@ -200,7 +200,7 @@ function RouteComponent() {
               <div className="text-sm">
                 <a
                   href="/forgot-password"
-                  className="font-medium text-gray-900 hover:underline"
+                  className="font-medium text-accent hover:text-accent/80 hover:underline"
                 >
                   Forgot password?
                 </a>
@@ -218,7 +218,7 @@ function RouteComponent() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-4xl shadow-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-4xl shadow-sm font-medium text-white bg-accent hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Signing in..." : "Sign in"}
               </button>
