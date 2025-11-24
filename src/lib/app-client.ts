@@ -99,339 +99,138 @@ type SuccessResponse<T> = T;
 type ErrorResponse = { error: string; details?: string };
 type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 
+// Helper function to handle API calls with consistent error handling
+async function apiCall<T = any>(
+  method: "get" | "post" | "patch" | "delete",
+  url: string,
+  options?: { params?: any; data?: any },
+): Promise<ApiResponse<T>> {
+  try {
+    const response = await apiClient[method](
+      url,
+      options?.params ? { params: options.params } : options?.data,
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return error.response.data;
+    }
+    return { error: "An unexpected error occurred" };
+  }
+}
+
 export const appClient = {
   buckets: {
-    list: async (): Promise<ApiResponse<{ buckets: Bucket[] }>> => {
-      try {
-        const response = await apiClient.get<{ buckets: Bucket[] }>(
-          "/api/buckets",
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    list: async () => apiCall<{ buckets: Bucket[] }>("get", "/api/buckets"),
 
-    create: async (
-      params: CreateBucketParams,
-    ): Promise<ApiResponse<{ bucket: Bucket }>> => {
-      try {
-        const response = await apiClient.post<{ bucket: Bucket }>(
-          "/api/buckets",
-          params,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    create: async (params: CreateBucketParams) =>
+      apiCall<{ bucket: Bucket }>("post", "/api/buckets", { data: params }),
 
-    get: async (bucketId: string): Promise<ApiResponse<{ bucket: Bucket }>> => {
-      try {
-        const response = await apiClient.get<{ bucket: Bucket }>(
-          `/api/buckets/${bucketId}`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    get: async (bucketId: string) =>
+      apiCall<{ bucket: Bucket }>("get", `/api/buckets/${bucketId}`),
 
-    update: async (
-      bucketId: string,
-      params: UpdateBucketParams,
-    ): Promise<ApiResponse<{ bucket: Bucket }>> => {
-      try {
-        const response = await apiClient.patch<{ bucket: Bucket }>(
-          `/api/buckets/${bucketId}`,
-          params,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    update: async (bucketId: string, params: UpdateBucketParams) =>
+      apiCall<{ bucket: Bucket }>("patch", `/api/buckets/${bucketId}`, {
+        data: params,
+      }),
 
-    delete: async (
-      bucketId: string,
-    ): Promise<ApiResponse<{ message: string }>> => {
-      try {
-        const response = await apiClient.delete<{ message: string }>(
-          `/api/buckets/${bucketId}`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    delete: async (bucketId: string) =>
+      apiCall<{ message: string }>("delete", `/api/buckets/${bucketId}`),
   },
 
   recipients: {
-    list: async (
-      bucketId: string,
-    ): Promise<ApiResponse<{ recipients: Recipient[] }>> => {
-      try {
-        const response = await apiClient.get<{ recipients: Recipient[] }>(
-          `/api/buckets/${bucketId}/recipients`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    list: async (bucketId: string) =>
+      apiCall<{ recipients: Recipient[] }>(
+        "get",
+        `/api/buckets/${bucketId}/recipients`,
+      ),
 
-    add: async (
-      bucketId: string,
-      email: string,
-    ): Promise<ApiResponse<{ recipient: Recipient }>> => {
-      try {
-        const response = await apiClient.post<{ recipient: Recipient }>(
-          `/api/buckets/${bucketId}/recipients`,
-          { email },
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    add: async (bucketId: string, email: string) =>
+      apiCall<{ recipient: Recipient }>(
+        "post",
+        `/api/buckets/${bucketId}/recipients`,
+        { data: { email } },
+      ),
 
-    remove: async (
-      bucketId: string,
-      recipientId: string,
-    ): Promise<ApiResponse<{ success: boolean }>> => {
-      try {
-        const response = await apiClient.delete<{ success: boolean }>(
-          `/api/buckets/${bucketId}/recipients/${recipientId}`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    remove: async (bucketId: string, recipientId: string) =>
+      apiCall<{ success: boolean }>(
+        "delete",
+        `/api/buckets/${bucketId}/recipients/${recipientId}`,
+      ),
 
-    update: async (
-      bucketId: string,
-      recipientId: string,
-      enabled: boolean,
-    ): Promise<ApiResponse<{ recipient: Recipient }>> => {
-      try {
-        const response = await apiClient.patch<{ recipient: Recipient }>(
-          `/api/buckets/${bucketId}/recipients/${recipientId}`,
-          { enabled },
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    update: async (bucketId: string, recipientId: string, enabled: boolean) =>
+      apiCall<{ recipient: Recipient }>(
+        "patch",
+        `/api/buckets/${bucketId}/recipients/${recipientId}`,
+        { data: { enabled } },
+      ),
 
-    resendVerification: async (
-      bucketId: string,
-      recipientId: string,
-    ): Promise<ApiResponse<{ success: boolean }>> => {
-      try {
-        const response = await apiClient.post<{ success: boolean }>(
-          `/api/buckets/${bucketId}/recipients/${recipientId}/resend-verification`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    resendVerification: async (bucketId: string, recipientId: string) =>
+      apiCall<{ success: boolean }>(
+        "post",
+        `/api/buckets/${bucketId}/recipients/${recipientId}/resend-verification`,
+      ),
 
-    disconnectSlack: async (
-      bucketId: string,
-    ): Promise<ApiResponse<{ success: boolean }>> => {
-      try {
-        const response = await apiClient.delete<{ success: boolean }>(
-          `/api/buckets/${bucketId}/disconnect-slack`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    disconnectSlack: async (bucketId: string) =>
+      apiCall<{ success: boolean }>(
+        "delete",
+        `/api/buckets/${bucketId}/disconnect-slack`,
+      ),
 
-    disconnectDiscord: async (
-      bucketId: string,
-    ): Promise<ApiResponse<{ success: boolean }>> => {
-      try {
-        const response = await apiClient.delete<{ success: boolean }>(
-          `/api/buckets/${bucketId}/disconnect-discord`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    disconnectDiscord: async (bucketId: string) =>
+      apiCall<{ success: boolean }>(
+        "delete",
+        `/api/buckets/${bucketId}/disconnect-discord`,
+      ),
   },
 
   submissions: {
-    list: async (
-      bucketId: string,
-    ): Promise<ApiResponse<{ submissions: Submission[] }>> => {
-      try {
-        const response = await apiClient.get<{ submissions: Submission[] }>(
-          `/api/buckets/${bucketId}/submissions`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    list: async (bucketId: string) =>
+      apiCall<{ submissions: Submission[] }>(
+        "get",
+        `/api/buckets/${bucketId}/submissions`,
+      ),
 
-    get: async (
-      bucketId: string,
-      submissionId: string,
-    ): Promise<ApiResponse<{ submission: Submission }>> => {
-      try {
-        const response = await apiClient.get<{ submission: Submission }>(
-          `/api/buckets/${bucketId}/submissions/${submissionId}`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    get: async (bucketId: string, submissionId: string) =>
+      apiCall<{ submission: Submission }>(
+        "get",
+        `/api/buckets/${bucketId}/submissions/${submissionId}`,
+      ),
 
-    delete: async (
-      bucketId: string,
-      submissionId: string,
-    ): Promise<ApiResponse<{ message: string }>> => {
-      try {
-        const response = await apiClient.delete<{ message: string }>(
-          `/api/buckets/${bucketId}/submissions/${submissionId}`,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    delete: async (bucketId: string, submissionId: string) =>
+      apiCall<{ message: string }>(
+        "delete",
+        `/api/buckets/${bucketId}/submissions/${submissionId}`,
+      ),
 
-    bulkDelete: async (
-      bucketId: string,
-      submissionIds: string[],
-    ): Promise<ApiResponse<{ success: boolean }>> => {
-      try {
-        const response = await apiClient.delete<{ success: boolean }>(
-          `/api/buckets/${bucketId}/submissions`,
-          { data: { submissionIds } },
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    bulkDelete: async (bucketId: string, submissionIds: string[]) =>
+      apiCall<{ success: boolean }>(
+        "delete",
+        `/api/buckets/${bucketId}/submissions`,
+        { data: { submissionIds } },
+      ),
 
-    analytics: async (
-      bucketId: string,
-    ): Promise<
-      ApiResponse<{
+    analytics: async (bucketId: string) =>
+      apiCall<{
         stats: { total: number; thisMonth: number; today: number };
         chartData: { date: string; submissions: number }[];
-      }>
-    > => {
-      try {
-        const response = await apiClient.get<{
-          stats: { total: number; thisMonth: number; today: number };
-          chartData: { date: string; submissions: number }[];
-        }>(`/api/buckets/${bucketId}/analytics`);
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+      }>("get", `/api/buckets/${bucketId}/analytics`),
   },
 
   apiKeys: {
-    list: async (): Promise<
-      ApiResponse<{ keys: { public: ApiKey; private: ApiKey } }>
-    > => {
-      try {
-        const response = await apiClient.get<{
-          keys: { public: ApiKey; private: ApiKey };
-        }>("/api/api-keys");
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    list: async () =>
+      apiCall<{ keys: { public: ApiKey; private: ApiKey } }>(
+        "get",
+        "/api/api-keys",
+      ),
 
-    roll: async (
-      params: RollApiKeyParams,
-    ): Promise<ApiResponse<{ key: ApiKey }>> => {
-      try {
-        const response = await apiClient.post<{ key: ApiKey }>(
-          "/api/api-keys",
-          params,
-        );
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+    roll: async (params: RollApiKeyParams) =>
+      apiCall<{ key: ApiKey }>("post", "/api/api-keys", { data: params }),
   },
 
   analytics: {
-    get: async (): Promise<
-      ApiResponse<{
+    get: async () =>
+      apiCall<{
         stats: {
           totalBuckets: number;
           totalSubmissions: number;
@@ -439,25 +238,6 @@ export const appClient = {
         };
         chartData: { date: string; submissions: number }[];
         topForms: { id: string; name: string; submissionCount: number }[];
-      }>
-    > => {
-      try {
-        const response = await apiClient.get<{
-          stats: {
-            totalBuckets: number;
-            totalSubmissions: number;
-            submissionsThisMonth: number;
-          };
-          chartData: { date: string; submissions: number }[];
-          topForms: { id: string; name: string; submissionCount: number }[];
-        }>("/api/analytics");
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          return error.response.data;
-        }
-        return { error: "An unexpected error occurred" };
-      }
-    },
+      }>("get", "/api/analytics"),
   },
 };
