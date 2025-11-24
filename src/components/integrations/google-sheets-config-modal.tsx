@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/button";
 
 interface GoogleSheetsConfigModalProps {
   bucketId: string;
@@ -158,19 +159,24 @@ export function GoogleSheetsConfigModal({
           )}
 
           <div className="flex gap-3">
-            <button
+            <Button
               onClick={onClose}
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-colors font-medium"
+              variant="outline"
+              size="lg"
+              className="flex-1 rounded-full"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleSave}
               disabled={!selectedId || isSaving}
-              className="flex-1 px-6 py-3 bg-accent text-white rounded-full hover:bg-accent/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              isLoading={isSaving}
+              variant="primary"
+              size="lg"
+              className="flex-1 rounded-full"
             >
-              {isSaving ? "Saving..." : "Save"}
-            </button>
+              Save
+            </Button>
           </div>
         </motion.div>
       </motion.div>
