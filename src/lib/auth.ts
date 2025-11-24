@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
+import { subscriptions } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import {
   polar,
   checkout,
@@ -40,14 +42,7 @@ export const auth = betterAuth({
   },
   plugins: [
     emailOTP({
-      async sendVerificationOTP({ email, otp, type }) {
-        // if (process.env.NODE_ENV === "development") {
-        //   console.log("=".repeat(50));
-        //   console.log(`📧 Email OTP for ${email}`);
-        //   console.log(`Type: ${type}`);
-        //   console.log(`OTP Code: ${otp}`);
-        //   console.log("=".repeat(50));
-        // } else {
+      async sendVerificationOTP({ email, otp }) {
         try {
           console.log(`Sending OTP email to ${email}`);
 
@@ -66,7 +61,6 @@ export const auth = betterAuth({
         } catch (error) {
           console.error("Error sending email:", error);
         }
-        // }
       },
       sendVerificationOnSignUp: true,
       otpLength: 6,
@@ -90,6 +84,47 @@ export const auth = betterAuth({
         usage(),
         webhooks({
           secret: process.env.POLAR_WEBHOOK_SECRET!,
+          onSubscriptionCreated: async (payload: any) => {
+            const subscription = payload.data;
+            const userId =
+              subscription.metadata?.userId ||
+              subscription.customer?.metadata?.userId;
+
+            if (userId) {
+              await db.insert(subscriptions).values({
+                userId,
+                polarId: subscription.id,
+                plan: subscription.product.name,
+                status: subscription.status,
+                currentPeriodStart: new Date(subscription.currentPeriodStart),
+                currentPeriodEnd: new Date(subscription.currentPeriodEnd),
+                cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+              });
+            }
+          },
+          onSubscriptionUpdated: async (payload: any) => {
+            const subscription = payload.data;
+            await db
+              .update(subscriptions)
+              .set({
+                status: subscription.status,
+                currentPeriodStart: new Date(subscription.currentPeriodStart),
+                currentPeriodEnd: new Date(subscription.currentPeriodEnd),
+                cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+                plan: subscription.product.name,
+              })
+              .where(eq(subscriptions.polarId, subscription.id));
+          },
+          onSubscriptionRevoked: async (payload: any) => {
+            const subscription = payload.data;
+            await db
+              .update(subscriptions)
+              .set({
+                status: "canceled",
+                cancelAtPeriodEnd: true,
+              })
+              .where(eq(subscriptions.polarId, subscription.id));
+          },
         }),
       ],
     }),
