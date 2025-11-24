@@ -69,6 +69,13 @@ export const auth = betterAuth({
     polar({
       client: polarClient,
       createCustomerOnSignUp: true,
+      getCustomerCreateParams: async ({ user }) => {
+        const metadata: Record<string, string | number | boolean> = {};
+        if (user.id) {
+          metadata.userId = user.id;
+        }
+        return { metadata };
+      },
       use: [
         checkout({
           products: [
@@ -84,38 +91,52 @@ export const auth = betterAuth({
         usage(),
         webhooks({
           secret: process.env.POLAR_WEBHOOK_SECRET!,
-          onSubscriptionCreated: async (payload: any) => {
+          onSubscriptionCreated: async (payload) => {
             const subscription = payload.data;
-            const userId =
-              subscription.metadata?.userId ||
-              subscription.customer?.metadata?.userId;
+            let userId =
+              (subscription.metadata?.userId as string) ||
+              (subscription.customer?.metadata?.userId as string) ||
+              (subscription.customer?.externalId as string);
+
+            if (!userId && subscription.customerId) {
+              try {
+                const customer = await polarClient.customers.get({
+                  id: subscription.customerId,
+                });
+                userId =
+                  (customer.metadata?.userId as string) ||
+                  (customer.externalId as string);
+              } catch (error) {
+                console.error("Error fetching customer:", error);
+              }
+            }
 
             if (userId) {
               await db.insert(subscriptions).values({
                 userId,
                 polarId: subscription.id,
                 plan: subscription.product.name,
-                status: subscription.status,
+                status: subscription.status as any,
                 currentPeriodStart: new Date(subscription.currentPeriodStart),
-                currentPeriodEnd: new Date(subscription.currentPeriodEnd),
+                currentPeriodEnd: new Date(subscription.currentPeriodEnd!),
                 cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
               });
             }
           },
-          onSubscriptionUpdated: async (payload: any) => {
+          onSubscriptionUpdated: async (payload) => {
             const subscription = payload.data;
             await db
               .update(subscriptions)
               .set({
-                status: subscription.status,
+                status: subscription.status as any,
                 currentPeriodStart: new Date(subscription.currentPeriodStart),
-                currentPeriodEnd: new Date(subscription.currentPeriodEnd),
+                currentPeriodEnd: new Date(subscription.currentPeriodEnd!),
                 cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
                 plan: subscription.product.name,
               })
               .where(eq(subscriptions.polarId, subscription.id));
           },
-          onSubscriptionRevoked: async (payload: any) => {
+          onSubscriptionRevoked: async (payload) => {
             const subscription = payload.data;
             await db
               .update(subscriptions)
