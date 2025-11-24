@@ -77,7 +77,7 @@ export const auth = betterAuth({
               slug: "Pro",
             },
           ],
-          successUrl: "/success?checkout_id={CHECKOUT_ID}",
+          successUrl: "/welcome-to-pro?checkout_id={CHECKOUT_ID}",
           authenticatedUsersOnly: true,
         }),
         portal(),
