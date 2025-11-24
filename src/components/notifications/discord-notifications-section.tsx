@@ -81,13 +81,16 @@ export function DiscordNotificationsSection({
               </Button>
             </>
           ) : (
-            <a
-              href={`/api/integrations/discord/authorize?bucketId=${bucketId}`}
-              className="px-4 py-3 bg-indigo-600 text-white text-sm font-medium rounded-3xl hover:bg-indigo-700 transition-colors inline-flex items-center gap-2"
+            <Button
+              onClick={() =>
+                (window.location.href = `/api/integrations/discord/authorize?bucketId=${bucketId}`)
+              }
+              requiresPro
+              className="bg-indigo-600 hover:bg-indigo-700 rounded-3xl py-3"
+              icon={<HugeiconsIcon icon={GameIcon} size={16} />}
             >
-              <HugeiconsIcon icon={GameIcon} size={16} />
               Connect Discord
-            </a>
+            </Button>
           )}
         </div>
       </div>
