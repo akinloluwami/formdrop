@@ -1,5 +1,6 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Mail01Icon, Add01Icon } from "@hugeicons/core-free-icons";
+import { Mail01Icon, Add01Icon, Alert01Icon } from "@hugeicons/core-free-icons";
+import { motion, AnimatePresence } from "motion/react";
 import { RecipientActions } from "./recipient-actions";
 import { useNotificationsStore } from "@/stores/notifications-store";
 import {
@@ -104,15 +105,41 @@ export function EmailRecipientsList({
       </div>
 
       <div className="p-4 bg-gray-50 border-t border-gray-100">
-        <form onSubmit={handleAddRecipient} className="flex gap-3">
-          <input
-            type="email"
-            placeholder="Enter email address"
-            value={newRecipientEmail}
-            onChange={(e) => setNewRecipientEmail(e.target.value)}
-            className="flex-1 px-3 py-3 text-sm border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent"
-            required
-          />
+        <form onSubmit={handleAddRecipient} className="flex items-start gap-3">
+          <div className="flex-1">
+            <input
+              type="email"
+              placeholder="Enter email address"
+              value={newRecipientEmail}
+              onChange={(e) => {
+                setNewRecipientEmail(e.target.value);
+                if (addRecipientMutation.isError) {
+                  addRecipientMutation.reset();
+                }
+              }}
+              className={`w-full px-3 py-3 text-sm border rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent ${
+                addRecipientMutation.isError
+                  ? "border-red-300 bg-red-50 text-red-900 placeholder:text-red-300"
+                  : "border-gray-200"
+              }`}
+              required
+            />
+            <AnimatePresence mode="wait">
+              {addRecipientMutation.isError && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginTop: 8 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="flex items-center gap-2 px-3 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-medium border border-red-100">
+                    <HugeiconsIcon icon={Alert01Icon} size={16} />
+                    <p>{addRecipientMutation.error.message}</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           <button
             type="submit"
             disabled={addRecipientMutation.isPending}
