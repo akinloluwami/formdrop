@@ -196,7 +196,7 @@ function RouteComponent() {
         )}
 
         <SlackNotificationsSection
-          isConnected={!!bucket?.slackWebhookUrl}
+          isConnected={bucket?.slackConnected ?? false}
           isEnabled={bucket?.slackNotificationsEnabled}
           channelName={bucket?.slackChannelName}
           teamName={bucket?.slackTeamName}
@@ -204,7 +204,7 @@ function RouteComponent() {
         />
 
         <DiscordNotificationsSection
-          isConnected={!!bucket?.discordWebhookUrl}
+          isConnected={bucket?.discordConnected ?? false}
           isEnabled={bucket?.discordNotificationsEnabled}
           channelName={bucket?.discordChannelName}
           guildName={bucket?.discordGuildName}
