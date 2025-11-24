@@ -27,6 +27,7 @@ import { Route as AppSettingsRouteImport } from './routes/app/settings'
 import { Route as AppApiKeysRouteImport } from './routes/app/api-keys'
 import { Route as AppAnalyticsRouteImport } from './routes/app/analytics'
 import { Route as ApiVerifyRecipientRouteImport } from './routes/api/verify-recipient'
+import { Route as ApiSubscriptionRouteImport } from './routes/api/subscription'
 import { Route as ApiBucketsRouteImport } from './routes/api/buckets'
 import { Route as ApiApiKeysRouteImport } from './routes/api/api-keys'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
@@ -145,6 +146,11 @@ const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
 const ApiVerifyRecipientRoute = ApiVerifyRecipientRouteImport.update({
   id: '/api/verify-recipient',
   path: '/api/verify-recipient',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSubscriptionRoute = ApiSubscriptionRouteImport.update({
+  id: '/api/subscription',
+  path: '/api/subscription',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBucketsRoute = ApiBucketsRouteImport.update({
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/subscription': typeof ApiSubscriptionRoute
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
@@ -371,6 +378,7 @@ export interface FileRoutesByTo {
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/subscription': typeof ApiSubscriptionRoute
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/subscription': typeof ApiSubscriptionRoute
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/api-keys': typeof AppApiKeysRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/api/subscription'
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/api/subscription'
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/buckets'
+    | '/api/subscription'
     | '/api/verify-recipient'
     | '/app/analytics'
     | '/app/api-keys'
@@ -619,6 +631,7 @@ export interface RootRouteChildren {
   ApiAnalyticsRoute: typeof ApiAnalyticsRoute
   ApiApiKeysRoute: typeof ApiApiKeysRoute
   ApiBucketsRoute: typeof ApiBucketsRouteWithChildren
+  ApiSubscriptionRoute: typeof ApiSubscriptionRoute
   ApiVerifyRecipientRoute: typeof ApiVerifyRecipientRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiIntegrationsDiscordAuthorizeRoute: typeof ApiIntegrationsDiscordAuthorizeRoute
@@ -758,6 +771,13 @@ declare module '@tanstack/react-router' {
       path: '/api/verify-recipient'
       fullPath: '/api/verify-recipient'
       preLoaderRoute: typeof ApiVerifyRecipientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/subscription': {
+      id: '/api/subscription'
+      path: '/api/subscription'
+      fullPath: '/api/subscription'
+      preLoaderRoute: typeof ApiSubscriptionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/buckets': {
@@ -1115,6 +1135,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAnalyticsRoute: ApiAnalyticsRoute,
   ApiApiKeysRoute: ApiApiKeysRoute,
   ApiBucketsRoute: ApiBucketsRouteWithChildren,
+  ApiSubscriptionRoute: ApiSubscriptionRoute,
   ApiVerifyRecipientRoute: ApiVerifyRecipientRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiIntegrationsDiscordAuthorizeRoute: ApiIntegrationsDiscordAuthorizeRoute,
