@@ -81,13 +81,16 @@ export function SlackNotificationsSection({
               </Button>
             </>
           ) : (
-            <a
-              href={`/api/integrations/slack/authorize?bucketId=${bucketId}`}
-              className="px-4 py-3 bg-purple-600 text-white text-sm font-medium rounded-3xl hover:bg-purple-700 transition-colors inline-flex items-center gap-2"
+            <Button
+              onClick={() =>
+                (window.location.href = `/api/integrations/slack/authorize?bucketId=${bucketId}`)
+              }
+              requiresPro
+              className="bg-purple-600 hover:bg-purple-700 rounded-3xl py-3"
+              icon={<HugeiconsIcon icon={LinkSquare02Icon} size={16} />}
             >
-              <HugeiconsIcon icon={LinkSquare02Icon} size={16} />
               Connect Slack
-            </a>
+            </Button>
           )}
         </div>
       </div>
