@@ -7,6 +7,8 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { RecipientItem } from "./recipient-item";
 
+import { Button } from "@/components/button";
+
 interface Recipient {
   id: string;
   email: string;
@@ -77,22 +79,22 @@ export function RecipientActions({
               <span className="text-xs text-gray-600 font-medium whitespace-nowrap">
                 Confirm Deletion?
               </span>
-              <button
+              <Button
                 onClick={onConfirmDelete}
                 disabled={isDeletingRecipient}
-                className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
-                title="Confirm delete"
-              >
-                <HugeiconsIcon icon={Tick02Icon} size={16} />
-              </button>
-              <button
+                variant="ghost"
+                size="sm"
+                className="text-green-600 hover:text-green-700 hover:bg-green-50 p-2 h-auto"
+                icon={<HugeiconsIcon icon={Tick02Icon} size={16} />}
+              />
+              <Button
                 onClick={onCancelDelete}
                 disabled={isDeletingRecipient}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-                title="Cancel"
-              >
-                <HugeiconsIcon icon={Cancel01Icon} size={16} />
-              </button>
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 h-auto"
+                icon={<HugeiconsIcon icon={Cancel01Icon} size={16} />}
+              />
             </motion.div>
           </AnimatePresence>
         </div>
