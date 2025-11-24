@@ -159,13 +159,16 @@ export function GoogleSheetsSection({
                 )}
               </AnimatePresence>
             ) : (
-              <a
-                href={`/api/integrations/google-sheets/authorize?bucketId=${bucketId}`}
-                className="px-4 py-3 bg-accent text-white text-sm font-medium rounded-3xl hover:bg-accent/90 transition-colors inline-flex items-center gap-2"
+              <Button
+                onClick={() =>
+                  (window.location.href = `/api/integrations/google-sheets/authorize?bucketId=${bucketId}`)
+                }
+                requiresPro
+                className="rounded-3xl py-3"
+                icon={<HugeiconsIcon icon={LinkSquare02Icon} size={16} />}
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} size={16} />
                 Connect
-              </a>
+              </Button>
             )}
           </div>
         ) : (
