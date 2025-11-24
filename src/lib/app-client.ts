@@ -7,6 +7,16 @@ const apiClient = axios.create({
   },
 });
 
+interface Subscription {
+  id: string;
+  userId: string;
+  plan: string;
+  status: "active" | "canceled" | "past_due" | "unpaid" | "trialing" | "paused";
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  cancelAtPeriodEnd: boolean | null;
+}
+
 interface Bucket {
   id: string;
   userId: string;
@@ -229,5 +239,13 @@ export const appClient = {
         chartData: { date: string; submissions: number }[];
         topForms: { id: string; name: string; submissionCount: number }[];
       }>("get", "/api/analytics"),
+  },
+
+  subscription: {
+    get: async () =>
+      apiCall<{ subscription: Subscription | null }>(
+        "get",
+        "/api/subscription",
+      ),
   },
 };
