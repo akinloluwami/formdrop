@@ -3,6 +3,7 @@ import { DocsSidebar } from "@/components/docs/docs-sidebar";
 import { Zap, Menu } from "lucide-react";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/docs")({
   component: DocsLayout,
@@ -44,12 +45,13 @@ function DocsLayout() {
             >
               {session ? "Go to App" : "Get Started"}
             </Link>
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               className="md:hidden p-2 text-gray-600"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Menu size={24} />
-            </button>
+              icon={<Menu size={24} />}
+            />
           </div>
         </div>
       </header>

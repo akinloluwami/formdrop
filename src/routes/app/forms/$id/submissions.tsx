@@ -19,6 +19,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CopyButton } from "@/components/copy-button";
+import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/forms/$id/submissions")({
   component: RouteComponent,
@@ -94,7 +95,7 @@ function RouteComponent() {
   method="POST" name="${bucketName}">
   <input type="text" name="name" placeholder="Your Name" required />
   <input type="email" name="email" placeholder="Your Email" required />
-  <button type="submit">Submit</button>
+  <Button type="submit">Submit</Button>
 </form>`;
 
   const fetchCodeExample = `fetch('https://api.formdrop.co/collect', {
@@ -186,21 +187,25 @@ function RouteComponent() {
               </div>
             ))}
             {value.length > 3 && !expanded && (
-              <button
+              <Button
                 onClick={() => setExpanded(true)}
-                className="text-sm text-accent hover:text-accent/80 font-medium flex items-center gap-1"
+                variant="ghost"
+                size="sm"
+                className="text-accent hover:text-accent/80 font-medium p-0 h-auto hover:bg-transparent"
+                icon={<HugeiconsIcon icon={ArrowDown01Icon} size={14} />}
               >
-                <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
                 Show {value.length - 3} more
-              </button>
+              </Button>
             )}
             {expanded && value.length > 3 && (
-              <button
+              <Button
                 onClick={() => setExpanded(false)}
-                className="text-sm text-accent hover:text-accent/80 font-medium"
+                variant="ghost"
+                size="sm"
+                className="text-accent hover:text-accent/80 font-medium p-0 h-auto hover:bg-transparent"
               >
                 Show less
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -303,42 +308,40 @@ function RouteComponent() {
         </div>
         <div className="flex gap-2 items-center">
           {selectedSubmissionIds.length > 0 && (
-            <button
+            <Button
               onClick={handleDelete}
               disabled={deleteMutation.isPending}
-              className="p-2 rounded-lg transition-colors bg-red-50 text-red-600 hover:bg-red-100 flex items-center gap-2 px-3"
+              variant="danger"
+              size="sm"
+              className="bg-red-50 text-red-600 hover:bg-red-100 border-transparent"
+              icon={<HugeiconsIcon icon={Delete02Icon} size={18} />}
             >
-              <HugeiconsIcon icon={Delete02Icon} size={18} />
-              <span className="text-sm font-medium">
-                Delete ({selectedSubmissionIds.length})
-              </span>
-            </button>
+              Delete ({selectedSubmissionIds.length})
+            </Button>
           )}
-          <button className="p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-600 flex items-center gap-2 px-3 border border-gray-200">
-            <HugeiconsIcon icon={Download01Icon} size={18} />
-            <span className="text-sm font-medium">Export</span>
-          </button>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="text-gray-600 hover:bg-gray-100 border-gray-200"
+            icon={<HugeiconsIcon icon={Download01Icon} size={18} />}
+          >
+            Export
+          </Button>
           <div className="w-px h-6 bg-gray-200 mx-1"></div>
-          <button
+          <Button
             onClick={() => setViewMode("card")}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === "card"
-                ? "bg-accent text-white"
-                : "hover:bg-gray-100 text-gray-600"
-            }`}
-          >
-            <HugeiconsIcon icon={GridIcon} size={18} />
-          </button>
-          <button
+            variant={viewMode === "card" ? "primary" : "ghost"}
+            size="sm"
+            className={`p-2 ${viewMode === "card" ? "" : "text-gray-600 hover:bg-gray-100"}`}
+            icon={<HugeiconsIcon icon={GridIcon} size={18} />}
+          />
+          <Button
             onClick={() => setViewMode("table")}
-            className={`p-2 rounded-lg transition-colors ${
-              viewMode === "table"
-                ? "bg-accent text-white"
-                : "hover:bg-gray-100 text-gray-600"
-            }`}
-          >
-            <HugeiconsIcon icon={TableIcon} size={18} />
-          </button>
+            variant={viewMode === "table" ? "primary" : "ghost"}
+            size="sm"
+            className={`p-2 ${viewMode === "table" ? "" : "text-gray-600 hover:bg-gray-100"}`}
+            icon={<HugeiconsIcon icon={TableIcon} size={18} />}
+          />
         </div>
       </div>
 
@@ -347,13 +350,15 @@ function RouteComponent() {
           <p className="text-gray-500 text-sm mb-4">
             No submissions yet for this form.
           </p>
-          <button
+          <Button
             onClick={() => setShowIntegrationModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-xl hover:bg-accent/90 transition-colors text-sm font-medium"
+            variant="primary"
+            size="md"
+            className="rounded-xl"
+            icon={<HugeiconsIcon icon={CodeIcon} size={18} />}
           >
-            <HugeiconsIcon icon={CodeIcon} size={18} />
             Show Integration Guide
-          </button>
+          </Button>
         </div>
       ) : viewMode === "card" ? (
         <div className="mt-4 space-y-4">
@@ -497,12 +502,13 @@ function RouteComponent() {
             >
               <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Submission Details</h3>
-                <button
+                <Button
                   onClick={() => setSelectedSubmission(null)}
-                  className="hover:bg-gray-100 p-2 rounded-lg transition-colors"
-                >
-                  <HugeiconsIcon icon={Cancel01Icon} size={20} />
-                </button>
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-gray-100 p-2 h-auto"
+                  icon={<HugeiconsIcon icon={Cancel01Icon} size={20} />}
+                />
               </div>
 
               <div className="p-6 space-y-6">
@@ -603,26 +609,29 @@ function RouteComponent() {
                 </p>
               </div>
               <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3">
-                <button
+                <Button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  variant="secondary"
+                  size="md"
+                  className="rounded-lg bg-transparent border-transparent hover:bg-gray-100"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={confirmDelete}
                   disabled={deleteMutation.isPending}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  {deleteMutation.isPending ? (
-                    "Deleting..."
-                  ) : (
-                    <>
+                  isLoading={deleteMutation.isPending}
+                  variant="danger"
+                  size="md"
+                  className="rounded-lg"
+                  icon={
+                    !deleteMutation.isPending && (
                       <HugeiconsIcon icon={Delete02Icon} size={16} />
-                      Delete
-                    </>
-                  )}
-                </button>
+                    )
+                  }
+                >
+                  {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                </Button>
               </div>
             </motion.div>
           </motion.div>
@@ -651,12 +660,13 @@ function RouteComponent() {
                   <h3 className="text-xl font-bold text-gray-900">
                     Integrate {bucketName}
                   </h3>
-                  <button
+                  <Button
                     onClick={() => setShowIntegrationModal(false)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <HugeiconsIcon icon={Cancel01Icon} size={20} />
-                  </button>
+                    variant="ghost"
+                    size="sm"
+                    className="p-2 hover:bg-gray-100 rounded-lg h-auto"
+                    icon={<HugeiconsIcon icon={Cancel01Icon} size={20} />}
+                  />
                 </div>
 
                 <div className="border rounded-3xl border-gray-200 p-4">
@@ -670,26 +680,32 @@ function RouteComponent() {
                       }`}
                     />
 
-                    <button
+                    <Button
                       onClick={() => setSelectedTab("html")}
-                      className="p-2 rounded-lg transition-colors relative z-10 hover:bg-black/5"
-                    >
-                      <HugeiconsIcon
-                        icon={Html5Icon}
-                        className="text-orange-600"
-                        size={24}
-                      />
-                    </button>
-                    <button
+                      variant="ghost"
+                      size="sm"
+                      className="p-2 rounded-lg relative z-10 hover:bg-black/5 h-auto"
+                      icon={
+                        <HugeiconsIcon
+                          icon={Html5Icon}
+                          className="text-orange-600"
+                          size={24}
+                        />
+                      }
+                    />
+                    <Button
                       onClick={() => setSelectedTab("fetch")}
-                      className="p-2 rounded-lg transition-colors relative z-10 hover:bg-black/5"
-                    >
-                      <HugeiconsIcon
-                        icon={JavaScriptIcon}
-                        className="text-yellow-500"
-                        size={24}
-                      />
-                    </button>
+                      variant="ghost"
+                      size="sm"
+                      className="p-2 rounded-lg relative z-10 hover:bg-black/5 h-auto"
+                      icon={
+                        <HugeiconsIcon
+                          icon={JavaScriptIcon}
+                          className="text-yellow-500"
+                          size={24}
+                        />
+                      }
+                    />
                   </div>
                   <div className="border rounded-3xl border-gray-200 p-4 mt-5 relative bg-gray-50/50">
                     <CopyButton

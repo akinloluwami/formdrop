@@ -6,6 +6,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Tooltip } from "@/components/tooltip";
 
+import { Button } from "@/components/button";
+
 interface RecipientStatus {
   type: "pending" | "expired" | "verified";
   verifiedAt?: Date | null;
@@ -87,14 +89,14 @@ export function RecipientItem({
                 <span className="px-2 py-0.5 rounded-full bg-red-100 text-xs font-medium text-red-700">
                   Invitation Expired
                 </span>
-                <button
+                <Button
                   onClick={onResendVerification}
                   disabled={isResending}
-                  className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
-                  title="Resend invitation"
-                >
-                  <HugeiconsIcon icon={ReloadIcon} size={14} />
-                </button>
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 h-auto rounded"
+                  icon={<HugeiconsIcon icon={ReloadIcon} size={14} />}
+                />
               </div>
             </Tooltip>
           )}
@@ -132,12 +134,13 @@ export function RecipientItem({
             }`}
           />
         </button>
-        <button
+        <Button
           onClick={onDelete}
-          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-        >
-          <HugeiconsIcon icon={Delete02Icon} size={16} />
-        </button>
+          variant="ghost"
+          size="sm"
+          className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 h-auto"
+          icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}
+        />
       </div>
     </div>
   );

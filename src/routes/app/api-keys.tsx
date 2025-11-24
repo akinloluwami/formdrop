@@ -11,6 +11,7 @@ import {
 import moment from "moment";
 import { CopyButton } from "@/components/copy-button";
 import { motion, AnimatePresence } from "motion/react";
+import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/api-keys")({
   component: ApiKeysPage,
@@ -131,18 +132,21 @@ function ApiKeysPage() {
                 to expose this key.
               </p>
             </div>
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => handleRoll("public")}
               disabled={rollMutation.isPending}
-              className="text-sm text-gray-600 hover:bg-gray-100 flex items-center gap-1 px-3 py-1.5 rounded-xl transition-colors"
+              icon={
+                <HugeiconsIcon
+                  icon={RefreshIcon}
+                  size={16}
+                  className={rollingKeyType === "public" ? "animate-spin" : ""}
+                />
+              }
             >
-              <HugeiconsIcon
-                icon={RefreshIcon}
-                size={16}
-                className={rollingKeyType === "public" ? "animate-spin" : ""}
-              />
               Roll Key
-            </button>
+            </Button>
           </div>
 
           <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 flex items-center gap-3">
@@ -190,18 +194,21 @@ function ApiKeysPage() {
                 </strong>
               </p>
             </div>
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => handleRoll("private")}
               disabled={rollMutation.isPending}
-              className="text-sm text-gray-600 hover:bg-gray-100 flex items-center gap-1 px-3 py-1.5 rounded-xl transition-colors"
+              icon={
+                <HugeiconsIcon
+                  icon={RefreshIcon}
+                  size={16}
+                  className={rollingKeyType === "private" ? "animate-spin" : ""}
+                />
+              }
             >
-              <HugeiconsIcon
-                icon={RefreshIcon}
-                size={16}
-                className={rollingKeyType === "private" ? "animate-spin" : ""}
-              />
               Roll Key
-            </button>
+            </Button>
           </div>
 
           <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 flex items-center gap-3">
@@ -281,19 +288,23 @@ function ApiKeysPage() {
                 </p>
 
                 <div className="flex justify-end gap-3">
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="md"
+                    className="rounded-xl"
                     onClick={() => setConfirmRollType(null)}
-                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="md"
+                    className="rounded-xl"
                     onClick={confirmRoll}
-                    className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors"
                   >
                     Yes, Roll Key
-                  </button>
+                  </Button>
                 </div>
               </div>
             </motion.div>

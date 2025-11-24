@@ -10,6 +10,7 @@ import {
   AlertCircleIcon,
   Loading03Icon,
 } from "@hugeicons/core-free-icons";
+import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/verify-recipient")({
   component: RouteComponent,
@@ -100,12 +101,14 @@ function RouteComponent() {
               Email Verified!
             </h1>
             <p className="text-gray-500 mb-6">{message}</p>
-            <button
+            <Button
               onClick={() => navigate({ to: "/" })}
-              className="px-6 py-3 bg-accent text-white rounded-xl hover:bg-accent/90 transition-colors font-medium"
+              variant="primary"
+              size="lg"
+              className="rounded-xl"
             >
               Go to Homepage
-            </button>
+            </Button>
           </div>
         )}
 
@@ -122,12 +125,14 @@ function RouteComponent() {
               {status === "expired" ? "Link Expired" : "Verification Failed"}
             </h1>
             <p className="text-gray-500 mb-6">{message}</p>
-            <button
+            <Button
               onClick={() => navigate({ to: "/" })}
-              className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
+              variant="secondary"
+              size="lg"
+              className="rounded-xl bg-gray-100 border-transparent"
             >
               Go to Homepage
-            </button>
+            </Button>
           </div>
         )}
       </div>

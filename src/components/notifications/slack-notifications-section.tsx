@@ -6,6 +6,8 @@ import {
   useDisconnectSlack,
 } from "@/hooks/use-bucket-mutations";
 
+import { Button } from "@/components/button";
+
 interface SlackNotificationsSectionProps {
   isConnected: boolean;
   isEnabled?: boolean;
@@ -68,13 +70,15 @@ export function SlackNotificationsSection({
                   }`}
                 />
               </button>
-              <button
+              <Button
                 onClick={handleDisconnect}
                 disabled={disconnectSlackMutation.isPending}
-                className="px-3 py-2 text-xs font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-colors disabled:opacity-50"
+                variant="ghost"
+                size="sm"
+                className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl"
               >
                 Disconnect
-              </button>
+              </Button>
             </>
           ) : (
             <a

@@ -6,6 +6,7 @@ import { appClient } from "@/lib/app-client";
 import { GoogleSheetsSection } from "@/components/integrations/google-sheets-section";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/forms/$id/integrations")({
   component: RouteComponent,
@@ -130,12 +131,14 @@ function RouteComponent() {
                   {modalContent.description}
                 </p>
 
-                <button
+                <Button
                   onClick={handleCloseModal}
-                  className={`${modalContent.accentColor} ${modalContent.hoverColor} text-white px-8 py-3 rounded-full transition-all font-semibold w-full shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]`}
+                  variant="primary"
+                  size="lg"
+                  className={`${modalContent.accentColor} ${modalContent.hoverColor} text-white rounded-full w-full shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]`}
                 >
                   Got it!
-                </button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>

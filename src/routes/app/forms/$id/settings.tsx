@@ -12,6 +12,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/forms/$id/settings")({
   component: RouteComponent,
@@ -169,20 +170,21 @@ function RouteComponent() {
             </div>
 
             <div className="pt-4 flex justify-end">
-              <button
+              <Button
                 onClick={handleSave}
                 disabled={updateMutation.isPending}
-                className="flex items-center gap-x-2 px-4 py-2 bg-accent text-white rounded-3xl hover:bg-accent/90 transition-colors disabled:opacity-50"
-              >
-                {updateMutation.isPending ? (
-                  "Saving..."
-                ) : (
-                  <>
+                isLoading={updateMutation.isPending}
+                variant="primary"
+                size="md"
+                className="rounded-3xl"
+                icon={
+                  !updateMutation.isPending && (
                     <HugeiconsIcon icon={Tick02Icon} size={18} />
-                    Save Changes
-                  </>
-                )}
-              </button>
+                  )
+                }
+              >
+                {updateMutation.isPending ? "Saving..." : "Save Changes"}
+              </Button>
             </div>
           </div>
         </div>
@@ -210,13 +212,14 @@ function RouteComponent() {
                 className="flex-1 px-3 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
                 placeholder="example.com"
               />
-              <button
+              <Button
                 onClick={handleAddDomain}
                 disabled={!newDomain.trim()}
-                className="px-4 py-3 bg-gray-100 text-gray-700 rounded-3xl hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <HugeiconsIcon icon={Add01Icon} size={20} />
-              </button>
+                variant="secondary"
+                size="lg"
+                className="rounded-3xl bg-gray-100 border-transparent"
+                icon={<HugeiconsIcon icon={Add01Icon} size={20} />}
+              />
             </div>
 
             {allowedDomains.length > 0 ? (
@@ -229,12 +232,13 @@ function RouteComponent() {
                     <span className="text-sm font-medium text-gray-700">
                       {domain}
                     </span>
-                    <button
+                    <Button
                       onClick={() => handleRemoveDomain(domain)}
-                      className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                    >
-                      <HugeiconsIcon icon={Cancel01Icon} size={16} />
-                    </button>
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-400 hover:text-red-500 p-1 h-auto"
+                      icon={<HugeiconsIcon icon={Cancel01Icon} size={16} />}
+                    />
                   </div>
                 ))}
               </div>
@@ -257,13 +261,15 @@ function RouteComponent() {
             Once you delete a form, there is no going back. Please be certain.
           </p>
 
-          <button
+          <Button
             onClick={() => setShowDeleteConfirm(true)}
-            className="flex items-center gap-x-2 px-4 py-2 bg-white border border-red-200 text-red-600 rounded-3xl hover:bg-red-50 transition-colors"
+            variant="danger"
+            size="md"
+            className="bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-3xl"
+            icon={<HugeiconsIcon icon={Delete02Icon} size={18} />}
           >
-            <HugeiconsIcon icon={Delete02Icon} size={18} />
             Delete Form
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -312,22 +318,27 @@ function RouteComponent() {
                 </div>
 
                 <div className="flex gap-x-3 justify-end">
-                  <button
+                  <Button
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-3xl transition-colors font-medium"
+                    variant="secondary"
+                    size="md"
+                    className="rounded-3xl bg-transparent border-transparent hover:bg-gray-100"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleDelete}
                     disabled={
                       deleteConfirmationText !== bucket.name ||
                       deleteMutation.isPending
                     }
-                    className="px-4 py-2 bg-red-600 text-white rounded-3xl hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    isLoading={deleteMutation.isPending}
+                    variant="danger"
+                    size="md"
+                    className="rounded-3xl"
                   >
                     {deleteMutation.isPending ? "Deleting..." : "Delete Form"}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </motion.div>

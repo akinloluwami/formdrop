@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { AuthError } from "@/components/auth-error";
 import { z } from "zod";
+import { Button } from "@/components/button";
 
 const verifyEmailSearchSchema = z.object({
   email: z.string().email().optional(),
@@ -157,24 +158,29 @@ function RouteComponent() {
                     className="mb-4"
                   />
                 )}
-                <button
+                <Button
                   type="submit"
                   disabled={loading || otp.length !== 6 || !email}
-                  className="w-full flex justify-center py-4 px-4 border border-transparent rounded-4xl shadow-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  isLoading={loading}
+                  variant="primary"
+                  size="xl"
+                  className="w-full bg-gray-900 hover:bg-gray-800 focus:ring-gray-900"
                 >
                   {loading ? "Verifying..." : "Verify Email"}
-                </button>
+                </Button>
               </div>
 
               <div className="text-center">
-                <button
+                <Button
                   type="button"
                   onClick={handleResendOtp}
                   disabled={loading || !email}
-                  className="text-sm font-medium text-gray-900 hover:underline disabled:opacity-50"
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-900 hover:underline hover:bg-transparent"
                 >
                   Resend code
-                </button>
+                </Button>
               </div>
             </form>
           </div>

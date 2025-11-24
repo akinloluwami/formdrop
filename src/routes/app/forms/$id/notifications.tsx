@@ -11,6 +11,7 @@ import { EmailRecipientsList } from "@/components/notifications/email-recipients
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Slack, Discord } from "@ridemountainpig/svgl-react";
+import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/forms/$id/notifications")({
   component: RouteComponent,
@@ -159,12 +160,14 @@ function RouteComponent() {
                 </p>
 
                 {/* Button */}
-                <button
+                <Button
                   onClick={handleCloseModal}
-                  className={`${modalContent.accentColor} ${modalContent.hoverColor} text-white px-8 py-3 rounded-full transition-all font-semibold w-full shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]`}
+                  variant="primary"
+                  size="lg"
+                  className={`${modalContent.accentColor} ${modalContent.hoverColor} text-white rounded-full w-full shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]`}
                 >
                   Got it!
-                </button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>
