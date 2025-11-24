@@ -9,11 +9,14 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
+import { useState } from "react";
+import { UpgradeModal } from "./upgrade-modal";
 
 export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session, isPending } = useSession();
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
   const handleSignOut = async () => {
     await signOut({
@@ -79,11 +82,18 @@ export function Sidebar() {
             Unlock powerful integrations and advanced analytics.
           </p>
 
-          <button className="w-full bg-accent hover:bg-accent/90 text-white text-xs font-medium py-3 rounded-3xl transition-all cursor-pointer shadow-sm shadow-accent/20 hover:shadow-accent/30 active:scale-[0.98] relative z-10">
+          <button
+            onClick={() => setIsUpgradeModalOpen(true)}
+            className="w-full bg-accent hover:bg-accent/90 text-white text-xs font-medium py-3 rounded-3xl transition-all cursor-pointer shadow-sm shadow-accent/20 hover:shadow-accent/30 active:scale-[0.98] relative z-10"
+          >
             Upgrade Plan
           </button>
         </div>
       </div>
+      <UpgradeModal
+        isOpen={isUpgradeModalOpen}
+        onClose={() => setIsUpgradeModalOpen(false)}
+      />
       <div className="p-4 border-t border-gray-100 w-full">
         {isPending ? (
           <div className="flex items-center gap-3 w-full">
