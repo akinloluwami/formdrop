@@ -13,35 +13,26 @@ interface Bucket {
   name: string;
   description: string | null;
   emailNotificationsEnabled: boolean;
-  slackWebhookUrl: string | null;
-  slackChannelId: string | null;
   slackChannelName: string | null;
   slackTeamName: string | null;
   slackNotificationsEnabled: boolean;
-  discordWebhookUrl: string | null;
-  discordChannelId: string | null;
+  slackConnected: boolean;
   discordChannelName: string | null;
   discordGuildName: string | null;
   discordNotificationsEnabled: boolean;
-  googleSheetsAccessToken: string | null;
-  googleSheetsRefreshToken: string | null;
-  googleSheetsTokenExpiry: Date | null;
+  discordConnected: boolean;
   googleSheetsSpreadsheetId: string | null;
   googleSheetsSpreadsheetName: string | null;
-  googleSheetsSheetId: string | null;
   googleSheetsEnabled: boolean;
-  airtableAccessToken: string | null;
-  airtableRefreshToken: string | null;
-  airtableTokenExpiry: Date | null;
-  airtableBaseId: string | null;
+  googleSheetsConnected: boolean;
   airtableBaseName: string | null;
-  airtableTableId: string | null;
   airtableTableName: string | null;
   airtableEnabled: boolean;
+  airtableConnected: boolean;
   allowedDomains: string[];
   createdAt: Date;
   updatedAt: Date;
-  submissionCount: number;
+  submissionCount?: number;
 }
 
 interface Recipient {
@@ -50,7 +41,6 @@ interface Recipient {
   email: string;
   enabled: boolean;
   verifiedAt: Date | null;
-  verificationToken: string | null;
   verificationTokenExpiresAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
