@@ -79,33 +79,6 @@ function RouteComponent() {
 
   const [selectedTab, setSelectedTab] = useState<"html" | "fetch">("html");
 
-  const features = [
-    {
-      title: "Real-time Analytics",
-      description:
-        "Track form views, submissions, and conversion rates in real-time with our beautiful dashboard.",
-      icon: BarChart3,
-    },
-    {
-      title: "Instant Notifications",
-      description:
-        "Get notified immediately via Email, Slack, or Discord whenever someone submits a form.",
-      icon: Bell,
-    },
-    {
-      title: "Seamless Integrations",
-      description:
-        "Connect your forms to Google Sheets, Webhooks, and more to automate your workflow.",
-      icon: Workflow,
-    },
-    {
-      title: "Secure & Reliable",
-      description:
-        "Enterprise-grade security with spam protection and rolling API keys to keep your data safe.",
-      icon: ShieldCheck,
-    },
-  ];
-
   const integrations = [
     {
       name: "Google Sheets",
@@ -127,7 +100,7 @@ function RouteComponent() {
     <div className="min-h-screen bg-white">
       {/* Navbar */}
       <div className="p-3 sticky top-0 z-50">
-        <div className="bg-white/80 backdrop-blur-md border border-gray-100 rounded-full flex items-center justify-between px-6 py-3 max-w-5xl mx-auto shadow-sm">
+        <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-full flex items-center justify-between px-6 py-3 max-w-5xl mx-auto">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white">
               <Zap size={18} fill="currentColor" />
@@ -184,7 +157,7 @@ function RouteComponent() {
 
           <div className="flex items-center justify-center gap-4 mt-10">
             <Link to={session ? "/app/forms" : "/signup"}>
-              <span className="rounded-full bg-accent text-white px-8 py-4 hover:bg-accent/90 transition-all flex items-center gap-x-2 font-medium text-lg shadow-lg shadow-accent/20 hover:shadow-xl hover:-translate-y-0.5">
+              <span className="rounded-full bg-accent text-white px-8 py-4 hover:bg-accent/90 transition-all flex items-center gap-x-2 font-medium text-lg border border-accent hover:-translate-y-0.5">
                 {session ? "Go to Dashboard" : "Start for Free"}
                 <HugeiconsIcon icon={ArrowRightDoubleIcon} />
               </span>
@@ -203,17 +176,17 @@ function RouteComponent() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="border rounded-3xl border-gray-200 bg-white shadow-2xl shadow-gray-200/50 max-w-4xl mx-auto mt-20 p-2 relative"
+          className="border rounded-3xl border-gray-200 bg-white max-w-4xl mx-auto mt-20 p-2 relative"
         >
           <div className="absolute -inset-1 bg-linear-to-r from-accent/30 to-purple-600/30 rounded-4xl blur-xl opacity-20 -z-10"></div>
           <div className="bg-gray-50/50 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-x-2 bg-white p-1 rounded-xl border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-x-2 bg-white p-1 rounded-xl border border-gray-200">
                 <button
                   onClick={() => setSelectedTab("html")}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedTab === "html"
-                      ? "bg-orange-50 text-orange-700 shadow-sm ring-1 ring-orange-200"
+                      ? "bg-orange-50 text-orange-700 ring-1 ring-orange-200"
                       : "text-gray-500 hover:bg-gray-50"
                   }`}
                 >
@@ -224,7 +197,7 @@ function RouteComponent() {
                   onClick={() => setSelectedTab("fetch")}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedTab === "fetch"
-                      ? "bg-yellow-50 text-yellow-700 shadow-sm ring-1 ring-yellow-200"
+                      ? "bg-yellow-50 text-yellow-700 ring-1 ring-yellow-200"
                       : "text-gray-500 hover:bg-gray-50"
                   }`}
                 >
