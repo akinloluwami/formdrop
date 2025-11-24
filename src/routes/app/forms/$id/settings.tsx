@@ -150,7 +150,7 @@ function RouteComponent() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                className="w-full px-3 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
                 placeholder="My Awesome Form"
               />
             </div>
@@ -163,7 +163,7 @@ function RouteComponent() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                className="w-full px-3 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
                 placeholder="What is this form for?"
               />
             </div>
@@ -172,7 +172,7 @@ function RouteComponent() {
               <button
                 onClick={handleSave}
                 disabled={updateMutation.isPending}
-                className="flex items-center gap-x-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                className="flex items-center gap-x-2 px-4 py-2 bg-accent text-white rounded-3xl hover:bg-accent/90 transition-colors disabled:opacity-50"
               >
                 {updateMutation.isPending ? (
                   "Saving..."
@@ -207,13 +207,13 @@ function RouteComponent() {
                     handleAddDomain();
                   }
                 }}
-                className="flex-1 px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                className="flex-1 px-3 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
                 placeholder="example.com"
               />
               <button
                 onClick={handleAddDomain}
                 disabled={!newDomain.trim()}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-3 bg-gray-100 text-gray-700 rounded-3xl hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <HugeiconsIcon icon={Add01Icon} size={20} />
               </button>
@@ -259,7 +259,7 @@ function RouteComponent() {
 
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="flex items-center gap-x-2 px-4 py-2 bg-white border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors"
+            className="flex items-center gap-x-2 px-4 py-2 bg-white border border-red-200 text-red-600 rounded-3xl hover:bg-red-50 transition-colors"
           >
             <HugeiconsIcon icon={Delete02Icon} size={18} />
             Delete Form
@@ -307,14 +307,14 @@ function RouteComponent() {
                     type="text"
                     value={deleteConfirmationText}
                     onChange={(e) => setDeleteConfirmationText(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                    className="w-full px-3 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
                   />
                 </div>
 
                 <div className="flex gap-x-3 justify-end">
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium"
+                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-3xl transition-colors font-medium"
                   >
                     Cancel
                   </button>
@@ -324,7 +324,7 @@ function RouteComponent() {
                       deleteConfirmationText !== bucket.name ||
                       deleteMutation.isPending
                     }
-                    className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-red-600 text-white rounded-3xl hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {deleteMutation.isPending ? "Deleting..." : "Delete Form"}
                   </button>
