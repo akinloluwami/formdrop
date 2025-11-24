@@ -10,6 +10,8 @@ import {
   useResendVerification,
 } from "@/hooks/use-recipient-mutations";
 
+import { Button } from "@/components/button";
+
 interface Recipient {
   id: string;
   email: string;
@@ -140,14 +142,16 @@ export function EmailRecipientsList({
               )}
             </AnimatePresence>
           </div>
-          <button
+          <Button
             type="submit"
             disabled={addRecipientMutation.isPending}
-            className="px-4 py-3 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-3xl hover:bg-gray-50 hover:text-gray-900 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="secondary"
+            size="md"
+            className="rounded-3xl"
+            icon={<HugeiconsIcon icon={Add01Icon} size={16} />}
           >
-            <HugeiconsIcon icon={Add01Icon} size={16} />
             Add Recipient
-          </button>
+          </Button>
         </form>
       </div>
     </div>
