@@ -1,10 +1,13 @@
 import React from "react";
+import { useIsPro } from "@/hooks/use-is-pro";
+import { Tooltip } from "@/components/tooltip";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg" | "xl";
   isLoading?: boolean;
   icon?: React.ReactNode;
+  requiresPro?: boolean;
 }
 
 export function Button({
@@ -15,8 +18,12 @@ export function Button({
   icon,
   children,
   disabled,
+  requiresPro,
   ...props
 }: ButtonProps) {
+  const { isPro } = useIsPro();
+  const isDisabledByPro = requiresPro && !isPro;
+
   const baseStyles =
     "inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
 
@@ -43,10 +50,10 @@ export function Button({
   const variantStyles = variants[variant];
   const sizeStyles = sizes[size];
 
-  return (
+  const buttonContent = (
     <button
       className={`${baseStyles} ${variantStyles} ${sizeStyles} ${className}`}
-      disabled={isLoading || disabled}
+      disabled={isLoading || disabled || isDisabledByPro}
       {...props}
     >
       {isLoading && (
@@ -75,4 +82,14 @@ export function Button({
       {children}
     </button>
   );
+
+  if (isDisabledByPro) {
+    return (
+      <Tooltip content="Upgrade to Pro to use this feature">
+        {buttonContent}
+      </Tooltip>
+    );
+  }
+
+  return buttonContent;
 }
