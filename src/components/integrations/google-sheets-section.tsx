@@ -12,6 +12,7 @@ import {
 import { useIntegrationsStore } from "@/stores/integrations-store";
 import { motion, AnimatePresence } from "motion/react";
 import { useFlag } from "@flagswift/react-client";
+import { Button } from "@/components/button";
 
 interface GoogleSheetsSectionProps {
   bucketId: string;
@@ -116,13 +117,15 @@ export function GoogleSheetsSection({
                       </a>
                     )}
 
-                    <button
+                    <Button
                       onClick={handleStartDisconnect}
                       disabled={disconnectMutation.isPending}
-                      className="px-3 py-2 text-xs font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-colors disabled:opacity-50"
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl"
                     >
                       Disconnect
-                    </button>
+                    </Button>
                   </motion.div>
                 ) : (
                   <motion.div
@@ -136,22 +139,22 @@ export function GoogleSheetsSection({
                     <span className="text-xs text-gray-600 font-medium whitespace-nowrap">
                       Confirm Disconnect?
                     </span>
-                    <button
+                    <Button
                       onClick={handleConfirmDisconnect}
                       disabled={disconnectMutation.isPending}
-                      className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
-                      title="Confirm disconnect"
-                    >
-                      <HugeiconsIcon icon={Tick02Icon} size={16} />
-                    </button>
-                    <button
+                      variant="ghost"
+                      size="sm"
+                      className="text-green-600 hover:text-green-700 hover:bg-green-50 p-2 h-auto"
+                      icon={<HugeiconsIcon icon={Tick02Icon} size={16} />}
+                    />
+                    <Button
                       onClick={handleCancelDisconnect}
                       disabled={disconnectMutation.isPending}
-                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-                      title="Cancel"
-                    >
-                      <HugeiconsIcon icon={Cancel01Icon} size={16} />
-                    </button>
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 h-auto"
+                      icon={<HugeiconsIcon icon={Cancel01Icon} size={16} />}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
