@@ -33,6 +33,7 @@ import { Route as ApiApiKeysRouteImport } from './routes/api/api-keys'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
 import { Route as AppFormsIndexRouteImport } from './routes/app/forms/index'
 import { Route as AppFormsIdRouteImport } from './routes/app/forms/$id'
+import { Route as ApiUserSettingsRouteImport } from './routes/api/user/settings'
 import { Route as ApiBucketsBucketIdRouteImport } from './routes/api/buckets/$bucketId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppFormsIdSubmissionsRouteImport } from './routes/app/forms/$id/submissions'
@@ -177,6 +178,11 @@ const AppFormsIdRoute = AppFormsIdRouteImport.update({
   id: '/forms/$id',
   path: '/forms/$id',
   getParentRoute: () => AppRoute,
+} as any)
+const ApiUserSettingsRoute = ApiUserSettingsRouteImport.update({
+  id: '/api/user/settings',
+  path: '/api/user/settings',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBucketsBucketIdRoute = ApiBucketsBucketIdRouteImport.update({
   id: '/$bucketId',
@@ -341,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/docs/': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
+  '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
@@ -390,6 +397,7 @@ export interface FileRoutesByTo {
   '/docs': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
+  '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
@@ -441,6 +449,7 @@ export interface FileRoutesById {
   '/docs/': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
+  '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms/': typeof AppFormsIndexRoute
   '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
@@ -493,6 +502,7 @@ export interface FileRouteTypes {
     | '/docs/'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
+    | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms'
     | '/api/buckets/$bucketId/analytics'
@@ -542,6 +552,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
+    | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms'
     | '/api/buckets/$bucketId/analytics'
@@ -592,6 +603,7 @@ export interface FileRouteTypes {
     | '/docs/'
     | '/api/auth/$'
     | '/api/buckets/$bucketId'
+    | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms/'
     | '/api/buckets/$bucketId/analytics'
@@ -634,6 +646,7 @@ export interface RootRouteChildren {
   ApiSubscriptionRoute: typeof ApiSubscriptionRoute
   ApiVerifyRecipientRoute: typeof ApiVerifyRecipientRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiUserSettingsRoute: typeof ApiUserSettingsRoute
   ApiIntegrationsDiscordAuthorizeRoute: typeof ApiIntegrationsDiscordAuthorizeRoute
   ApiIntegrationsDiscordCallbackRoute: typeof ApiIntegrationsDiscordCallbackRoute
   ApiIntegrationsGoogleSheetsAuthorizeRoute: typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
@@ -814,6 +827,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/forms/$id'
       preLoaderRoute: typeof AppFormsIdRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/api/user/settings': {
+      id: '/api/user/settings'
+      path: '/api/user/settings'
+      fullPath: '/api/user/settings'
+      preLoaderRoute: typeof ApiUserSettingsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/buckets/$bucketId': {
       id: '/api/buckets/$bucketId'
@@ -1138,6 +1158,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSubscriptionRoute: ApiSubscriptionRoute,
   ApiVerifyRecipientRoute: ApiVerifyRecipientRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiUserSettingsRoute: ApiUserSettingsRoute,
   ApiIntegrationsDiscordAuthorizeRoute: ApiIntegrationsDiscordAuthorizeRoute,
   ApiIntegrationsDiscordCallbackRoute: ApiIntegrationsDiscordCallbackRoute,
   ApiIntegrationsGoogleSheetsAuthorizeRoute:
