@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { buckets } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
+import { refreshGoogleSheetsToken } from "@/lib/google-sheets";
 
 export const Route = createFileRoute(
   "/api/integrations/google-sheets/spreadsheets",
@@ -56,8 +57,35 @@ export const Route = createFileRoute(
             );
           }
 
-          // TODO: Implement token refresh if expired
-          const accessToken = bucket.googleSheetsAccessToken;
+          // Check if token is expired or about to expire (within 5 minutes)
+          let accessToken = bucket.googleSheetsAccessToken;
+          const isExpired =
+            bucket.googleSheetsTokenExpiry &&
+            new Date(bucket.googleSheetsTokenExpiry).getTime() - 5 * 60 * 1000 <
+              Date.now();
+
+          if (isExpired && bucket.googleSheetsRefreshToken) {
+            try {
+              const { accessToken: newAccessToken, expiresIn } =
+                await refreshGoogleSheetsToken(bucket.googleSheetsRefreshToken);
+
+              accessToken = newAccessToken;
+              const newExpiry = new Date(Date.now() + expiresIn * 1000);
+
+              // Update bucket with new token
+              await db
+                .update(buckets)
+                .set({
+                  googleSheetsAccessToken: newAccessToken,
+                  googleSheetsTokenExpiry: newExpiry,
+                })
+                .where(eq(buckets.id, bucketId));
+            } catch (error) {
+              console.error("Failed to refresh Google Sheets token:", error);
+              // Continue with old token if refresh fails, or return error
+              // For now we'll try to proceed, but it will likely fail at the API call
+            }
+          }
 
           // List spreadsheets from Google Drive
           const response = await fetch(
