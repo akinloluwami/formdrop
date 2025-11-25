@@ -1,6 +1,7 @@
 import { db } from "../db";
 import { buckets } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { recordIntegrationUsage } from "./recordIntegrationUsage";
 
 interface SyncGoogleSheetsParams {
   spreadsheetId: string;
@@ -285,8 +286,12 @@ export async function syncGoogleSheets({
       `Successfully synced submission ${submissionId} to Google Sheets`,
     );
 
-    // TODO: Record integration sync event/usage
-    // Similar to recordNotificationUsage but for integrations
+    await recordIntegrationUsage({
+      userId,
+      bucketId,
+      submissionId,
+      integration: "google-sheets",
+    });
 
     return { success: true };
   } catch (error: any) {
