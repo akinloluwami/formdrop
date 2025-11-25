@@ -8,9 +8,7 @@ export function CodePreview() {
   const [selectedTab, setSelectedTab] = useState<"html" | "fetch">("html");
 
   const htmlCodeExample = `<form
-  action="https://api.formdrop.co/collect" 
-  method="POST" name="contact-form">
-  <input type="hidden" name="x-api-key" value="your-public-key" />
+  action="https://api.formdrop.co/collect?key=your-public-key"
   <input type="text" name="name" placeholder="Your Name" required />
   <input type="email" name="email" placeholder="Your Email" required />
   <button type="submit">Submit</button>
@@ -49,25 +47,43 @@ export function CodePreview() {
             <div className="flex items-center gap-x-2 bg-white p-1 rounded-xl border border-gray-200">
               <button
                 onClick={() => setSelectedTab("html")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedTab === "html"
-                    ? "bg-orange-50 text-orange-700 ring-1 ring-orange-200"
-                    : "text-gray-500 hover:bg-gray-50"
+                    ? "text-orange-700"
+                    : "text-gray-500 hover:text-gray-900"
                 }`}
               >
-                <HugeiconsIcon icon={Html5Icon} size={20} />
-                HTML
+                {selectedTab === "html" && (
+                  <motion.div
+                    layoutId="active-tab"
+                    className="absolute inset-0 bg-orange-100 ring-1 ring-orange-200 rounded-lg"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <HugeiconsIcon icon={Html5Icon} size={20} />
+                  HTML
+                </span>
               </button>
               <button
                 onClick={() => setSelectedTab("fetch")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedTab === "fetch"
-                    ? "bg-yellow-50 text-yellow-700 ring-1 ring-yellow-200"
-                    : "text-gray-500 hover:bg-gray-50"
+                    ? "text-yellow-700"
+                    : "text-gray-500 hover:text-gray-900"
                 }`}
               >
-                <HugeiconsIcon icon={JavaScriptIcon} size={20} />
-                Fetch
+                {selectedTab === "fetch" && (
+                  <motion.div
+                    layoutId="active-tab"
+                    className="absolute inset-0 bg-yellow-100 ring-1 ring-yellow-200 rounded-lg"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <HugeiconsIcon icon={JavaScriptIcon} size={20} />
+                  Fetch
+                </span>
               </button>
             </div>
             <div className="flex gap-1.5">
