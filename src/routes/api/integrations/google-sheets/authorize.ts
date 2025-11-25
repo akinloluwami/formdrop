@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { buckets } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
+import { isUserPro } from "@/lib/subscription-check";
 
 export const Route = createFileRoute(
   "/api/integrations/google-sheets/authorize",
@@ -26,6 +27,13 @@ export const Route = createFileRoute(
             return Response.json(
               { error: "bucketId is required" },
               { status: 400 },
+            );
+          }
+
+          const isPro = await isUserPro(session.user.id);
+          if (!isPro) {
+            return Response.redirect(
+              `${url.origin}/app/forms/${bucketId}/integrations?error=requires_pro`,
             );
           }
 
