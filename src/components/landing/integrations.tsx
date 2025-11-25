@@ -49,10 +49,11 @@ export function Integrations() {
             </p>
             <div className="space-y-4">
               {[
-                "Real-time notifications in Slack & Discord",
+                "Unlimited Forms",
+                "Unlimited Submissions",
+                "Real-time notifications via Email, Slack & Discord",
                 "Auto-sync to Google Sheets",
-                "Email auto-responders",
-                "Webhooks for custom integrations",
+                "Powerful analytics and reporting",
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
