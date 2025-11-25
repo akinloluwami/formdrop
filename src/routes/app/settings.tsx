@@ -7,7 +7,10 @@ import {
   CreditCardIcon,
 } from "@hugeicons/core-free-icons";
 import { useSession } from "@/lib/auth-client";
-import { Button } from "@/components/button";
+import { useQuery } from "@tanstack/react-query";
+import { ProfileSettings } from "@/components/settings/profile-settings";
+import { PasswordSettings } from "@/components/settings/password-settings";
+import { BillingSettings } from "@/components/settings/billing-settings";
 
 type Tab = "profile" | "password" | "billing";
 
@@ -31,11 +34,32 @@ function SettingsPage() {
     navigate({ search: { tab } });
   };
 
+  const { data: settings, isLoading: isSettingsLoading } = useQuery({
+    queryKey: ["user-settings"],
+    queryFn: async () => {
+      const res = await fetch("/api/user/settings");
+      if (!res.ok) throw new Error("Failed to fetch settings");
+      return res.json();
+    },
+  });
+
   const tabs = [
     { id: "profile", label: "Profile", icon: UserIcon },
     { id: "password", label: "Password", icon: LockKeyIcon },
     { id: "billing", label: "Billing", icon: CreditCardIcon },
   ] as const;
+
+  if (isSettingsLoading) {
+    return (
+      <div className="max-w-6xl mx-auto animate-pulse">
+        <div className="h-8 w-32 bg-gray-200 rounded mb-8"></div>
+        <div className="flex gap-8">
+          <div className="w-64 h-64 bg-gray-200 rounded-3xl"></div>
+          <div className="flex-1 h-96 bg-gray-200 rounded-3xl"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -87,171 +111,14 @@ function SettingsPage() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === "profile" && (
-                <div className="bg-white rounded-3xl border border-gray-200 p-6 md:p-8">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                    Profile Information
-                  </h2>
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-6">
-                      <div className="h-20 w-20 rounded-full bg-accent/10 flex items-center justify-center text-accent text-2xl font-medium">
-                        {session?.user?.name?.charAt(0).toUpperCase() ||
-                          session?.user?.email?.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <Button variant="outline" size="md">
-                          Change Avatar
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Full Name
-                        </label>
-                        <input
-                          type="text"
-                          defaultValue={session?.user?.name || ""}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Email Address
-                        </label>
-                        <input
-                          type="email"
-                          defaultValue={session?.user?.email || ""}
-                          disabled
-                          className="w-full px-4 py-3 border border-gray-200 rounded-3xl bg-gray-50 text-gray-500 cursor-not-allowed"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="pt-4 flex justify-end">
-                      <Button
-                        variant="primary"
-                        size="lg"
-                        className="shadow-lg shadow-accent/20"
-                      >
-                        Save Changes
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {activeTab === "profile" && <ProfileSettings session={session} />}
 
               {activeTab === "password" && (
-                <div className="bg-white rounded-3xl border border-gray-200 p-6 md:p-8">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                    Change Password
-                  </h2>
-                  <div className="space-y-6 max-w-md">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Current Password
-                      </label>
-                      <input
-                        type="password"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        New Password
-                      </label>
-                      <input
-                        type="password"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Confirm New Password
-                      </label>
-                      <input
-                        type="password"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
-                      />
-                    </div>
-
-                    <div className="pt-4">
-                      <Button
-                        variant="primary"
-                        size="lg"
-                        className="shadow-lg shadow-accent/20"
-                      >
-                        Update Password
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <PasswordSettings hasPassword={settings?.hasPassword} />
               )}
 
               {activeTab === "billing" && (
-                <div className="bg-white rounded-3xl border border-gray-200 p-6 md:p-8">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                    Billing & Plans
-                  </h2>
-
-                  <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200 mb-8">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">
-                          Current Plan
-                        </p>
-                        <h3 className="text-xl font-bold text-gray-900">
-                          Free Plan
-                        </h3>
-                      </div>
-                      <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                        Active
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                      <div className="bg-accent h-2 rounded-full w-[45%]"></div>
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      450 / 1,000 submissions used this month
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-medium text-gray-900">
-                      Payment Methods
-                    </h3>
-                    <div className="p-4 border border-gray-200 rounded-3xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-6 bg-gray-200 rounded flex items-center justify-center text-xs font-bold text-gray-500">
-                          VISA
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            •••• •••• •••• 4242
-                          </p>
-                          <p className="text-xs text-gray-500">Expires 12/24</p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-500 hover:text-gray-900"
-                      >
-                        Edit
-                      </Button>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full border-dashed border-gray-300 hover:border-gray-400 text-gray-600"
-                      icon={<HugeiconsIcon icon={CreditCardIcon} size={18} />}
-                    >
-                      Add Payment Method
-                    </Button>
-                  </div>
-                </div>
+                <BillingSettings settings={settings} />
               )}
             </motion.div>
           </AnimatePresence>
