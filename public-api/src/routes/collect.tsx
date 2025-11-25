@@ -93,16 +93,43 @@ export const CollectRoute = () => (
           .set({ lastUsedAt: new Date() })
           .where(eq(apiKeys.id, key.id));
 
-        const { bucket: bucketName, data } = req.body as {
-          bucket: string;
-          data: Record<string, any>;
-        };
+        const body = (req.body || {}) as Record<string, any>;
+        const url = new URL(req.url || "", `http://${req.headers.host}`);
 
-        if (!bucketName || !data) {
+        // Try to get bucket from body or query params
+        // Support:
+        // 1. JSON: { bucket: "name", data: { ... } }
+        // 2. Form: _bucket="name" or bucket="name" in body
+        // 3. Query: ?bucket=name
+        let bucketName =
+          body.bucket || body._bucket || url.searchParams.get("bucket");
+
+        let submissionData = body.data;
+
+        // If data is not explicitly nested (like in JSON), assume the whole body is data
+        if (!submissionData) {
+          // Remove reserved keys
+          const { bucket, _bucket, ...rest } = body;
+          submissionData = rest;
+        }
+
+        if (!bucketName) {
           return (
             <Response
               status={400}
-              json={{ error: "bucket and data are required" }}
+              json={{
+                error:
+                  "Bucket name is required. Provide it via 'bucket' field, '_bucket' field, or 'bucket' query parameter.",
+              }}
+            />
+          );
+        }
+
+        if (!submissionData) {
+          return (
+            <Response
+              status={400}
+              json={{ error: "No submission data found" }}
             />
           );
         }
@@ -150,7 +177,7 @@ export const CollectRoute = () => (
           .insert(submissions)
           .values({
             bucketId: bucket.id,
-            payload: data,
+            payload: submissionData,
             ip: (req.headers["x-forwarded-for"] as string) || req.ip,
             userAgent: req.headers["user-agent"] as string,
           })
@@ -192,7 +219,7 @@ export const CollectRoute = () => (
                 await sendEmailNotification({
                   recipientEmail: email,
                   bucketName,
-                  data,
+                  data: submissionData,
                   userId: key.userId,
                   bucketId: bucket.id,
                   submissionId: submission.id,
@@ -215,7 +242,7 @@ export const CollectRoute = () => (
               await sendSlackNotification({
                 webhookUrl: bucket.slackWebhookUrl!,
                 bucketName,
-                data,
+                data: submissionData,
                 submissionId: submission.id,
                 userId: key.userId,
                 bucketId: bucket.id,
@@ -235,7 +262,7 @@ export const CollectRoute = () => (
               await sendDiscordNotification({
                 webhookUrl: bucket.discordWebhookUrl!,
                 bucketName,
-                data,
+                data: submissionData,
                 submissionId: submission.id,
                 userId: key.userId,
                 bucketId: bucket.id,
@@ -262,7 +289,7 @@ export const CollectRoute = () => (
                 accessToken: bucket.googleSheetsAccessToken!,
                 refreshToken: bucket.googleSheetsRefreshToken,
                 tokenExpiry: bucket.googleSheetsTokenExpiry,
-                submissionData: data,
+                submissionData,
                 submissionId: submission.id,
                 bucketId: bucket.id,
                 userId: key.userId,
