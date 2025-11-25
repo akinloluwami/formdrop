@@ -15,7 +15,9 @@ export async function refreshGoogleSheetsToken(refreshToken: string) {
   const data = await response.json();
 
   if (data.error) {
-    throw new Error(`Failed to refresh token: ${data.error_description || data.error}`);
+    throw new Error(
+      `Failed to refresh token: ${data.error_description || data.error}`,
+    );
   }
 
   return {
