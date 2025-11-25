@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { Resend } from "resend";
 import { RecipientVerificationEmail } from "@/emails/RecipientVerificationEmail";
 import crypto from "crypto";
+import { isUserPro } from "@/lib/subscription-check";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -97,6 +98,14 @@ export const Route = createFileRoute("/api/buckets/$bucketId/recipients")({
           const userId = session.user.id;
           const { bucketId } = params;
           const { email } = await request.json();
+
+          const isPro = await isUserPro(userId);
+          if (!isPro) {
+            return Response.json(
+              { error: "Pro subscription required" },
+              { status: 403 },
+            );
+          }
 
           if (!email) {
             return Response.json(
