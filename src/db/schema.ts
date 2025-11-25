@@ -25,6 +25,7 @@ export const eventTypeEnum = pgEnum("event_type", [
   "submission_deleted",
   "notification_sent",
   "api_key_generated",
+  "integration_synced",
 ]);
 
 export const apiKeyTypeEnum = pgEnum("api_key_type", ["public", "private"]);
