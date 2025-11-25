@@ -98,7 +98,6 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navbar */}
       <div className="p-3 sticky top-0 z-50">
         <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-full flex items-center justify-between px-6 py-3 max-w-5xl mx-auto">
           <div className="flex items-center gap-2">
@@ -109,13 +108,13 @@ function RouteComponent() {
           </div>
           <div className="hidden md:flex gap-x-8">
             {links.map((link) => (
-              <a
-                key={link.href}
+              <Link
+                to={link.href}
                 href={link.href}
                 className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
           <Link
@@ -127,9 +126,7 @@ function RouteComponent() {
         </div>
       </div>
 
-      {/* Hero Section */}
       <div className="max-w-5xl mx-auto mt-20 px-4 text-center relative">
-        {/* Background Pattern */}
         <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[16px_16px] mask-[radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-50"></div>
 
         <motion.div
