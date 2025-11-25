@@ -33,6 +33,29 @@ function PricingPage() {
       : []),
   ];
 
+  const freeFeatures = [
+    { label: "Unlimited Submissions", included: true },
+    { label: "Unlimited Forms", included: true },
+    { label: "Email Notifications", included: true },
+    { label: "Custom Redirects", included: true },
+    { label: "Integrations", included: false },
+    { label: "Basic Analytics", included: true },
+    { label: "Slack & Discord Notifications", included: false },
+    { label: "1,000 Row Exports", included: true },
+  ];
+
+  const proFeatures = [
+    "Unlimited submissions",
+    "Unlimited Forms",
+    "Email, Slack & Discord Notifications",
+    "Integrations",
+    "Custom Redirects",
+    "Advanced Analytics",
+    "Unlimited Row Exports",
+    "Monthly & Weekly Reports",
+    "Priority Support",
+  ];
+
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
       {/* Navbar */}
@@ -63,7 +86,6 @@ function PricingPage() {
           </Link>
         </div>
       </div>
-
       <div className="max-w-5xl mx-auto px-6 py-20">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
@@ -117,26 +139,20 @@ function PricingPage() {
             </Link>
 
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <span className="text-gray-600">100 submissions/month</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <span className="text-gray-600">1 Form</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                <span className="text-gray-600">Email Notifications</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <X className="w-5 h-5 text-gray-300 shrink-0 mt-0.5" />
-                <span className="text-gray-400">Custom Redirects</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <X className="w-5 h-5 text-gray-300 shrink-0 mt-0.5" />
-                <span className="text-gray-400">Webhooks</span>
-              </li>
+              {freeFeatures.map((feature) => (
+                <li key={feature.label} className="flex items-start gap-3">
+                  {feature.included ? (
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                  ) : (
+                    <X className="w-5 h-5 text-gray-300 shrink-0 mt-0.5" />
+                  )}
+                  <span
+                    className={`text-gray-600 ${!feature.included && "line-through"}`}
+                  >
+                    {feature.label}
+                  </span>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -167,88 +183,19 @@ function PricingPage() {
             </Link>
 
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3 h-3 text-accent" />
-                </div>
-                <span className="text-gray-200">Unlimited submissions</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3 h-3 text-accent" />
-                </div>
-                <span className="text-gray-200">Unlimited Forms</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3 h-3 text-accent" />
-                </div>
-                <span className="text-gray-200">
-                  Email, Slack & Discord Notifications
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3 h-3 text-accent" />
-                </div>
-                <span className="text-gray-200">Custom Redirects</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3 h-3 text-accent" />
-                </div>
-                <span className="text-gray-200">Webhooks & Integrations</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3 h-3 text-accent" />
-                </div>
-                <span className="text-gray-200">Priority Support</span>
-              </li>
+              {proFeatures.map((feature) => (
+                <li key={feature} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 text-accent" />
+                  </div>
+                  <span className="text-gray-200">{feature}</span>
+                </li>
+              ))}
             </ul>
-          </div>
-        </div>
-
-        {/* FAQ Section */}
-        <div className="mt-32 max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">
-                Can I cancel anytime?
-              </h3>
-              <p className="text-gray-600">
-                Yes, you can cancel your subscription at any time. You will
-                continue to have access to Pro features until the end of your
-                billing period.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">
-                What happens if I exceed the free limit?
-              </h3>
-              <p className="text-gray-600">
-                We'll notify you when you're close to the limit. If you exceed
-                it, we'll continue to collect submissions but you'll need to
-                upgrade to view them.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">
-                Do you offer refunds?
-              </h3>
-              <p className="text-gray-600">
-                We offer a 14-day money-back guarantee if you're not satisfied
-                with FormDrop.
-              </p>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="border-t border-gray-100 py-12 bg-white mt-20">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
@@ -257,20 +204,7 @@ function PricingPage() {
             </div>
             <span className="font-bold text-gray-900">FormDrop</span>
           </div>
-          <div className="flex gap-8 text-sm text-gray-500">
-            <Link to="/pricing" className="hover:text-gray-900">
-              Pricing
-            </Link>
-            <a href="/docs" className="hover:text-gray-900">
-              Documentation
-            </a>
-            <a href="/terms" className="hover:text-gray-900">
-              Terms
-            </a>
-            <a href="/privacy" className="hover:text-gray-900">
-              Privacy
-            </a>
-          </div>
+
           <div className="text-sm text-gray-400">
             © {new Date().getFullYear()} FormDrop. All rights reserved.
           </div>
