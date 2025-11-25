@@ -71,6 +71,13 @@
       "when": 1763955049922,
       "tag": "0009_eager_boomerang",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1764053141645,
+      "tag": "0010_confused_zodiak",
+      "breakpoints": true
     }
   ]
 }
