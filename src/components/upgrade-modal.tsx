@@ -17,7 +17,6 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
 
   const benefits = [
     "Unlimited forms",
-    "Unlimited submissions",
     "Form folders",
     "Advanced analytics",
     "Powerful integrations",
