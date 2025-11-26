@@ -31,19 +31,6 @@ export const Route = createFileRoute("/api/api-keys")({
             .where(eq(apiKeys.userId, userId))
             .orderBy(desc(apiKeys.createdAt));
 
-          // Auto-create a key if none exist
-          if (userApiKeys.length === 0) {
-            const [newKey] = await db
-              .insert(apiKeys)
-              .values({
-                userId,
-                key: generateApiKey(),
-                name: "Default Key",
-              })
-              .returning();
-            userApiKeys = [newKey];
-          }
-
           return Response.json({
             keys: userApiKeys,
           });
