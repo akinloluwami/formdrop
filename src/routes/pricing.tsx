@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import { Zap, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { motion } from "motion/react";
+import { Navbar } from "@/components/landing/navbar";
 
 export const Route = createFileRoute("/pricing")({
   component: PricingPage,
@@ -12,26 +13,6 @@ export const Route = createFileRoute("/pricing")({
 function PricingPage() {
   const { data: session } = authClient.useSession();
   const [isAnnual, setIsAnnual] = useState(true);
-
-  const links = [
-    {
-      href: "/pricing",
-      label: "Pricing",
-    },
-    {
-      href: "/docs",
-      label: "Docs",
-    },
-    // Only show Login if not logged in
-    ...(!session
-      ? [
-          {
-            href: "/login",
-            label: "Login",
-          },
-        ]
-      : []),
-  ];
 
   const freeFeatures = [
     { label: "Unlimited Submissions", included: true },
@@ -58,34 +39,7 @@ function PricingPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
-      {/* Navbar */}
-      <div className="p-3 sticky top-0 z-50">
-        <div className="bg-white/80 backdrop-blur-md border border-gray-100 rounded-full flex items-center justify-between px-6 py-3 max-w-5xl mx-auto shadow-sm">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white">
-              <Zap size={18} fill="currentColor" />
-            </div>
-            <h2 className="text-xl font-bold tracking-tight">FormDrop</h2>
-          </Link>
-          <div className="hidden md:flex gap-x-8">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <Link
-            to={session ? "/app/forms" : "/signup"}
-            className="rounded-full bg-gray-900 text-white px-5 py-2.5 text-sm font-medium hover:bg-gray-800 transition-colors"
-          >
-            {session ? "Dashboard" : "Get Started"}
-          </Link>
-        </div>
-      </div>
+      <Navbar />
       <div className="max-w-5xl mx-auto px-6 py-20">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
@@ -199,9 +153,7 @@ function PricingPage() {
       <footer className="border-t border-gray-100 py-12 bg-white mt-20">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-accent rounded-md flex items-center justify-center text-white">
-              <Zap size={14} fill="currentColor" />
-            </div>
+            <img src="/purple_icon.svg" alt="FormDrop Logo" className="w-10" />
             <span className="font-bold text-gray-900">FormDrop</span>
           </div>
 
