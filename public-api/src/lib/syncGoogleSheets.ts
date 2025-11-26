@@ -1,5 +1,5 @@
 import { db } from "../db";
-import { buckets } from "../db/schema";
+import { forms } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { recordIntegrationUsage } from "./recordIntegrationUsage";
 
@@ -11,9 +11,9 @@ interface SyncGoogleSheetsParams {
   tokenExpiry?: Date | null;
   submissionData: Record<string, any>;
   submissionId: string;
-  bucketId: string;
+  formId: string;
   userId: string;
-  bucketName?: string;
+  formName?: string;
 }
 
 interface TokenRefreshResponse {
@@ -27,7 +27,7 @@ interface TokenRefreshResponse {
  */
 async function refreshAccessToken(
   refreshToken: string,
-  bucketId: string,
+  formId: string,
 ): Promise<string> {
   const response = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
@@ -53,14 +53,14 @@ async function refreshAccessToken(
   const expiresIn = data.expires_in;
   const newTokenExpiry = new Date(Date.now() + expiresIn * 1000);
 
-  // Update bucket with new token
+  // Update form with new token
   await db
-    .update(buckets)
+    .update(forms)
     .set({
       googleSheetsAccessToken: newAccessToken,
       googleSheetsTokenExpiry: newTokenExpiry,
     })
-    .where(eq(buckets.id, bucketId));
+    .where(eq(forms.id, formId));
 
   return newAccessToken;
 }
@@ -72,7 +72,7 @@ async function getValidAccessToken(
   accessToken: string,
   refreshToken: string | null | undefined,
   tokenExpiry: Date | null | undefined,
-  bucketId: string,
+  formId: string,
 ): Promise<string> {
   // Check if token is expired or about to expire (within 5 minutes)
   const now = new Date();
@@ -83,7 +83,7 @@ async function getValidAccessToken(
       throw new Error("Access token expired and no refresh token available");
     }
     console.log("Access token expired, refreshing...");
-    return await refreshAccessToken(refreshToken, bucketId);
+    return await refreshAccessToken(refreshToken, formId);
   }
 
   return accessToken;
@@ -182,9 +182,9 @@ export async function syncGoogleSheets({
   tokenExpiry,
   submissionData,
   submissionId,
-  bucketId,
+  formId,
   userId,
-  bucketName,
+  formName,
 }: SyncGoogleSheetsParams) {
   try {
     // Get valid access token (refresh if needed)
@@ -192,7 +192,7 @@ export async function syncGoogleSheets({
       accessToken,
       refreshToken,
       tokenExpiry,
-      bucketId,
+      formId,
     );
 
     // Get spreadsheet info to find sheet name
@@ -288,7 +288,7 @@ export async function syncGoogleSheets({
 
     await recordIntegrationUsage({
       userId,
-      bucketId,
+      formId,
       submissionId,
       integration: "google-sheets",
     });

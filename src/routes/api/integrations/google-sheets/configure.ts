@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets } from "@/db/schema";
+import { forms } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
@@ -20,54 +20,51 @@ export const Route = createFileRoute(
           }
 
           const body = await request.json();
-          const { bucketId, spreadsheetId, spreadsheetName } = body;
+          const { formId, spreadsheetId, spreadsheetName } = body;
 
-          if (!bucketId || !spreadsheetId || !spreadsheetName) {
+          if (!formId || !spreadsheetId || !spreadsheetName) {
             return Response.json(
               {
                 error:
-                  "bucketId, spreadsheetId, and spreadsheetName are required",
+                  "formId, spreadsheetId, and spreadsheetName are required",
               },
               { status: 400 },
             );
           }
 
-          // Verify bucket belongs to user
-          const [bucket] = await db
+          // Verify form belongs to user
+          const [form] = await db
             .select()
-            .from(buckets)
+            .from(forms)
             .where(
               and(
-                eq(buckets.id, bucketId),
-                eq(buckets.userId, session.user.id),
-                isNull(buckets.deletedAt),
+                eq(forms.id, formId),
+                eq(forms.userId, session.user.id),
+                isNull(forms.deletedAt),
               ),
             )
             .limit(1);
 
-          if (!bucket) {
-            return Response.json(
-              { error: "Bucket not found" },
-              { status: 404 },
-            );
+          if (!form) {
+            return Response.json({ error: "Form not found" }, { status: 404 });
           }
 
-          if (!bucket.googleSheetsAccessToken) {
+          if (!form.googleSheetsAccessToken) {
             return Response.json(
               { error: "Google Sheets not connected" },
               { status: 400 },
             );
           }
 
-          // Update bucket with spreadsheet info and enable integration
+          // Update form with spreadsheet info and enable integration
           await db
-            .update(buckets)
+            .update(forms)
             .set({
               googleSheetsSpreadsheetId: spreadsheetId,
               googleSheetsSpreadsheetName: spreadsheetName,
               googleSheetsEnabled: true,
             })
-            .where(eq(buckets.id, bucketId));
+            .where(eq(forms.id, formId));
 
           return Response.json({ success: true });
         } catch (error: any) {

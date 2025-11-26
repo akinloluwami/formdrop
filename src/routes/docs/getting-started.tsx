@@ -19,27 +19,23 @@ function GettingStarted() {
       </div>
 
       <div className="prose prose-gray max-w-none">
-        <h2 className="text-2xl font-bold mt-10 mb-4">
-          1. Get your API Key
-        </h2>
+        <h2 className="text-2xl font-bold mt-10 mb-4">1. Get your API Key</h2>
         <p>
-          Log in to your dashboard and navigate to the <strong>API Keys</strong> section.
-          You'll need your <strong>Public Key</strong> for the frontend code.
+          Log in to your dashboard and navigate to the <strong>API Keys</strong>{" "}
+          section. You'll need your <strong>Public Key</strong> for the frontend
+          code.
         </p>
 
         <h2 className="text-2xl font-bold mt-10 mb-4">
           2. Create a Form (Optional)
         </h2>
         <p>
-          You can create a form in the dashboard, or simply send a submission with a new <code>bucket</code> name.
-          If the form doesn't exist, we'll automatically create it for you.
+          You can create a form in the dashboard, or simply send a submission
+          with a new <code>form</code> name. If the form doesn't exist, we'll
+          automatically create it for you.
         </p>
 
-
-
-        <h2 className="text-2xl font-bold mt-10 mb-4">
-          3. Send a Submission
-        </h2>
+        <h2 className="text-2xl font-bold mt-10 mb-4">3. Send a Submission</h2>
         <p>
           You can submit data using a standard HTML form or send an API request.
         </p>
@@ -51,8 +47,8 @@ function GettingStarted() {
               value: "html",
               language: "html",
               code: `<form action="https://api.formdrop.co/collect?key=YOUR_PUBLIC_KEY" method="POST">
-  <!-- The bucket field must match your form name in the dashboard -->
-  <input type="hidden" name="bucket" value="Contact Us" />
+  <!-- The form field must match your form name in the dashboard -->
+  <input type="hidden" name="form" value="Contact Us" />
   
   <input type="email" name="email" placeholder="Email" required />
   <textarea name="message" placeholder="Message" required></textarea>
@@ -71,7 +67,7 @@ function GettingStarted() {
       'Authorization': 'Bearer YOUR_PUBLIC_KEY'
     },
     body: JSON.stringify({
-      bucket: "Contact Us",
+      form: "Contact Us",
       data: {
         email: "user@example.com",
         message: "Hello world"
@@ -90,7 +86,7 @@ function GettingStarted() {
               code: `<?php
 $url = 'https://api.formdrop.co/collect';
 $data = [
-    'bucket' => 'Contact Us',
+    'form' => 'Contact Us',
     'data' => [
         'email' => 'user@example.com',
         'message' => 'Hello world'
@@ -121,7 +117,7 @@ var_dump($result);
   -H "Authorization: Bearer YOUR_PUBLIC_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "bucket": "Contact Us",
+    "form": "Contact Us",
     "data": {
       "email": "user@example.com",
       "message": "Hello world"
@@ -131,10 +127,13 @@ var_dump($result);
           ]}
         />
 
-        <h2 className="text-2xl font-bold mt-10 mb-4">4. Check your Dashboard</h2>
+        <h2 className="text-2xl font-bold mt-10 mb-4">
+          4. Check your Dashboard
+        </h2>
         <p>
-          Go to the <strong>Forms</strong> section in your dashboard to view the submission.
-          You can also configure email, Slack, or Discord notifications for this form.
+          Go to the <strong>Forms</strong> section in your dashboard to view the
+          submission. You can also configure email, Slack, or Discord
+          notifications for this form.
         </p>
       </div>
     </div>

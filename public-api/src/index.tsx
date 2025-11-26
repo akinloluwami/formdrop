@@ -1,6 +1,6 @@
 import { App, RouteGroup, Middleware, serve } from "react-serve-js";
 import { CollectRoute } from "./routes/collect";
-import { BucketsRoutes } from "./routes/buckets";
+import { FormsRoutes } from "./routes/forms";
 import { SubmissionsRoutes } from "./routes/submissions";
 import { authMiddleware } from "./middleware/auth";
 
@@ -17,7 +17,7 @@ function Backend() {
 
       <RouteGroup prefix="/api">
         <Middleware use={authMiddleware} />
-        <BucketsRoutes />
+        <FormsRoutes />
         <SubmissionsRoutes />
       </RouteGroup>
     </App>

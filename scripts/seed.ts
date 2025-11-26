@@ -2,7 +2,7 @@ import { db } from "../src/db";
 import {
   user,
   account,
-  buckets,
+  forms,
   submissions,
   apiKeys,
   notifications,
@@ -34,7 +34,7 @@ async function seed() {
     await db.delete(apiKeys);
     await db.delete(notifications);
     await db.delete(submissions);
-    await db.delete(buckets);
+    await db.delete(forms);
     await db.delete(account);
     await db.delete(user);
 
@@ -110,50 +110,54 @@ async function seed() {
     console.log(`   User 1: ${user1Email}`);
     console.log(`   User 2: ${user2Email}`);
     // Create buckets for user 1
-    console.log("🪣 Creating buckets...");
-    const [contactBucket, newsletterBucket, feedbackBucket] = await db
-      .insert(buckets)
+    console.log("🪣 Creating forms...");
+    const [contactForm, newsletterForm, feedbackForm] = await db
+      .insert(forms)
       .values([
         {
           userId: user1Id,
           name: "Contact Form",
+          slug: "contact1",
           description: "Main website contact form submissions",
           allowedDomains: ["example.com", "www.example.com"],
         },
         {
           userId: user1Id,
           name: "Newsletter Signups",
+          slug: "newslet1",
           description: "Email newsletter subscription form",
           allowedDomains: ["example.com"],
         },
         {
           userId: user1Id,
           name: "Product Feedback",
+          slug: "feedbac1",
           description: "Customer feedback and feature requests",
           allowedDomains: [],
         },
       ])
       .returning();
 
-    // Create buckets for user 2
-    const [supportBucket] = await db
-      .insert(buckets)
+    // Create forms for user 2
+    const [supportForm] = await db
+      .insert(forms)
       .values([
         {
           userId: user2Id,
           name: "Support Tickets",
+          slug: "support1",
           description: "Customer support form submissions",
           allowedDomains: ["support.example.com"],
         },
       ])
       .returning();
 
-    console.log("✅ Created 4 buckets");
+    console.log("✅ Created 4 forms");
 
-    // Create submissions for contact bucket
+    // Create submissions for contact form
     console.log("📝 Creating submissions...");
     const contactSubmissions = Array.from({ length: 15 }, () => ({
-      bucketId: contactBucket.id,
+      formId: contactForm.id,
       payload: {
         name: faker.person.fullName(),
         email: faker.internet.email(),
@@ -167,7 +171,7 @@ async function seed() {
     }));
 
     const newsletterSubmissions = Array.from({ length: 25 }, () => ({
-      bucketId: newsletterBucket.id,
+      formId: newsletterForm.id,
       payload: {
         email: faker.internet.email(),
         name: faker.person.fullName(),
@@ -182,7 +186,7 @@ async function seed() {
     }));
 
     const feedbackSubmissions = Array.from({ length: 10 }, () => ({
-      bucketId: feedbackBucket.id,
+      formId: feedbackForm.id,
       payload: {
         rating: faker.number.int({ min: 1, max: 5 }),
         feedback: faker.lorem.paragraphs(1),
@@ -200,7 +204,7 @@ async function seed() {
     }));
 
     const supportSubmissions = Array.from({ length: 8 }, () => ({
-      bucketId: supportBucket.id,
+      formId: supportForm.id,
       payload: {
         name: faker.person.fullName(),
         email: faker.internet.email(),
@@ -240,20 +244,20 @@ async function seed() {
 
     const usageMap = new Map<
       string,
-      { userId: string; bucketId: string; period: string; count: number }
+      { userId: string; formId: string; period: string; count: number }
     >();
 
     for (const group of allSubmissions) {
       for (const sub of group.submissions) {
         const period = moment(sub.createdAt).format("YYYY-MM-DD");
-        const key = `${sub.bucketId}-${period}`;
+        const key = `${sub.formId}-${period}`;
 
         if (usageMap.has(key)) {
           usageMap.get(key)!.count++;
         } else {
           usageMap.set(key, {
             userId: group.userId,
-            bucketId: sub.bucketId,
+            formId: sub.formId,
             period,
             count: 1,
           });
@@ -266,25 +270,6 @@ async function seed() {
     }
 
     console.log(`✅ Created ${usageMap.size} usage records`);
-
-    // Create API keys
-    console.log("🔐 Creating API keys...");
-    const [publicApiKey, privateApiKey] = await db
-      .insert(apiKeys)
-      .values([
-        {
-          userId: user1Id,
-          key: generateApiKey("public"),
-          type: "public",
-          lastUsedAt: faker.date.recent({ days: 1 }),
-        },
-        {
-          userId: user1Id,
-          key: generateApiKey("private"),
-          type: "private",
-        },
-      ])
-      .returning();
 
     await db.insert(apiKeys).values([
       {
@@ -305,25 +290,25 @@ async function seed() {
     console.log("🔔 Creating notifications...");
     await db.insert(notifications).values([
       {
-        bucketId: contactBucket.id,
+        formId: contactForm.id,
         type: "email",
         target: "admin@example.com",
         enabled: "true",
       },
       {
-        bucketId: contactBucket.id,
+        formId: contactForm.id,
         type: "webhook",
         target: "https://hooks.example.com/contact",
         enabled: "true",
       },
       {
-        bucketId: newsletterBucket.id,
+        formId: newsletterForm.id,
         type: "email",
         target: "marketing@example.com",
         enabled: "true",
       },
       {
-        bucketId: supportBucket.id,
+        formId: supportForm.id,
         type: "webhook",
         target: "https://hooks.example.com/support",
         enabled: "false",
@@ -337,30 +322,30 @@ async function seed() {
     await db.insert(events).values([
       {
         userId: user1Id,
-        bucketId: contactBucket.id,
-        eventType: "bucket_created",
-        details: { bucketName: contactBucket.name },
+        formId: contactForm.id,
+        eventType: "form_created",
+        details: { formName: contactForm.name },
         createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       },
       {
         userId: user1Id,
-        bucketId: contactBucket.id,
+        formId: contactForm.id,
         eventType: "submission_created",
         details: { submissionCount: 15 },
         createdAt: faker.date.recent({ days: 7 }),
       },
       {
         userId: user1Id,
-        bucketId: null,
+        formId: null,
         eventType: "api_key_generated",
         details: { keyType: "public" },
         createdAt: faker.date.recent({ days: 5 }),
       },
       {
         userId: user2Id,
-        bucketId: supportBucket.id,
-        eventType: "bucket_created",
-        details: { bucketName: supportBucket.name },
+        formId: supportForm.id,
+        eventType: "form_created",
+        details: { formName: supportForm.name },
         createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
       },
     ]);
@@ -371,7 +356,7 @@ async function seed() {
     console.log("\n📋 Summary:");
     console.log(`  - User 1: ${user1Email} / password123`);
     console.log(`  - User 2: ${user2Email} / password123`);
-    console.log("  - 4 buckets");
+    console.log("  - 4 forms");
     console.log("  - 58 submissions");
     console.log("  - 4 API keys");
     console.log("  - 4 notifications");

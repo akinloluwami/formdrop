@@ -4,7 +4,7 @@ import { sql } from "drizzle-orm";
 
 interface RecordNotificationParams {
   userId: string;
-  bucketId: string;
+  formId: string;
   submissionId: string;
   period: string;
   type: "email" | "slack" | "discord";
@@ -13,7 +13,7 @@ interface RecordNotificationParams {
 
 export async function recordNotificationUsage({
   userId,
-  bucketId,
+  formId,
   submissionId,
   period,
   type,
@@ -23,7 +23,7 @@ export async function recordNotificationUsage({
     // Record notification event
     await db.insert(events).values({
       userId,
-      bucketId,
+      formId,
       eventType: "notification_sent",
       details: {
         type,
@@ -37,7 +37,7 @@ export async function recordNotificationUsage({
       .insert(notificationUsage)
       .values({
         userId,
-        bucketId,
+        formId,
         period,
         type,
         count: 1,
@@ -45,7 +45,7 @@ export async function recordNotificationUsage({
       .onConflictDoUpdate({
         target: [
           notificationUsage.userId,
-          notificationUsage.bucketId,
+          notificationUsage.formId,
           notificationUsage.period,
           notificationUsage.type,
         ],

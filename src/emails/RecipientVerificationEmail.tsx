@@ -11,37 +11,37 @@ import {
 } from "@react-email/components";
 
 interface RecipientVerificationEmailProps {
-  verificationUrl: string;
-  bucketName: string;
+  verificationLink: string;
+  formName: string;
 }
 
 export const RecipientVerificationEmail = ({
-  verificationUrl,
-  bucketName,
+  verificationLink,
+  formName,
 }: RecipientVerificationEmailProps) => (
   <Html>
     <Head />
     <Preview>
-      Verify your email to receive notifications from {bucketName}
+      Verify your email to receive notifications from {formName}
     </Preview>
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>FormDrop</Heading>
         <Text style={text}>
           You've been added to receive email notifications for submissions to{" "}
-          <strong>{bucketName}</strong>.
+          <strong>{formName}</strong>.
         </Text>
         <Text style={text}>
           To start receiving these notifications, please verify your email
           address by clicking the button below:
         </Text>
         <Section style={buttonContainer}>
-          <Link style={button} href={verificationUrl}>
+          <Link style={button} href={verificationLink}>
             Verify Email Address
           </Link>
         </Section>
         <Text style={text}>Or copy and paste this URL into your browser:</Text>
-        <Text style={link}>{verificationUrl}</Text>
+        <Text style={link}>{verificationLink}</Text>
         <Text style={footer}>
           This link will expire in 24 hours. If you didn't request to receive
           these notifications, you can safely ignore this email.

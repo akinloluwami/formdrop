@@ -6,17 +6,17 @@ import {
   RouteGroup,
 } from "react-serve-js";
 import { db } from "../db";
-import { buckets, submissions } from "../db/schema";
+import { forms, submissions } from "../db/schema";
 import { eq, and, desc, isNull } from "drizzle-orm";
 
 export const SubmissionsRoutes = () => (
-  <RouteGroup prefix="/:bucketId/submissions">
-    {/* Get submissions for a bucket */}
+  <RouteGroup prefix="/:formId/submissions">
+    {/* Get submissions for a form */}
     <Route path="/" method="GET">
       {async () => {
         const { params } = useRoute();
         const apiKey = useContext("apiKey");
-        const { bucketId } = params;
+        const { formId } = params;
 
         if (apiKey.type !== "private") {
           return (
@@ -27,29 +27,29 @@ export const SubmissionsRoutes = () => (
           );
         }
 
-        const [bucket] = await db
+        const [form] = await db
           .select()
-          .from(buckets)
+          .from(forms)
           .where(
             and(
-              eq(buckets.id, bucketId),
-              eq(buckets.userId, apiKey.userId),
-              isNull(buckets.deletedAt),
+              eq(forms.id, formId),
+              eq(forms.userId, apiKey.userId),
+              isNull(forms.deletedAt),
             ),
           )
           .limit(1);
 
-        if (!bucket) {
-          return <Response status={404} json={{ error: "Bucket not found" }} />;
+        if (!form) {
+          return <Response status={404} json={{ error: "Form not found" }} />;
         }
 
-        const bucketSubmissions = await db
+        const formSubmissions = await db
           .select()
           .from(submissions)
-          .where(eq(submissions.bucketId, bucketId))
+          .where(eq(submissions.formId, formId))
           .orderBy(desc(submissions.createdAt));
 
-        return <Response json={{ submissions: bucketSubmissions }} />;
+        return <Response json={{ submissions: formSubmissions }} />;
       }}
     </Route>
 
@@ -58,7 +58,7 @@ export const SubmissionsRoutes = () => (
       {async () => {
         const { params } = useRoute();
         const apiKey = useContext("apiKey");
-        const { bucketId, submissionId } = params;
+        const { formId, submissionId } = params;
 
         if (apiKey.type !== "private") {
           return (
@@ -71,20 +71,20 @@ export const SubmissionsRoutes = () => (
           );
         }
 
-        const [bucket] = await db
+        const [form] = await db
           .select()
-          .from(buckets)
+          .from(forms)
           .where(
             and(
-              eq(buckets.id, bucketId),
-              eq(buckets.userId, apiKey.userId),
-              isNull(buckets.deletedAt),
+              eq(forms.id, formId),
+              eq(forms.userId, apiKey.userId),
+              isNull(forms.deletedAt),
             ),
           )
           .limit(1);
 
-        if (!bucket) {
-          return <Response status={404} json={{ error: "Bucket not found" }} />;
+        if (!form) {
+          return <Response status={404} json={{ error: "Form not found" }} />;
         }
 
         await db
@@ -92,7 +92,7 @@ export const SubmissionsRoutes = () => (
           .where(
             and(
               eq(submissions.id, submissionId),
-              eq(submissions.bucketId, bucketId),
+              eq(submissions.formId, formId),
             ),
           );
 

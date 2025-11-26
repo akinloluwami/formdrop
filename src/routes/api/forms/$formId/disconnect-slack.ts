@@ -4,12 +4,16 @@ import { forms } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
-export const Route = createFileRoute(
-  "/api/integrations/google-sheets/disconnect",
-)({
+export const Route = createFileRoute("/api/forms/$formId/disconnect-slack")({
   server: {
     handlers: {
-      POST: async ({ request }: { request: Request }) => {
+      DELETE: async ({
+        request,
+        params,
+      }: {
+        request: Request;
+        params: { formId: string };
+      }) => {
         try {
           const session = await auth.api.getSession({
             headers: request.headers,
@@ -19,15 +23,8 @@ export const Route = createFileRoute(
             return Response.json({ error: "Unauthorized" }, { status: 401 });
           }
 
-          const body = await request.json();
-          const { formId } = body;
-
-          if (!formId) {
-            return Response.json(
-              { error: "formId is required" },
-              { status: 400 },
-            );
-          }
+          const userId = session.user.id;
+          const { formId } = params;
 
           // Verify form belongs to user
           const [form] = await db
@@ -36,7 +33,7 @@ export const Route = createFileRoute(
             .where(
               and(
                 eq(forms.id, formId),
-                eq(forms.userId, session.user.id),
+                eq(forms.userId, userId),
                 isNull(forms.deletedAt),
               ),
             )
@@ -46,17 +43,15 @@ export const Route = createFileRoute(
             return Response.json({ error: "Form not found" }, { status: 404 });
           }
 
-          // Clear Google Sheets integration data
+          // Clear Slack integration
           await db
             .update(forms)
             .set({
-              googleSheetsAccessToken: null,
-              googleSheetsRefreshToken: null,
-              googleSheetsTokenExpiry: null,
-              googleSheetsSpreadsheetId: null,
-              googleSheetsSpreadsheetName: null,
-              googleSheetsSheetId: null,
-              googleSheetsEnabled: false,
+              slackWebhookUrl: null,
+              slackChannelId: null,
+              slackChannelName: null,
+              slackTeamName: null,
+              slackNotificationsEnabled: false,
             })
             .where(eq(forms.id, formId));
 

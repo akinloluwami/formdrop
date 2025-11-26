@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets } from "@/db/schema";
+import { forms } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const Route = createFileRoute(
@@ -12,7 +12,7 @@ export const Route = createFileRoute(
         try {
           const url = new URL(request.url);
           const code = url.searchParams.get("code");
-          const state = url.searchParams.get("state"); // bucketId
+          const state = url.searchParams.get("state"); // formId
           const error = url.searchParams.get("error");
 
           if (error) {
@@ -30,7 +30,7 @@ export const Route = createFileRoute(
             );
           }
 
-          const bucketId = state;
+          const formId = state;
 
           // Exchange code for access token
           const tokenResponse = await fetch(
@@ -54,7 +54,7 @@ export const Route = createFileRoute(
 
           if (tokenData.error) {
             return Response.redirect(
-              `${process.env.APP_URL}/app/forms/${bucketId}/integrations?error=google_sheets_failed`,
+              `${process.env.APP_URL}/app/forms/${formId}/integrations?error=google_sheets_failed`,
               302,
             );
           }
@@ -66,21 +66,21 @@ export const Route = createFileRoute(
 
           if (!accessToken) {
             return Response.redirect(
-              `${process.env.APP_URL}/app/forms/${bucketId}/integrations?error=google_sheets_no_token`,
+              `${process.env.APP_URL}/app/forms/${formId}/integrations?error=google_sheets_no_token`,
               302,
             );
           }
 
-          // Get bucket info to create spreadsheet name
-          const [bucket] = await db
+          // Get form info to create spreadsheet name
+          const [form] = await db
             .select()
-            .from(buckets)
-            .where(eq(buckets.id, bucketId))
+            .from(forms)
+            .where(eq(forms.id, formId))
             .limit(1);
 
-          if (!bucket) {
+          if (!form) {
             return Response.redirect(
-              `${process.env.APP_URL}/app/forms/${bucketId}/integrations?error=bucket_not_found`,
+              `${process.env.APP_URL}/app/forms/${formId}/integrations?error=form_not_found`,
               302,
             );
           }
@@ -96,7 +96,7 @@ export const Route = createFileRoute(
               },
               body: JSON.stringify({
                 properties: {
-                  title: `FormDrop - ${bucket.name}`,
+                  title: `FormDrop - ${form.name}`,
                 },
               }),
             },
@@ -108,7 +108,7 @@ export const Route = createFileRoute(
               await createSpreadsheetResponse.text(),
             );
             return Response.redirect(
-              `${process.env.APP_URL}/app/forms/${bucketId}/integrations?error=spreadsheet_creation_failed`,
+              `${process.env.APP_URL}/app/forms/${formId}/integrations?error=spreadsheet_creation_failed`,
               302,
             );
           }
@@ -117,9 +117,9 @@ export const Route = createFileRoute(
           const spreadsheetId = spreadsheetData.spreadsheetId;
           const spreadsheetName = spreadsheetData.properties.title;
 
-          // Update bucket with Google Sheets tokens and spreadsheet info
+          // Update form with Google Sheets tokens and spreadsheet info
           await db
-            .update(buckets)
+            .update(forms)
             .set({
               googleSheetsAccessToken: accessToken,
               googleSheetsRefreshToken: refreshToken,
@@ -128,11 +128,11 @@ export const Route = createFileRoute(
               googleSheetsSpreadsheetName: spreadsheetName,
               googleSheetsEnabled: true, // Enable immediately
             })
-            .where(eq(buckets.id, bucketId));
+            .where(eq(forms.id, formId));
 
           // Redirect back to integrations page with success
           return Response.redirect(
-            `${process.env.APP_URL}/app/forms/${bucketId}/integrations?success=google_sheets_connected`,
+            `${process.env.APP_URL}/app/forms/${formId}/integrations?success=google_sheets_connected`,
             302,
           );
         } catch (error: any) {

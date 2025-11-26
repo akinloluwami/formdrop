@@ -35,12 +35,12 @@ function RouteComponent() {
     }
   }, [success]);
 
-  const { data: bucket, isLoading: isBucketLoading } = useQuery({
-    queryKey: ["bucket", id],
+  const { data: form, isLoading: isFormLoading } = useQuery({
+    queryKey: ["form", id],
     queryFn: async () => {
-      const response = await appClient.buckets.get(id);
+      const response = await appClient.forms.get(id);
       if ("error" in response) throw new Error(response.error);
-      return response.bucket;
+      return response.form;
     },
   });
 
@@ -53,7 +53,7 @@ function RouteComponent() {
     },
   });
 
-  if (isBucketLoading || isRecipientsLoading) {
+  if (isFormLoading || isRecipientsLoading) {
     return (
       <div className="max-w-3xl mx-auto animate-pulse">
         <div className="flex items-center gap-x-3 py-2 mb-6">
@@ -186,32 +186,32 @@ function RouteComponent() {
         </div>
 
         <EmailNotificationsSection
-          bucketId={id}
-          isEnabled={bucket?.emailNotificationsEnabled}
+          formId={id}
+          isEnabled={form?.emailNotificationsEnabled}
         />
 
-        {bucket?.emailNotificationsEnabled && (
+        {form?.emailNotificationsEnabled && (
           <EmailRecipientsList
-            bucketId={id}
+            formId={id}
             ownerEmail={session?.user?.email}
             recipients={recipients || []}
           />
         )}
 
         <SlackNotificationsSection
-          isConnected={bucket?.slackConnected ?? false}
-          isEnabled={bucket?.slackNotificationsEnabled}
-          channelName={bucket?.slackChannelName}
-          teamName={bucket?.slackTeamName}
-          bucketId={id}
+          isConnected={form?.slackConnected ?? false}
+          isEnabled={form?.slackNotificationsEnabled}
+          channelName={form?.slackChannelName}
+          teamName={form?.slackTeamName}
+          formId={id}
         />
 
         <DiscordNotificationsSection
-          isConnected={bucket?.discordConnected ?? false}
-          isEnabled={bucket?.discordNotificationsEnabled}
-          channelName={bucket?.discordChannelName}
-          guildName={bucket?.discordGuildName}
-          bucketId={id}
+          isConnected={form?.discordConnected ?? false}
+          isEnabled={form?.discordNotificationsEnabled}
+          channelName={form?.discordChannelName}
+          guildName={form?.discordGuildName}
+          formId={id}
         />
       </div>
     </>

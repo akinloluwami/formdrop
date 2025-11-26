@@ -10,6 +10,7 @@ import {
   integer,
   boolean,
 } from "drizzle-orm/pg-core";
+import { isNull } from "drizzle-orm";
 import { account, session, user, verification } from "./auth-schema";
 
 export const notificationTypeEnum = pgEnum("notification_type", [
@@ -20,7 +21,7 @@ export const notificationTypeEnum = pgEnum("notification_type", [
 ]);
 
 export const eventTypeEnum = pgEnum("event_type", [
-  "bucket_created",
+  "form_created",
   "submission_created",
   "submission_deleted",
   "notification_sent",
@@ -30,14 +31,15 @@ export const eventTypeEnum = pgEnum("event_type", [
 
 export const apiKeyTypeEnum = pgEnum("api_key_type", ["public", "private"]);
 
-export const buckets = pgTable(
-  "buckets",
+export const forms = pgTable(
+  "forms",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
+    slug: text("slug").unique().notNull(),
     description: text("description"),
     emailNotificationsEnabled: boolean("email_notifications_enabled")
       .default(true)
@@ -92,9 +94,11 @@ export const buckets = pgTable(
     deletedAt: timestamp("deleted_at"),
   },
   (table: any) => [
-    uniqueIndex("user_bucket_unique_idx").on(table.userId, table.name),
+    uniqueIndex("user_form_unique_active_idx")
+      .on(table.userId, table.name)
+      .where(isNull(table.deletedAt)),
 
-    index("buckets_user_id_idx").on(table.userId),
+    index("forms_user_id_idx").on(table.userId),
   ],
 );
 
@@ -102,9 +106,9 @@ export const submissions = pgTable(
   "submissions",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    bucketId: uuid("bucket_id")
+    formId: uuid("form_id")
       .notNull()
-      .references(() => buckets.id, { onDelete: "cascade" }),
+      .references(() => forms.id, { onDelete: "cascade" }),
     payload: jsonb("payload").notNull(),
     ip: text("ip"),
     userAgent: text("user_agent"),
@@ -112,9 +116,9 @@ export const submissions = pgTable(
     deletedAt: timestamp("deleted_at"),
   },
   (table: any) => [
-    index("submissions_bucket_created_idx").on(table.bucketId, table.createdAt),
+    index("submissions_form_created_idx").on(table.formId, table.createdAt),
 
-    index("submissions_bucket_id_idx").on(table.bucketId),
+    index("submissions_form_id_idx").on(table.formId),
   ],
 );
 
@@ -122,9 +126,9 @@ export const notifications = pgTable(
   "notifications",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    bucketId: uuid("bucket_id")
+    formId: uuid("form_id")
       .notNull()
-      .references(() => buckets.id, { onDelete: "cascade" }),
+      .references(() => forms.id, { onDelete: "cascade" }),
     type: notificationTypeEnum("type").notNull(),
     target: text("target").notNull(),
     enabled: text("enabled").default("true").notNull(),
@@ -134,16 +138,16 @@ export const notifications = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table: any) => [index("notifications_bucket_id_idx").on(table.bucketId)],
+  (table: any) => [index("notifications_form_id_idx").on(table.formId)],
 );
 
 export const emailNotificationRecipients = pgTable(
   "email_notification_recipients",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    bucketId: uuid("bucket_id")
+    formId: uuid("form_id")
       .notNull()
-      .references(() => buckets.id, { onDelete: "cascade" }),
+      .references(() => forms.id, { onDelete: "cascade" }),
     email: text("email").notNull(),
     enabled: boolean("enabled").default(true).notNull(),
     verifiedAt: timestamp("verified_at"),
@@ -156,7 +160,7 @@ export const emailNotificationRecipients = pgTable(
       .notNull(),
   },
   (table: any) => [
-    index("email_notification_recipients_bucket_id_idx").on(table.bucketId),
+    index("email_notification_recipients_form_id_idx").on(table.formId),
   ],
 );
 
@@ -167,7 +171,7 @@ export const events = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    bucketId: uuid("bucket_id").references(() => buckets.id, {
+    formId: uuid("form_id").references(() => forms.id, {
       onDelete: "set null",
     }),
     eventType: eventTypeEnum("event_type").notNull(),
@@ -177,7 +181,7 @@ export const events = pgTable(
   (table: any) => [
     index("events_user_created_idx").on(table.userId, table.createdAt),
 
-    index("events_bucket_created_idx").on(table.bucketId, table.createdAt),
+    index("events_form_created_idx").on(table.formId, table.createdAt),
   ],
 );
 
@@ -209,9 +213,9 @@ export const usage = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
 
-    bucketId: uuid("bucket_id")
+    formId: uuid("form_id")
       .notNull()
-      .references(() => buckets.id, { onDelete: "cascade" }),
+      .references(() => forms.id, { onDelete: "cascade" }),
 
     // for daily counting — easiest for quotas
     period: text("period").notNull(),
@@ -228,7 +232,7 @@ export const usage = pgTable(
     // prevent duplicate rows per period
     uniqueIndex("usage_unique_idx").on(
       table.userId,
-      table.bucketId,
+      table.formId,
       table.period,
     ),
     index("usage_user_period_idx").on(table.userId, table.period),
@@ -244,9 +248,9 @@ export const notificationUsage = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
 
-    bucketId: uuid("bucket_id")
+    formId: uuid("form_id")
       .notNull()
-      .references(() => buckets.id, { onDelete: "cascade" }),
+      .references(() => forms.id, { onDelete: "cascade" }),
 
     type: notificationTypeEnum("type").notNull(),
 
@@ -265,7 +269,7 @@ export const notificationUsage = pgTable(
     // prevent duplicate rows per period
     uniqueIndex("notification_usage_unique_idx").on(
       table.userId,
-      table.bucketId,
+      table.formId,
       table.period,
       table.type,
     ),

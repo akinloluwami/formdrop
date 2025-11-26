@@ -17,7 +17,7 @@ interface Subscription {
   cancelAtPeriodEnd: boolean | null;
 }
 
-interface Bucket {
+interface Form {
   id: string;
   userId: string;
   name: string;
@@ -43,11 +43,12 @@ interface Bucket {
   createdAt: Date;
   updatedAt: Date;
   submissionCount?: number;
+  slug: string;
 }
 
 interface Recipient {
   id: string;
-  bucketId: string;
+  formId: string;
   email: string;
   enabled: boolean;
   verifiedAt: Date | null;
@@ -58,7 +59,7 @@ interface Recipient {
 
 interface Submission {
   id: string;
-  bucketId: string;
+  formId: string;
   payload: Record<string, any>;
   ip: string | null;
   userAgent: string | null;
@@ -74,13 +75,13 @@ interface ApiKey {
   createdAt: Date;
 }
 
-interface CreateBucketParams {
+interface CreateFormParams {
   name: string;
   description?: string;
   allowedDomains?: string[];
 }
 
-interface UpdateBucketParams {
+interface UpdateFormParams {
   name?: string;
   description?: string;
   emailNotificationsEnabled?: boolean;
@@ -106,10 +107,17 @@ async function apiCall<T = any>(
   options?: { params?: any; data?: any },
 ): Promise<ApiResponse<T>> {
   try {
-    const response = await apiClient[method](
-      url,
-      options?.params ? { params: options.params } : options?.data,
-    );
+    let response;
+    if (method === "get" || method === "delete") {
+      response = await apiClient[method](url, {
+        params: options?.params,
+        data: options?.data,
+      });
+    } else {
+      response = await apiClient[method](url, options?.data, {
+        params: options?.params,
+      });
+    }
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -120,101 +128,101 @@ async function apiCall<T = any>(
 }
 
 export const appClient = {
-  buckets: {
-    list: async () => apiCall<{ buckets: Bucket[] }>("get", "/api/buckets"),
+  forms: {
+    list: async () => apiCall<{ forms: Form[] }>("get", "/api/forms"),
 
-    create: async (params: CreateBucketParams) =>
-      apiCall<{ bucket: Bucket }>("post", "/api/buckets", { data: params }),
+    create: async (params: CreateFormParams) =>
+      apiCall<{ form: Form }>("post", "/api/forms", { data: params }),
 
-    get: async (bucketId: string) =>
-      apiCall<{ bucket: Bucket }>("get", `/api/buckets/${bucketId}`),
+    get: async (formId: string) =>
+      apiCall<{ form: Form }>("get", `/api/forms/${formId}`),
 
-    update: async (bucketId: string, params: UpdateBucketParams) =>
-      apiCall<{ bucket: Bucket }>("patch", `/api/buckets/${bucketId}`, {
+    update: async (formId: string, params: UpdateFormParams) =>
+      apiCall<{ form: Form }>("patch", `/api/forms/${formId}`, {
         data: params,
       }),
 
-    delete: async (bucketId: string) =>
-      apiCall<{ message: string }>("delete", `/api/buckets/${bucketId}`),
+    delete: async (formId: string) =>
+      apiCall<{ message: string }>("delete", `/api/forms/${formId}`),
   },
 
   recipients: {
-    list: async (bucketId: string) =>
+    list: async (formId: string) =>
       apiCall<{ recipients: Recipient[] }>(
         "get",
-        `/api/buckets/${bucketId}/recipients`,
+        `/api/forms/${formId}/recipients`,
       ),
 
-    add: async (bucketId: string, email: string) =>
+    add: async (formId: string, email: string) =>
       apiCall<{ recipient: Recipient }>(
         "post",
-        `/api/buckets/${bucketId}/recipients`,
+        `/api/forms/${formId}/recipients`,
         { data: { email } },
       ),
 
-    remove: async (bucketId: string, recipientId: string) =>
+    remove: async (formId: string, recipientId: string) =>
       apiCall<{ success: boolean }>(
         "delete",
-        `/api/buckets/${bucketId}/recipients/${recipientId}`,
+        `/api/forms/${formId}/recipients/${recipientId}`,
       ),
 
-    update: async (bucketId: string, recipientId: string, enabled: boolean) =>
+    update: async (formId: string, recipientId: string, enabled: boolean) =>
       apiCall<{ recipient: Recipient }>(
         "patch",
-        `/api/buckets/${bucketId}/recipients/${recipientId}`,
+        `/api/forms/${formId}/recipients/${recipientId}`,
         { data: { enabled } },
       ),
 
-    resendVerification: async (bucketId: string, recipientId: string) =>
+    resendVerification: async (formId: string, recipientId: string) =>
       apiCall<{ success: boolean }>(
         "post",
-        `/api/buckets/${bucketId}/recipients/${recipientId}/resend-verification`,
+        `/api/forms/${formId}/recipients/${recipientId}/resend-verification`,
       ),
 
-    disconnectSlack: async (bucketId: string) =>
+    disconnectSlack: async (formId: string) =>
       apiCall<{ success: boolean }>(
         "delete",
-        `/api/buckets/${bucketId}/disconnect-slack`,
+        `/api/forms/${formId}/disconnect-slack`,
       ),
 
-    disconnectDiscord: async (bucketId: string) =>
+    disconnectDiscord: async (formId: string) =>
       apiCall<{ success: boolean }>(
         "delete",
-        `/api/buckets/${bucketId}/disconnect-discord`,
+        `/api/forms/${formId}/disconnect-discord`,
       ),
   },
 
   submissions: {
-    list: async (bucketId: string) =>
+    list: async (formId: string) =>
       apiCall<{ submissions: Submission[] }>(
         "get",
-        `/api/buckets/${bucketId}/submissions`,
+        `/api/forms/${formId}/submissions`,
       ),
 
-    get: async (bucketId: string, submissionId: string) =>
+    get: async (formId: string, submissionId: string) =>
       apiCall<{ submission: Submission }>(
         "get",
-        `/api/buckets/${bucketId}/submissions/${submissionId}`,
+        `/api/forms/${formId}/submissions/${submissionId}`,
       ),
 
-    delete: async (bucketId: string, submissionId: string) =>
+    delete: async (formId: string, submissionId: string) =>
       apiCall<{ message: string }>(
         "delete",
-        `/api/buckets/${bucketId}/submissions/${submissionId}`,
+        `/api/forms/${formId}/submissions/${submissionId}`,
       ),
 
-    bulkDelete: async (bucketId: string, submissionIds: string[]) =>
+    bulkDelete: async (formId: string, submissionIds: string[]) =>
       apiCall<{ success: boolean }>(
         "delete",
-        `/api/buckets/${bucketId}/submissions`,
+        `/api/forms/${formId}/submissions`,
         { data: { submissionIds } },
       ),
 
-    analytics: async (bucketId: string) =>
+    analytics: async (formId: string) =>
       apiCall<{
         stats: { total: number; thisMonth: number; today: number };
         chartData: { date: string; submissions: number }[];
-      }>("get", `/api/buckets/${bucketId}/analytics`),
+      }>("get", `/api/forms/${formId}/analytics`),
   },
 
   apiKeys: {
@@ -232,7 +240,7 @@ export const appClient = {
     get: async () =>
       apiCall<{
         stats: {
-          totalBuckets: number;
+          totalForms: number;
           totalSubmissions: number;
           submissionsThisMonth: number;
         };

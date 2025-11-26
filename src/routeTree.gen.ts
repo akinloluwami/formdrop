@@ -28,13 +28,13 @@ import { Route as AppApiKeysRouteImport } from './routes/app/api-keys'
 import { Route as AppAnalyticsRouteImport } from './routes/app/analytics'
 import { Route as ApiVerifyRecipientRouteImport } from './routes/api/verify-recipient'
 import { Route as ApiSubscriptionRouteImport } from './routes/api/subscription'
-import { Route as ApiBucketsRouteImport } from './routes/api/buckets'
+import { Route as ApiFormsRouteImport } from './routes/api/forms'
 import { Route as ApiApiKeysRouteImport } from './routes/api/api-keys'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
 import { Route as AppFormsIndexRouteImport } from './routes/app/forms/index'
 import { Route as AppFormsIdRouteImport } from './routes/app/forms/$id'
 import { Route as ApiUserSettingsRouteImport } from './routes/api/user/settings'
-import { Route as ApiBucketsBucketIdRouteImport } from './routes/api/buckets/$bucketId'
+import { Route as ApiFormsFormIdRouteImport } from './routes/api/forms/$formId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppFormsIdSubmissionsRouteImport } from './routes/app/forms/$id/submissions'
 import { Route as AppFormsIdSettingsRouteImport } from './routes/app/forms/$id/settings'
@@ -50,14 +50,14 @@ import { Route as ApiIntegrationsGoogleSheetsCallbackRouteImport } from './route
 import { Route as ApiIntegrationsGoogleSheetsAuthorizeRouteImport } from './routes/api/integrations/google-sheets/authorize'
 import { Route as ApiIntegrationsDiscordCallbackRouteImport } from './routes/api/integrations/discord/callback'
 import { Route as ApiIntegrationsDiscordAuthorizeRouteImport } from './routes/api/integrations/discord/authorize'
-import { Route as ApiBucketsBucketIdSubmissionsRouteImport } from './routes/api/buckets/$bucketId/submissions'
-import { Route as ApiBucketsBucketIdRecipientsRouteImport } from './routes/api/buckets/$bucketId/recipients'
-import { Route as ApiBucketsBucketIdDisconnectSlackRouteImport } from './routes/api/buckets/$bucketId/disconnect-slack'
-import { Route as ApiBucketsBucketIdDisconnectDiscordRouteImport } from './routes/api/buckets/$bucketId/disconnect-discord'
-import { Route as ApiBucketsBucketIdAnalyticsRouteImport } from './routes/api/buckets/$bucketId/analytics'
-import { Route as ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport } from './routes/api/buckets/$bucketId/submissions/$submissionId'
-import { Route as ApiBucketsBucketIdRecipientsRecipientIdRouteImport } from './routes/api/buckets/$bucketId/recipients/$recipientId'
-import { Route as ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRouteImport } from './routes/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
+import { Route as ApiFormsFormIdSubmissionsRouteImport } from './routes/api/forms/$formId/submissions'
+import { Route as ApiFormsFormIdRecipientsRouteImport } from './routes/api/forms/$formId/recipients'
+import { Route as ApiFormsFormIdDisconnectSlackRouteImport } from './routes/api/forms/$formId/disconnect-slack'
+import { Route as ApiFormsFormIdDisconnectDiscordRouteImport } from './routes/api/forms/$formId/disconnect-discord'
+import { Route as ApiFormsFormIdAnalyticsRouteImport } from './routes/api/forms/$formId/analytics'
+import { Route as ApiFormsFormIdSubmissionsSubmissionIdRouteImport } from './routes/api/forms/$formId/submissions/$submissionId'
+import { Route as ApiFormsFormIdRecipientsRecipientIdRouteImport } from './routes/api/forms/$formId/recipients/$recipientId'
+import { Route as ApiFormsFormIdRecipientsRecipientIdResendVerificationRouteImport } from './routes/api/forms/$formId/recipients/$recipientId/resend-verification'
 
 const WelcomeToProRoute = WelcomeToProRouteImport.update({
   id: '/welcome-to-pro',
@@ -154,9 +154,9 @@ const ApiSubscriptionRoute = ApiSubscriptionRouteImport.update({
   path: '/api/subscription',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiBucketsRoute = ApiBucketsRouteImport.update({
-  id: '/api/buckets',
-  path: '/api/buckets',
+const ApiFormsRoute = ApiFormsRouteImport.update({
+  id: '/api/forms',
+  path: '/api/forms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiApiKeysRoute = ApiApiKeysRouteImport.update({
@@ -184,10 +184,10 @@ const ApiUserSettingsRoute = ApiUserSettingsRouteImport.update({
   path: '/api/user/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiBucketsBucketIdRoute = ApiBucketsBucketIdRouteImport.update({
-  id: '/$bucketId',
-  path: '/$bucketId',
-  getParentRoute: () => ApiBucketsRoute,
+const ApiFormsFormIdRoute = ApiFormsFormIdRouteImport.update({
+  id: '/$formId',
+  path: '/$formId',
+  getParentRoute: () => ApiFormsRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -273,53 +273,52 @@ const ApiIntegrationsDiscordAuthorizeRoute =
     path: '/api/integrations/discord/authorize',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiBucketsBucketIdSubmissionsRoute =
-  ApiBucketsBucketIdSubmissionsRouteImport.update({
+const ApiFormsFormIdSubmissionsRoute =
+  ApiFormsFormIdSubmissionsRouteImport.update({
     id: '/submissions',
     path: '/submissions',
-    getParentRoute: () => ApiBucketsBucketIdRoute,
+    getParentRoute: () => ApiFormsFormIdRoute,
   } as any)
-const ApiBucketsBucketIdRecipientsRoute =
-  ApiBucketsBucketIdRecipientsRouteImport.update({
+const ApiFormsFormIdRecipientsRoute =
+  ApiFormsFormIdRecipientsRouteImport.update({
     id: '/recipients',
     path: '/recipients',
-    getParentRoute: () => ApiBucketsBucketIdRoute,
+    getParentRoute: () => ApiFormsFormIdRoute,
   } as any)
-const ApiBucketsBucketIdDisconnectSlackRoute =
-  ApiBucketsBucketIdDisconnectSlackRouteImport.update({
+const ApiFormsFormIdDisconnectSlackRoute =
+  ApiFormsFormIdDisconnectSlackRouteImport.update({
     id: '/disconnect-slack',
     path: '/disconnect-slack',
-    getParentRoute: () => ApiBucketsBucketIdRoute,
+    getParentRoute: () => ApiFormsFormIdRoute,
   } as any)
-const ApiBucketsBucketIdDisconnectDiscordRoute =
-  ApiBucketsBucketIdDisconnectDiscordRouteImport.update({
+const ApiFormsFormIdDisconnectDiscordRoute =
+  ApiFormsFormIdDisconnectDiscordRouteImport.update({
     id: '/disconnect-discord',
     path: '/disconnect-discord',
-    getParentRoute: () => ApiBucketsBucketIdRoute,
+    getParentRoute: () => ApiFormsFormIdRoute,
   } as any)
-const ApiBucketsBucketIdAnalyticsRoute =
-  ApiBucketsBucketIdAnalyticsRouteImport.update({
-    id: '/analytics',
-    path: '/analytics',
-    getParentRoute: () => ApiBucketsBucketIdRoute,
-  } as any)
-const ApiBucketsBucketIdSubmissionsSubmissionIdRoute =
-  ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport.update({
+const ApiFormsFormIdAnalyticsRoute = ApiFormsFormIdAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => ApiFormsFormIdRoute,
+} as any)
+const ApiFormsFormIdSubmissionsSubmissionIdRoute =
+  ApiFormsFormIdSubmissionsSubmissionIdRouteImport.update({
     id: '/$submissionId',
     path: '/$submissionId',
-    getParentRoute: () => ApiBucketsBucketIdSubmissionsRoute,
+    getParentRoute: () => ApiFormsFormIdSubmissionsRoute,
   } as any)
-const ApiBucketsBucketIdRecipientsRecipientIdRoute =
-  ApiBucketsBucketIdRecipientsRecipientIdRouteImport.update({
+const ApiFormsFormIdRecipientsRecipientIdRoute =
+  ApiFormsFormIdRecipientsRecipientIdRouteImport.update({
     id: '/$recipientId',
     path: '/$recipientId',
-    getParentRoute: () => ApiBucketsBucketIdRecipientsRoute,
+    getParentRoute: () => ApiFormsFormIdRecipientsRoute,
   } as any)
-const ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute =
-  ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRouteImport.update({
+const ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute =
+  ApiFormsFormIdRecipientsRecipientIdResendVerificationRouteImport.update({
     id: '/resend-verification',
     path: '/resend-verification',
-    getParentRoute: () => ApiBucketsBucketIdRecipientsRecipientIdRoute,
+    getParentRoute: () => ApiFormsFormIdRecipientsRecipientIdRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -334,7 +333,7 @@ export interface FileRoutesByFullPath {
   '/welcome-to-pro': typeof WelcomeToProRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
-  '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/forms': typeof ApiFormsRouteWithChildren
   '/api/subscription': typeof ApiSubscriptionRoute
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
@@ -346,15 +345,15 @@ export interface FileRoutesByFullPath {
   '/docs/integrations': typeof DocsIntegrationsRoute
   '/docs/': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
+  '/api/forms/$formId': typeof ApiFormsFormIdRouteWithChildren
   '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
-  '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
-  '/api/buckets/$bucketId/disconnect-discord': typeof ApiBucketsBucketIdDisconnectDiscordRoute
-  '/api/buckets/$bucketId/disconnect-slack': typeof ApiBucketsBucketIdDisconnectSlackRoute
-  '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
-  '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
+  '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
+  '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
+  '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
+  '/api/forms/$formId/recipients': typeof ApiFormsFormIdRecipientsRouteWithChildren
+  '/api/forms/$formId/submissions': typeof ApiFormsFormIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
   '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
   '/api/integrations/google-sheets/authorize': typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
@@ -369,9 +368,9 @@ export interface FileRoutesByFullPath {
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
-  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren
-  '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
-  '/api/buckets/$bucketId/recipients/$recipientId/resend-verification': typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
+  '/api/forms/$formId/recipients/$recipientId': typeof ApiFormsFormIdRecipientsRecipientIdRouteWithChildren
+  '/api/forms/$formId/submissions/$submissionId': typeof ApiFormsFormIdSubmissionsSubmissionIdRoute
+  '/api/forms/$formId/recipients/$recipientId/resend-verification': typeof ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -384,7 +383,7 @@ export interface FileRoutesByTo {
   '/welcome-to-pro': typeof WelcomeToProRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
-  '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/forms': typeof ApiFormsRouteWithChildren
   '/api/subscription': typeof ApiSubscriptionRoute
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
@@ -396,15 +395,15 @@ export interface FileRoutesByTo {
   '/docs/integrations': typeof DocsIntegrationsRoute
   '/docs': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
+  '/api/forms/$formId': typeof ApiFormsFormIdRouteWithChildren
   '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
-  '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
-  '/api/buckets/$bucketId/disconnect-discord': typeof ApiBucketsBucketIdDisconnectDiscordRoute
-  '/api/buckets/$bucketId/disconnect-slack': typeof ApiBucketsBucketIdDisconnectSlackRoute
-  '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
-  '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
+  '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
+  '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
+  '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
+  '/api/forms/$formId/recipients': typeof ApiFormsFormIdRecipientsRouteWithChildren
+  '/api/forms/$formId/submissions': typeof ApiFormsFormIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
   '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
   '/api/integrations/google-sheets/authorize': typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
@@ -419,9 +418,9 @@ export interface FileRoutesByTo {
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
-  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren
-  '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
-  '/api/buckets/$bucketId/recipients/$recipientId/resend-verification': typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
+  '/api/forms/$formId/recipients/$recipientId': typeof ApiFormsFormIdRecipientsRecipientIdRouteWithChildren
+  '/api/forms/$formId/submissions/$submissionId': typeof ApiFormsFormIdSubmissionsSubmissionIdRoute
+  '/api/forms/$formId/recipients/$recipientId/resend-verification': typeof ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -436,7 +435,7 @@ export interface FileRoutesById {
   '/welcome-to-pro': typeof WelcomeToProRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
-  '/api/buckets': typeof ApiBucketsRouteWithChildren
+  '/api/forms': typeof ApiFormsRouteWithChildren
   '/api/subscription': typeof ApiSubscriptionRoute
   '/api/verify-recipient': typeof ApiVerifyRecipientRoute
   '/app/analytics': typeof AppAnalyticsRoute
@@ -448,15 +447,15 @@ export interface FileRoutesById {
   '/docs/integrations': typeof DocsIntegrationsRoute
   '/docs/': typeof DocsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/buckets/$bucketId': typeof ApiBucketsBucketIdRouteWithChildren
+  '/api/forms/$formId': typeof ApiFormsFormIdRouteWithChildren
   '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms/': typeof AppFormsIndexRoute
-  '/api/buckets/$bucketId/analytics': typeof ApiBucketsBucketIdAnalyticsRoute
-  '/api/buckets/$bucketId/disconnect-discord': typeof ApiBucketsBucketIdDisconnectDiscordRoute
-  '/api/buckets/$bucketId/disconnect-slack': typeof ApiBucketsBucketIdDisconnectSlackRoute
-  '/api/buckets/$bucketId/recipients': typeof ApiBucketsBucketIdRecipientsRouteWithChildren
-  '/api/buckets/$bucketId/submissions': typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
+  '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
+  '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
+  '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
+  '/api/forms/$formId/recipients': typeof ApiFormsFormIdRecipientsRouteWithChildren
+  '/api/forms/$formId/submissions': typeof ApiFormsFormIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
   '/api/integrations/discord/callback': typeof ApiIntegrationsDiscordCallbackRoute
   '/api/integrations/google-sheets/authorize': typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
@@ -471,9 +470,9 @@ export interface FileRoutesById {
   '/app/forms/$id/notifications': typeof AppFormsIdNotificationsRoute
   '/app/forms/$id/settings': typeof AppFormsIdSettingsRoute
   '/app/forms/$id/submissions': typeof AppFormsIdSubmissionsRoute
-  '/api/buckets/$bucketId/recipients/$recipientId': typeof ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren
-  '/api/buckets/$bucketId/submissions/$submissionId': typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
-  '/api/buckets/$bucketId/recipients/$recipientId/resend-verification': typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
+  '/api/forms/$formId/recipients/$recipientId': typeof ApiFormsFormIdRecipientsRecipientIdRouteWithChildren
+  '/api/forms/$formId/submissions/$submissionId': typeof ApiFormsFormIdSubmissionsSubmissionIdRoute
+  '/api/forms/$formId/recipients/$recipientId/resend-verification': typeof ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -489,7 +488,7 @@ export interface FileRouteTypes {
     | '/welcome-to-pro'
     | '/api/analytics'
     | '/api/api-keys'
-    | '/api/buckets'
+    | '/api/forms'
     | '/api/subscription'
     | '/api/verify-recipient'
     | '/app/analytics'
@@ -501,15 +500,15 @@ export interface FileRouteTypes {
     | '/docs/integrations'
     | '/docs/'
     | '/api/auth/$'
-    | '/api/buckets/$bucketId'
+    | '/api/forms/$formId'
     | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms'
-    | '/api/buckets/$bucketId/analytics'
-    | '/api/buckets/$bucketId/disconnect-discord'
-    | '/api/buckets/$bucketId/disconnect-slack'
-    | '/api/buckets/$bucketId/recipients'
-    | '/api/buckets/$bucketId/submissions'
+    | '/api/forms/$formId/analytics'
+    | '/api/forms/$formId/disconnect-discord'
+    | '/api/forms/$formId/disconnect-slack'
+    | '/api/forms/$formId/recipients'
+    | '/api/forms/$formId/submissions'
     | '/api/integrations/discord/authorize'
     | '/api/integrations/discord/callback'
     | '/api/integrations/google-sheets/authorize'
@@ -524,9 +523,9 @@ export interface FileRouteTypes {
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
-    | '/api/buckets/$bucketId/recipients/$recipientId'
-    | '/api/buckets/$bucketId/submissions/$submissionId'
-    | '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
+    | '/api/forms/$formId/recipients/$recipientId'
+    | '/api/forms/$formId/submissions/$submissionId'
+    | '/api/forms/$formId/recipients/$recipientId/resend-verification'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -539,7 +538,7 @@ export interface FileRouteTypes {
     | '/welcome-to-pro'
     | '/api/analytics'
     | '/api/api-keys'
-    | '/api/buckets'
+    | '/api/forms'
     | '/api/subscription'
     | '/api/verify-recipient'
     | '/app/analytics'
@@ -551,15 +550,15 @@ export interface FileRouteTypes {
     | '/docs/integrations'
     | '/docs'
     | '/api/auth/$'
-    | '/api/buckets/$bucketId'
+    | '/api/forms/$formId'
     | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms'
-    | '/api/buckets/$bucketId/analytics'
-    | '/api/buckets/$bucketId/disconnect-discord'
-    | '/api/buckets/$bucketId/disconnect-slack'
-    | '/api/buckets/$bucketId/recipients'
-    | '/api/buckets/$bucketId/submissions'
+    | '/api/forms/$formId/analytics'
+    | '/api/forms/$formId/disconnect-discord'
+    | '/api/forms/$formId/disconnect-slack'
+    | '/api/forms/$formId/recipients'
+    | '/api/forms/$formId/submissions'
     | '/api/integrations/discord/authorize'
     | '/api/integrations/discord/callback'
     | '/api/integrations/google-sheets/authorize'
@@ -574,9 +573,9 @@ export interface FileRouteTypes {
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
-    | '/api/buckets/$bucketId/recipients/$recipientId'
-    | '/api/buckets/$bucketId/submissions/$submissionId'
-    | '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
+    | '/api/forms/$formId/recipients/$recipientId'
+    | '/api/forms/$formId/submissions/$submissionId'
+    | '/api/forms/$formId/recipients/$recipientId/resend-verification'
   id:
     | '__root__'
     | '/'
@@ -590,7 +589,7 @@ export interface FileRouteTypes {
     | '/welcome-to-pro'
     | '/api/analytics'
     | '/api/api-keys'
-    | '/api/buckets'
+    | '/api/forms'
     | '/api/subscription'
     | '/api/verify-recipient'
     | '/app/analytics'
@@ -602,15 +601,15 @@ export interface FileRouteTypes {
     | '/docs/integrations'
     | '/docs/'
     | '/api/auth/$'
-    | '/api/buckets/$bucketId'
+    | '/api/forms/$formId'
     | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms/'
-    | '/api/buckets/$bucketId/analytics'
-    | '/api/buckets/$bucketId/disconnect-discord'
-    | '/api/buckets/$bucketId/disconnect-slack'
-    | '/api/buckets/$bucketId/recipients'
-    | '/api/buckets/$bucketId/submissions'
+    | '/api/forms/$formId/analytics'
+    | '/api/forms/$formId/disconnect-discord'
+    | '/api/forms/$formId/disconnect-slack'
+    | '/api/forms/$formId/recipients'
+    | '/api/forms/$formId/submissions'
     | '/api/integrations/discord/authorize'
     | '/api/integrations/discord/callback'
     | '/api/integrations/google-sheets/authorize'
@@ -625,9 +624,9 @@ export interface FileRouteTypes {
     | '/app/forms/$id/notifications'
     | '/app/forms/$id/settings'
     | '/app/forms/$id/submissions'
-    | '/api/buckets/$bucketId/recipients/$recipientId'
-    | '/api/buckets/$bucketId/submissions/$submissionId'
-    | '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
+    | '/api/forms/$formId/recipients/$recipientId'
+    | '/api/forms/$formId/submissions/$submissionId'
+    | '/api/forms/$formId/recipients/$recipientId/resend-verification'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -642,7 +641,7 @@ export interface RootRouteChildren {
   WelcomeToProRoute: typeof WelcomeToProRoute
   ApiAnalyticsRoute: typeof ApiAnalyticsRoute
   ApiApiKeysRoute: typeof ApiApiKeysRoute
-  ApiBucketsRoute: typeof ApiBucketsRouteWithChildren
+  ApiFormsRoute: typeof ApiFormsRouteWithChildren
   ApiSubscriptionRoute: typeof ApiSubscriptionRoute
   ApiVerifyRecipientRoute: typeof ApiVerifyRecipientRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -793,11 +792,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSubscriptionRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/buckets': {
-      id: '/api/buckets'
-      path: '/api/buckets'
-      fullPath: '/api/buckets'
-      preLoaderRoute: typeof ApiBucketsRouteImport
+    '/api/forms': {
+      id: '/api/forms'
+      path: '/api/forms'
+      fullPath: '/api/forms'
+      preLoaderRoute: typeof ApiFormsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/api-keys': {
@@ -835,12 +834,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUserSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/buckets/$bucketId': {
-      id: '/api/buckets/$bucketId'
-      path: '/$bucketId'
-      fullPath: '/api/buckets/$bucketId'
-      preLoaderRoute: typeof ApiBucketsBucketIdRouteImport
-      parentRoute: typeof ApiBucketsRoute
+    '/api/forms/$formId': {
+      id: '/api/forms/$formId'
+      path: '/$formId'
+      fullPath: '/api/forms/$formId'
+      preLoaderRoute: typeof ApiFormsFormIdRouteImport
+      parentRoute: typeof ApiFormsRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -947,61 +946,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiIntegrationsDiscordAuthorizeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/buckets/$bucketId/submissions': {
-      id: '/api/buckets/$bucketId/submissions'
+    '/api/forms/$formId/submissions': {
+      id: '/api/forms/$formId/submissions'
       path: '/submissions'
-      fullPath: '/api/buckets/$bucketId/submissions'
-      preLoaderRoute: typeof ApiBucketsBucketIdSubmissionsRouteImport
-      parentRoute: typeof ApiBucketsBucketIdRoute
+      fullPath: '/api/forms/$formId/submissions'
+      preLoaderRoute: typeof ApiFormsFormIdSubmissionsRouteImport
+      parentRoute: typeof ApiFormsFormIdRoute
     }
-    '/api/buckets/$bucketId/recipients': {
-      id: '/api/buckets/$bucketId/recipients'
+    '/api/forms/$formId/recipients': {
+      id: '/api/forms/$formId/recipients'
       path: '/recipients'
-      fullPath: '/api/buckets/$bucketId/recipients'
-      preLoaderRoute: typeof ApiBucketsBucketIdRecipientsRouteImport
-      parentRoute: typeof ApiBucketsBucketIdRoute
+      fullPath: '/api/forms/$formId/recipients'
+      preLoaderRoute: typeof ApiFormsFormIdRecipientsRouteImport
+      parentRoute: typeof ApiFormsFormIdRoute
     }
-    '/api/buckets/$bucketId/disconnect-slack': {
-      id: '/api/buckets/$bucketId/disconnect-slack'
+    '/api/forms/$formId/disconnect-slack': {
+      id: '/api/forms/$formId/disconnect-slack'
       path: '/disconnect-slack'
-      fullPath: '/api/buckets/$bucketId/disconnect-slack'
-      preLoaderRoute: typeof ApiBucketsBucketIdDisconnectSlackRouteImport
-      parentRoute: typeof ApiBucketsBucketIdRoute
+      fullPath: '/api/forms/$formId/disconnect-slack'
+      preLoaderRoute: typeof ApiFormsFormIdDisconnectSlackRouteImport
+      parentRoute: typeof ApiFormsFormIdRoute
     }
-    '/api/buckets/$bucketId/disconnect-discord': {
-      id: '/api/buckets/$bucketId/disconnect-discord'
+    '/api/forms/$formId/disconnect-discord': {
+      id: '/api/forms/$formId/disconnect-discord'
       path: '/disconnect-discord'
-      fullPath: '/api/buckets/$bucketId/disconnect-discord'
-      preLoaderRoute: typeof ApiBucketsBucketIdDisconnectDiscordRouteImport
-      parentRoute: typeof ApiBucketsBucketIdRoute
+      fullPath: '/api/forms/$formId/disconnect-discord'
+      preLoaderRoute: typeof ApiFormsFormIdDisconnectDiscordRouteImport
+      parentRoute: typeof ApiFormsFormIdRoute
     }
-    '/api/buckets/$bucketId/analytics': {
-      id: '/api/buckets/$bucketId/analytics'
+    '/api/forms/$formId/analytics': {
+      id: '/api/forms/$formId/analytics'
       path: '/analytics'
-      fullPath: '/api/buckets/$bucketId/analytics'
-      preLoaderRoute: typeof ApiBucketsBucketIdAnalyticsRouteImport
-      parentRoute: typeof ApiBucketsBucketIdRoute
+      fullPath: '/api/forms/$formId/analytics'
+      preLoaderRoute: typeof ApiFormsFormIdAnalyticsRouteImport
+      parentRoute: typeof ApiFormsFormIdRoute
     }
-    '/api/buckets/$bucketId/submissions/$submissionId': {
-      id: '/api/buckets/$bucketId/submissions/$submissionId'
+    '/api/forms/$formId/submissions/$submissionId': {
+      id: '/api/forms/$formId/submissions/$submissionId'
       path: '/$submissionId'
-      fullPath: '/api/buckets/$bucketId/submissions/$submissionId'
-      preLoaderRoute: typeof ApiBucketsBucketIdSubmissionsSubmissionIdRouteImport
-      parentRoute: typeof ApiBucketsBucketIdSubmissionsRoute
+      fullPath: '/api/forms/$formId/submissions/$submissionId'
+      preLoaderRoute: typeof ApiFormsFormIdSubmissionsSubmissionIdRouteImport
+      parentRoute: typeof ApiFormsFormIdSubmissionsRoute
     }
-    '/api/buckets/$bucketId/recipients/$recipientId': {
-      id: '/api/buckets/$bucketId/recipients/$recipientId'
+    '/api/forms/$formId/recipients/$recipientId': {
+      id: '/api/forms/$formId/recipients/$recipientId'
       path: '/$recipientId'
-      fullPath: '/api/buckets/$bucketId/recipients/$recipientId'
-      preLoaderRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRouteImport
-      parentRoute: typeof ApiBucketsBucketIdRecipientsRoute
+      fullPath: '/api/forms/$formId/recipients/$recipientId'
+      preLoaderRoute: typeof ApiFormsFormIdRecipientsRecipientIdRouteImport
+      parentRoute: typeof ApiFormsFormIdRecipientsRoute
     }
-    '/api/buckets/$bucketId/recipients/$recipientId/resend-verification': {
-      id: '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
+    '/api/forms/$formId/recipients/$recipientId/resend-verification': {
+      id: '/api/forms/$formId/recipients/$recipientId/resend-verification'
       path: '/resend-verification'
-      fullPath: '/api/buckets/$bucketId/recipients/$recipientId/resend-verification'
-      preLoaderRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRouteImport
-      parentRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRoute
+      fullPath: '/api/forms/$formId/recipients/$recipientId/resend-verification'
+      preLoaderRoute: typeof ApiFormsFormIdRecipientsRecipientIdResendVerificationRouteImport
+      parentRoute: typeof ApiFormsFormIdRecipientsRecipientIdRoute
     }
   }
 }
@@ -1062,84 +1061,81 @@ const DocsRouteChildren: DocsRouteChildren = {
 
 const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
 
-interface ApiBucketsBucketIdRecipientsRecipientIdRouteChildren {
-  ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute
+interface ApiFormsFormIdRecipientsRecipientIdRouteChildren {
+  ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute: typeof ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute
 }
 
-const ApiBucketsBucketIdRecipientsRecipientIdRouteChildren: ApiBucketsBucketIdRecipientsRecipientIdRouteChildren =
+const ApiFormsFormIdRecipientsRecipientIdRouteChildren: ApiFormsFormIdRecipientsRecipientIdRouteChildren =
   {
-    ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute:
-      ApiBucketsBucketIdRecipientsRecipientIdResendVerificationRoute,
+    ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute:
+      ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute,
   }
 
-const ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren =
-  ApiBucketsBucketIdRecipientsRecipientIdRoute._addFileChildren(
-    ApiBucketsBucketIdRecipientsRecipientIdRouteChildren,
+const ApiFormsFormIdRecipientsRecipientIdRouteWithChildren =
+  ApiFormsFormIdRecipientsRecipientIdRoute._addFileChildren(
+    ApiFormsFormIdRecipientsRecipientIdRouteChildren,
   )
 
-interface ApiBucketsBucketIdRecipientsRouteChildren {
-  ApiBucketsBucketIdRecipientsRecipientIdRoute: typeof ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren
+interface ApiFormsFormIdRecipientsRouteChildren {
+  ApiFormsFormIdRecipientsRecipientIdRoute: typeof ApiFormsFormIdRecipientsRecipientIdRouteWithChildren
 }
 
-const ApiBucketsBucketIdRecipientsRouteChildren: ApiBucketsBucketIdRecipientsRouteChildren =
+const ApiFormsFormIdRecipientsRouteChildren: ApiFormsFormIdRecipientsRouteChildren =
   {
-    ApiBucketsBucketIdRecipientsRecipientIdRoute:
-      ApiBucketsBucketIdRecipientsRecipientIdRouteWithChildren,
+    ApiFormsFormIdRecipientsRecipientIdRoute:
+      ApiFormsFormIdRecipientsRecipientIdRouteWithChildren,
   }
 
-const ApiBucketsBucketIdRecipientsRouteWithChildren =
-  ApiBucketsBucketIdRecipientsRoute._addFileChildren(
-    ApiBucketsBucketIdRecipientsRouteChildren,
+const ApiFormsFormIdRecipientsRouteWithChildren =
+  ApiFormsFormIdRecipientsRoute._addFileChildren(
+    ApiFormsFormIdRecipientsRouteChildren,
   )
 
-interface ApiBucketsBucketIdSubmissionsRouteChildren {
-  ApiBucketsBucketIdSubmissionsSubmissionIdRoute: typeof ApiBucketsBucketIdSubmissionsSubmissionIdRoute
+interface ApiFormsFormIdSubmissionsRouteChildren {
+  ApiFormsFormIdSubmissionsSubmissionIdRoute: typeof ApiFormsFormIdSubmissionsSubmissionIdRoute
 }
 
-const ApiBucketsBucketIdSubmissionsRouteChildren: ApiBucketsBucketIdSubmissionsRouteChildren =
+const ApiFormsFormIdSubmissionsRouteChildren: ApiFormsFormIdSubmissionsRouteChildren =
   {
-    ApiBucketsBucketIdSubmissionsSubmissionIdRoute:
-      ApiBucketsBucketIdSubmissionsSubmissionIdRoute,
+    ApiFormsFormIdSubmissionsSubmissionIdRoute:
+      ApiFormsFormIdSubmissionsSubmissionIdRoute,
   }
 
-const ApiBucketsBucketIdSubmissionsRouteWithChildren =
-  ApiBucketsBucketIdSubmissionsRoute._addFileChildren(
-    ApiBucketsBucketIdSubmissionsRouteChildren,
+const ApiFormsFormIdSubmissionsRouteWithChildren =
+  ApiFormsFormIdSubmissionsRoute._addFileChildren(
+    ApiFormsFormIdSubmissionsRouteChildren,
   )
 
-interface ApiBucketsBucketIdRouteChildren {
-  ApiBucketsBucketIdAnalyticsRoute: typeof ApiBucketsBucketIdAnalyticsRoute
-  ApiBucketsBucketIdDisconnectDiscordRoute: typeof ApiBucketsBucketIdDisconnectDiscordRoute
-  ApiBucketsBucketIdDisconnectSlackRoute: typeof ApiBucketsBucketIdDisconnectSlackRoute
-  ApiBucketsBucketIdRecipientsRoute: typeof ApiBucketsBucketIdRecipientsRouteWithChildren
-  ApiBucketsBucketIdSubmissionsRoute: typeof ApiBucketsBucketIdSubmissionsRouteWithChildren
+interface ApiFormsFormIdRouteChildren {
+  ApiFormsFormIdAnalyticsRoute: typeof ApiFormsFormIdAnalyticsRoute
+  ApiFormsFormIdDisconnectDiscordRoute: typeof ApiFormsFormIdDisconnectDiscordRoute
+  ApiFormsFormIdDisconnectSlackRoute: typeof ApiFormsFormIdDisconnectSlackRoute
+  ApiFormsFormIdRecipientsRoute: typeof ApiFormsFormIdRecipientsRouteWithChildren
+  ApiFormsFormIdSubmissionsRoute: typeof ApiFormsFormIdSubmissionsRouteWithChildren
 }
 
-const ApiBucketsBucketIdRouteChildren: ApiBucketsBucketIdRouteChildren = {
-  ApiBucketsBucketIdAnalyticsRoute: ApiBucketsBucketIdAnalyticsRoute,
-  ApiBucketsBucketIdDisconnectDiscordRoute:
-    ApiBucketsBucketIdDisconnectDiscordRoute,
-  ApiBucketsBucketIdDisconnectSlackRoute:
-    ApiBucketsBucketIdDisconnectSlackRoute,
-  ApiBucketsBucketIdRecipientsRoute:
-    ApiBucketsBucketIdRecipientsRouteWithChildren,
-  ApiBucketsBucketIdSubmissionsRoute:
-    ApiBucketsBucketIdSubmissionsRouteWithChildren,
+const ApiFormsFormIdRouteChildren: ApiFormsFormIdRouteChildren = {
+  ApiFormsFormIdAnalyticsRoute: ApiFormsFormIdAnalyticsRoute,
+  ApiFormsFormIdDisconnectDiscordRoute: ApiFormsFormIdDisconnectDiscordRoute,
+  ApiFormsFormIdDisconnectSlackRoute: ApiFormsFormIdDisconnectSlackRoute,
+  ApiFormsFormIdRecipientsRoute: ApiFormsFormIdRecipientsRouteWithChildren,
+  ApiFormsFormIdSubmissionsRoute: ApiFormsFormIdSubmissionsRouteWithChildren,
 }
 
-const ApiBucketsBucketIdRouteWithChildren =
-  ApiBucketsBucketIdRoute._addFileChildren(ApiBucketsBucketIdRouteChildren)
+const ApiFormsFormIdRouteWithChildren = ApiFormsFormIdRoute._addFileChildren(
+  ApiFormsFormIdRouteChildren,
+)
 
-interface ApiBucketsRouteChildren {
-  ApiBucketsBucketIdRoute: typeof ApiBucketsBucketIdRouteWithChildren
+interface ApiFormsRouteChildren {
+  ApiFormsFormIdRoute: typeof ApiFormsFormIdRouteWithChildren
 }
 
-const ApiBucketsRouteChildren: ApiBucketsRouteChildren = {
-  ApiBucketsBucketIdRoute: ApiBucketsBucketIdRouteWithChildren,
+const ApiFormsRouteChildren: ApiFormsRouteChildren = {
+  ApiFormsFormIdRoute: ApiFormsFormIdRouteWithChildren,
 }
 
-const ApiBucketsRouteWithChildren = ApiBucketsRoute._addFileChildren(
-  ApiBucketsRouteChildren,
+const ApiFormsRouteWithChildren = ApiFormsRoute._addFileChildren(
+  ApiFormsRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1154,7 +1150,7 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeToProRoute: WelcomeToProRoute,
   ApiAnalyticsRoute: ApiAnalyticsRoute,
   ApiApiKeysRoute: ApiApiKeysRoute,
-  ApiBucketsRoute: ApiBucketsRouteWithChildren,
+  ApiFormsRoute: ApiFormsRouteWithChildren,
   ApiSubscriptionRoute: ApiSubscriptionRoute,
   ApiVerifyRecipientRoute: ApiVerifyRecipientRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

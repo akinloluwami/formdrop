@@ -6,16 +6,16 @@ import {
   Cancel01Icon,
 } from "@hugeicons/core-free-icons";
 import {
-  useBucketUpdate,
+  useFormUpdate,
   useDisconnectGoogleSheets,
-} from "@/hooks/use-bucket-mutations";
+} from "@/hooks/use-form-mutations";
 import { useIntegrationsStore } from "@/stores/integrations-store";
 import { motion, AnimatePresence } from "motion/react";
 import { useFlag } from "@flagswift/react-client";
 import { Button } from "@/components/button";
 
 interface GoogleSheetsSectionProps {
-  bucketId: string;
+  formId: string;
   isConnected: boolean;
   isEnabled?: boolean;
   spreadsheetName?: string | null;
@@ -23,21 +23,21 @@ interface GoogleSheetsSectionProps {
 }
 
 export function GoogleSheetsSection({
-  bucketId,
+  formId,
   isConnected,
   isEnabled,
   spreadsheetName,
   spreadsheetId,
 }: GoogleSheetsSectionProps) {
-  const updateBucketMutation = useBucketUpdate(bucketId);
-  const disconnectMutation = useDisconnectGoogleSheets(bucketId);
+  const updateFormMutation = useFormUpdate(formId);
+  const disconnectMutation = useDisconnectGoogleSheets(formId);
   const { disconnectingIntegration, setDisconnectingIntegration } =
     useIntegrationsStore();
 
   const isDisconnecting = disconnectingIntegration === "google-sheets";
 
   const handleToggle = () => {
-    updateBucketMutation.mutate({
+    updateFormMutation.mutate({
       googleSheetsEnabled: !isEnabled,
     });
   };
@@ -93,10 +93,10 @@ export function GoogleSheetsSection({
                   >
                     <button
                       onClick={handleToggle}
-                      disabled={updateBucketMutation.isPending}
+                      disabled={updateFormMutation.isPending}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                         isEnabled ? "bg-accent" : "bg-gray-200"
-                      } ${updateBucketMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                      } ${updateFormMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                       <span
                         className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -161,7 +161,7 @@ export function GoogleSheetsSection({
             ) : (
               <Button
                 onClick={() =>
-                  (window.location.href = `/api/integrations/google-sheets/authorize?bucketId=${bucketId}`)
+                  (window.location.href = `/api/integrations/google-sheets/authorize?formId=${formId}`)
                 }
                 requiresPro
                 className="rounded-3xl py-3"

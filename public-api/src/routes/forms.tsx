@@ -1,11 +1,10 @@
 import { Response, useContext, Route, RouteGroup } from "react-serve-js";
 import { db } from "../db";
-import { buckets } from "../db/schema";
+import { forms } from "../db/schema";
 import { eq, desc, and, isNull } from "drizzle-orm";
 
-export const BucketsRoutes = () => (
-  <RouteGroup prefix="/buckets">
-    {/* Get all buckets */}
+export const FormsRoutes = () => (
+  <RouteGroup prefix="/forms">
     <Route path="/" method="GET">
       {async () => {
         const apiKey = useContext("apiKey");
@@ -19,15 +18,12 @@ export const BucketsRoutes = () => (
           );
         }
 
-        const userBuckets = await db
+        const userForms = await db
           .select()
-          .from(buckets)
-          .where(
-            and(eq(buckets.userId, apiKey.userId), isNull(buckets.deletedAt)),
-          )
-          .orderBy(desc(buckets.createdAt));
-
-        return <Response json={{ buckets: userBuckets }} />;
+          .from(forms)
+          .where(and(eq(forms.userId, apiKey.userId), isNull(forms.deletedAt)))
+          .orderBy(desc(forms.createdAt));
+        return <Response json={{ forms: userForms }} />;
       }}
     </Route>
   </RouteGroup>

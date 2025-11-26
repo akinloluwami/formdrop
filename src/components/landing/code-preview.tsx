@@ -8,24 +8,22 @@ export function CodePreview() {
   const [selectedTab, setSelectedTab] = useState<"html" | "fetch">("html");
 
   const htmlCodeExample = `<form
-  action="https://api.formdrop.co/collect?key=your-public-key"
+  action="https://api.formdrop.co/f/your-form-slug"
+  method="POST"
+>
   <input type="text" name="name" placeholder="Your Name" required />
   <input type="email" name="email" placeholder="Your Email" required />
   <button type="submit">Submit</button>
 </form>`;
 
-  const fetchCodeExample = `fetch('https://api.formdrop.co/collect', {
+  const fetchCodeExample = `fetch('https://api.formdrop.co/f/your-form-slug', {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': "Bearer your-public-key"
+    'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    bucket: "contact-form",
-    data: {
-      name: "John Doe",
-      email: "john.doe@example.com"
-    }
+    name: "John Doe",
+    email: "john.doe@example.com"
   })
 })
   .then(res => res.json())

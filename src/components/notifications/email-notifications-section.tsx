@@ -1,20 +1,20 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Notification01Icon } from "@hugeicons/core-free-icons";
-import { useBucketUpdate } from "@/hooks/use-bucket-mutations";
+import { useFormUpdate } from "@/hooks/use-form-mutations";
 
 interface EmailNotificationsSectionProps {
-  bucketId: string;
+  formId: string;
   isEnabled?: boolean;
 }
 
 export function EmailNotificationsSection({
-  bucketId,
+  formId,
   isEnabled,
 }: EmailNotificationsSectionProps) {
-  const updateBucketMutation = useBucketUpdate(bucketId);
+  const updateFormMutation = useFormUpdate(formId);
 
   const handleToggle = () => {
-    updateBucketMutation.mutate({
+    updateFormMutation.mutate({
       emailNotificationsEnabled: !isEnabled,
     });
   };
@@ -37,10 +37,10 @@ export function EmailNotificationsSection({
         </div>
         <button
           onClick={handleToggle}
-          disabled={updateBucketMutation.isPending}
+          disabled={updateFormMutation.isPending}
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
             isEnabled ? "bg-accent" : "bg-gray-200"
-          } ${updateBucketMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+          } ${updateFormMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
         >
           <span
             className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${

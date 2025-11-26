@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets } from "@/db/schema";
+import { forms } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { refreshGoogleSheetsToken } from "@/lib/google-sheets";
@@ -21,36 +21,33 @@ export const Route = createFileRoute(
           }
 
           const url = new URL(request.url);
-          const bucketId = url.searchParams.get("bucketId");
+          const formId = url.searchParams.get("formId");
 
-          if (!bucketId) {
+          if (!formId) {
             return Response.json(
-              { error: "bucketId is required" },
+              { error: "formId is required" },
               { status: 400 },
             );
           }
 
-          // Get bucket with tokens
-          const [bucket] = await db
+          // Get form with tokens
+          const [form] = await db
             .select()
-            .from(buckets)
+            .from(forms)
             .where(
               and(
-                eq(buckets.id, bucketId),
-                eq(buckets.userId, session.user.id),
-                isNull(buckets.deletedAt),
+                eq(forms.id, formId),
+                eq(forms.userId, session.user.id),
+                isNull(forms.deletedAt),
               ),
             )
             .limit(1);
 
-          if (!bucket) {
-            return Response.json(
-              { error: "Bucket not found" },
-              { status: 404 },
-            );
+          if (!form) {
+            return Response.json({ error: "Form not found" }, { status: 404 });
           }
 
-          if (!bucket.googleSheetsAccessToken) {
+          if (!form.googleSheetsAccessToken) {
             return Response.json(
               { error: "Google Sheets not connected" },
               { status: 400 },
@@ -58,28 +55,28 @@ export const Route = createFileRoute(
           }
 
           // Check if token is expired or about to expire (within 5 minutes)
-          let accessToken = bucket.googleSheetsAccessToken;
+          let accessToken = form.googleSheetsAccessToken;
           const isExpired =
-            bucket.googleSheetsTokenExpiry &&
-            new Date(bucket.googleSheetsTokenExpiry).getTime() - 5 * 60 * 1000 <
+            form.googleSheetsTokenExpiry &&
+            new Date(form.googleSheetsTokenExpiry).getTime() - 5 * 60 * 1000 <
               Date.now();
 
-          if (isExpired && bucket.googleSheetsRefreshToken) {
+          if (isExpired && form.googleSheetsRefreshToken) {
             try {
               const { accessToken: newAccessToken, expiresIn } =
-                await refreshGoogleSheetsToken(bucket.googleSheetsRefreshToken);
+                await refreshGoogleSheetsToken(form.googleSheetsRefreshToken);
 
               accessToken = newAccessToken;
               const newExpiry = new Date(Date.now() + expiresIn * 1000);
 
-              // Update bucket with new token
+              // Update form with new token
               await db
-                .update(buckets)
+                .update(forms)
                 .set({
                   googleSheetsAccessToken: newAccessToken,
                   googleSheetsTokenExpiry: newExpiry,
                 })
-                .where(eq(buckets.id, bucketId));
+                .where(eq(forms.id, formId));
             } catch (error) {
               console.error("Failed to refresh Google Sheets token:", error);
               // Continue with old token if refresh fails, or return error

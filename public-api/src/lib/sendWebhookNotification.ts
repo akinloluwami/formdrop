@@ -2,20 +2,20 @@ import { recordNotificationUsage } from "./recordNotificationUsage";
 
 export async function sendSlackNotification({
   webhookUrl,
-  bucketName,
+  formName,
   data,
   submissionId,
   userId,
-  bucketId,
+  formId,
   period,
   channelName,
 }: {
   webhookUrl: string;
-  bucketName: string;
+  formName: string;
   data: Record<string, any>;
   submissionId: string;
   userId: string;
-  bucketId: string;
+  formId: string;
   period: string;
   channelName?: string | null;
 }) {
@@ -29,7 +29,7 @@ export async function sendSlackNotification({
       type: "header",
       text: {
         type: "plain_text",
-        text: `✉️ New submission for ${bucketName}`,
+        text: `✉️ New submission for ${formName}`,
         emoji: true,
       },
     },
@@ -63,7 +63,7 @@ export async function sendSlackNotification({
   // Record notification usage
   await recordNotificationUsage({
     userId,
-    bucketId,
+    formId,
     submissionId,
     period,
     type: "slack",
@@ -75,20 +75,20 @@ export async function sendSlackNotification({
 
 export async function sendDiscordNotification({
   webhookUrl,
-  bucketName,
+  formName,
   data,
   submissionId,
   userId,
-  bucketId,
+  formId,
   period,
   channelName,
 }: {
   webhookUrl: string;
-  bucketName: string;
+  formName: string;
   data: Record<string, any>;
   submissionId: string;
   userId: string;
-  bucketId: string;
+  formId: string;
   period: string;
   channelName?: string | null;
 }) {
@@ -104,7 +104,7 @@ export async function sendDiscordNotification({
     }));
 
   const embed = {
-    title: `✉️ New submission for ${bucketName}`,
+    title: `✉️ New submission for ${formName}`,
     color: 0x6f63e4, // Accent color
     fields,
     footer: {
@@ -128,7 +128,7 @@ export async function sendDiscordNotification({
   // Record notification usage
   await recordNotificationUsage({
     userId,
-    bucketId,
+    formId,
     submissionId,
     period,
     type: "discord",

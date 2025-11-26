@@ -38,7 +38,7 @@ function ApiDocs() {
                   </li>
                   <li>
                     <strong>Private Key:</strong> Keep secret. Used for managing
-                    buckets and submissions. Never expose this in client-side
+                    forms and submissions. Never expose this in client-side
                     code.
                   </li>
                 </ul>
@@ -74,8 +74,8 @@ function ApiDocs() {
             </div>
             <p className="text-gray-600 mb-6">
               Send a new form submission. This endpoint is public and should be
-              used from your frontend code. If the <code>bucket</code> doesn't exist,
-              it will be created automatically.
+              used from your frontend code. If the <code>form</code> doesn't
+              exist, it will be created automatically.
             </p>
 
             <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-6">
@@ -101,7 +101,7 @@ function ApiDocs() {
               <h3 className="font-semibold mb-4">Request Body</h3>
               <div className="space-y-3">
                 <div className="flex gap-4 text-sm">
-                  <span className="font-mono text-gray-500 w-24">bucket</span>
+                  <span className="font-mono text-gray-500 w-24">form</span>
                   <span className="text-gray-600">
                     The name of your form (e.g. "Contact Us").
                   </span>
@@ -124,7 +124,7 @@ fetch('https://api.formdrop.co/collect', {
     'Authorization': 'Bearer YOUR_PUBLIC_KEY'
   },
   body: JSON.stringify({
-    bucket: "Contact Us",
+    form: "Contact Us",
     data: {
       email: "user@example.com",
       message: "Hello world"
@@ -135,20 +135,19 @@ fetch('https://api.formdrop.co/collect', {
             />
           </section>
 
-          {/* List Buckets */}
-          <section id="list-buckets">
+          {/* List Forms */}
+          <section id="list-forms">
             <div className="flex items-center gap-3 mb-4">
               <span className="px-3 py-1 text-sm font-bold text-blue-700 bg-blue-100 rounded-lg">
                 GET
               </span>
-              <h2 className="text-2xl font-bold">List Buckets</h2>
+              <h2 className="text-2xl font-bold">List Forms</h2>
             </div>
             <p className="text-gray-600 mb-6">
-              Retrieve a list of all your form buckets. Requires a private API
-              key.
+              Retrieve a list of all your forms. Requires a private API key.
             </p>
             <CodeBlock
-              code={`curl https://api.formdrop.co/buckets \\
+              code={`curl https://api.formdrop.co/forms \\
   -H "Authorization: Bearer YOUR_PRIVATE_KEY"`}
               language="bash"
             />
@@ -163,11 +162,11 @@ fetch('https://api.formdrop.co/collect', {
               <h2 className="text-2xl font-bold">Get Submissions</h2>
             </div>
             <p className="text-gray-600 mb-6">
-              Retrieve submissions for a specific bucket. Requires a private API
+              Retrieve submissions for a specific form. Requires a private API
               key.
             </p>
             <CodeBlock
-              code={`curl https://api.formdrop.co/:bucketId/submissions \\
+              code={`curl https://api.formdrop.co/forms/:formId/submissions \\
   -H "Authorization: Bearer YOUR_PRIVATE_KEY"`}
               language="bash"
             />
@@ -186,7 +185,7 @@ fetch('https://api.formdrop.co/collect', {
               key.
             </p>
             <CodeBlock
-              code={`curl -X DELETE https://api.formdrop.co/:bucketId/submissions/:submissionId \\
+              code={`curl -X DELETE https://api.formdrop.co/forms/:formId/submissions/:submissionId \\
   -H "Authorization: Bearer YOUR_PRIVATE_KEY"`}
               language="bash"
             />

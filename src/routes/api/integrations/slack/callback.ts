@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets } from "@/db/schema";
+import { forms } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const Route = createFileRoute("/api/integrations/slack/callback")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/integrations/slack/callback")({
         try {
           const url = new URL(request.url);
           const code = url.searchParams.get("code");
-          const state = url.searchParams.get("state"); // bucketId
+          const state = url.searchParams.get("state"); // formId
           const error = url.searchParams.get("error");
 
           if (error) {
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/api/integrations/slack/callback")({
             );
           }
 
-          const bucketId = state;
+          const formId = state;
 
           // Exchange code for access token
           const tokenResponse = await fetch(
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/api/integrations/slack/callback")({
 
           if (!tokenData.ok) {
             return Response.redirect(
-              `${process.env.APP_URL}/app/forms/${bucketId}/notifications?error=slack_failed`,
+              `${process.env.APP_URL}/app/forms/${formId}/notifications?error=slack_failed`,
               302,
             );
           }
@@ -64,14 +64,14 @@ export const Route = createFileRoute("/api/integrations/slack/callback")({
 
           if (!webhookUrl) {
             return Response.redirect(
-              `${process.env.APP_URL}/app/forms/${bucketId}/notifications?error=slack_no_webhook`,
+              `${process.env.APP_URL}/app/forms/${formId}/notifications?error=slack_no_webhook`,
               302,
             );
           }
 
-          // Update bucket with Slack information
+          // Update form with Slack information
           await db
-            .update(buckets)
+            .update(forms)
             .set({
               slackWebhookUrl: webhookUrl,
               slackChannelId: channelId,
@@ -79,11 +79,11 @@ export const Route = createFileRoute("/api/integrations/slack/callback")({
               slackTeamName: teamName,
               slackNotificationsEnabled: true,
             })
-            .where(eq(buckets.id, bucketId));
+            .where(eq(forms.id, formId));
 
           // Redirect back to notifications page
           return Response.redirect(
-            `${process.env.APP_URL}/app/forms/${bucketId}/notifications?success=slack_connected`,
+            `${process.env.APP_URL}/app/forms/${formId}/notifications?success=slack_connected`,
             302,
           );
         } catch (error: any) {

@@ -30,24 +30,24 @@ function RouteComponent() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
 
-  const { data: bucket, isLoading } = useQuery({
-    queryKey: ["bucket", id],
+  const { data: form, isLoading } = useQuery({
+    queryKey: ["form", id],
     queryFn: async () => {
-      const response = await appClient.buckets.get(id);
+      const response = await appClient.forms.get(id);
       if ("error" in response) {
         throw new Error(response.error);
       }
-      return response.bucket;
+      return response.form;
     },
   });
 
   useEffect(() => {
-    if (bucket) {
-      setName(bucket.name);
-      setDescription(bucket.description || "");
-      setAllowedDomains(bucket.allowedDomains || []);
+    if (form) {
+      setName(form.name);
+      setDescription(form.description || "");
+      setAllowedDomains(form.allowedDomains || []);
     }
-  }, [bucket]);
+  }, [form]);
 
   const updateMutation = useMutation({
     mutationFn: async (data: {
@@ -55,24 +55,24 @@ function RouteComponent() {
       description: string;
       allowedDomains: string[];
     }) => {
-      const response = await appClient.buckets.update(id, data);
+      const response = await appClient.forms.update(id, data);
       if ("error" in response) throw new Error(response.error);
-      return response.bucket;
+      return response.form;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bucket", id] });
+      queryClient.invalidateQueries({ queryKey: ["form", id] });
       // Maybe show a toast?
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      const response = await appClient.buckets.delete(id);
+      const response = await appClient.forms.delete(id);
       if ("error" in response) throw new Error(response.error);
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["buckets"] });
+      queryClient.invalidateQueries({ queryKey: ["forms"] });
       navigate({ to: "/app/forms" });
     },
   });
@@ -107,7 +107,7 @@ function RouteComponent() {
   };
 
   const handleDelete = () => {
-    if (deleteConfirmationText === bucket?.name) {
+    if (deleteConfirmationText === form?.name) {
       deleteMutation.mutate();
     }
   };
@@ -124,7 +124,7 @@ function RouteComponent() {
     );
   }
 
-  if (!bucket) return <div>Bucket not found</div>;
+  if (!form) return <div>Form not found</div>;
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -301,13 +301,12 @@ function RouteComponent() {
                 </div>
                 <p className="text-gray-600 mb-6">
                   This action cannot be undone. This will permanently delete the
-                  form <strong>{bucket.name}</strong> and all of its
-                  submissions.
+                  form <strong>{form.name}</strong> and all of its submissions.
                 </p>
 
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Type <strong>{bucket.name}</strong> to confirm
+                    Type <strong>{form.name}</strong> to confirm
                   </label>
                   <input
                     type="text"
@@ -329,7 +328,7 @@ function RouteComponent() {
                   <Button
                     onClick={handleDelete}
                     disabled={
-                      deleteConfirmationText !== bucket.name ||
+                      deleteConfirmationText !== form.name ||
                       deleteMutation.isPending
                     }
                     isLoading={deleteMutation.isPending}

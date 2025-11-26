@@ -25,12 +25,12 @@ function RouteComponent() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
-  const { data: bucket, isLoading } = useQuery({
-    queryKey: ["bucket", id],
+  const { data: form, isLoading } = useQuery({
+    queryKey: ["form", id],
     queryFn: async () => {
-      const response = await appClient.buckets.get(id);
+      const response = await appClient.forms.get(id);
       if ("error" in response) throw new Error(response.error);
-      return response.bucket;
+      return response.form;
     },
   });
 
@@ -158,11 +158,11 @@ function RouteComponent() {
 
         <div className="space-y-4">
           <GoogleSheetsSection
-            bucketId={id}
-            isConnected={bucket?.googleSheetsConnected ?? false}
-            isEnabled={bucket?.googleSheetsEnabled}
-            spreadsheetName={bucket?.googleSheetsSpreadsheetName}
-            spreadsheetId={bucket?.googleSheetsSpreadsheetId}
+            formId={id}
+            isConnected={form?.googleSheetsConnected ?? false}
+            isEnabled={form?.googleSheetsEnabled}
+            spreadsheetName={form?.googleSheetsSpreadsheetName}
+            spreadsheetId={form?.googleSheetsSpreadsheetId}
           />
 
           {/* Airtable - Coming soon */}

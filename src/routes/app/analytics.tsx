@@ -48,7 +48,7 @@ function RouteComponent() {
   }
 
   const { stats, chartData, topForms } = data || {
-    stats: { totalBuckets: 0, totalSubmissions: 0, submissionsThisMonth: 0 },
+    stats: { totalForms: 0, totalSubmissions: 0, submissionsThisMonth: 0 },
     chartData: [],
     topForms: [],
   };
@@ -63,7 +63,7 @@ function RouteComponent() {
         <div className="p-6 border border-gray-200 rounded-3xl bg-white">
           <p className="text-sm font-medium text-gray-500">Total Forms</p>
           <p className="text-3xl font-bold text-gray-900 mt-2">
-            {stats.totalBuckets}
+            {stats.totalForms}
           </p>
         </div>
         <div className="p-6 border border-gray-200 rounded-3xl bg-white">

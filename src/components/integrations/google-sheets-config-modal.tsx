@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/button";
 
 interface GoogleSheetsConfigModalProps {
-  bucketId: string;
+  formId: string;
   currentSpreadsheetId?: string | null;
   onClose: () => void;
 }
@@ -16,7 +16,7 @@ interface Spreadsheet {
 }
 
 export function GoogleSheetsConfigModal({
-  bucketId,
+  formId,
   currentSpreadsheetId,
   onClose,
 }: GoogleSheetsConfigModalProps) {
@@ -37,7 +37,7 @@ export function GoogleSheetsConfigModal({
     try {
       setIsLoading(true);
       const response = await fetch(
-        `/api/integrations/google-sheets/spreadsheets?bucketId=${bucketId}`,
+        `/api/integrations/google-sheets/spreadsheets?formId=${formId}`,
       );
 
       if (!response.ok) {
@@ -67,7 +67,7 @@ export function GoogleSheetsConfigModal({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            bucketId,
+            formId,
             spreadsheetId: selectedSpreadsheet.id,
             spreadsheetName: selectedSpreadsheet.name,
           }),
@@ -78,8 +78,8 @@ export function GoogleSheetsConfigModal({
         throw new Error("Failed to save configuration");
       }
 
-      // Invalidate bucket query to refresh the UI
-      await queryClient.invalidateQueries({ queryKey: ["bucket", bucketId] });
+      // Invalidate form query to refresh the UI
+      await queryClient.invalidateQueries({ queryKey: ["form", formId] });
       onClose();
     } catch (err: any) {
       setError(err.message);

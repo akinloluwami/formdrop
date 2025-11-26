@@ -1,10 +1,7 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { LinkSquare02Icon } from "@hugeicons/core-free-icons";
 import { Slack } from "@ridemountainpig/svgl-react";
-import {
-  useBucketUpdate,
-  useDisconnectSlack,
-} from "@/hooks/use-bucket-mutations";
+import { useFormUpdate, useDisconnectSlack } from "@/hooks/use-form-mutations";
 
 import { Button } from "@/components/button";
 
@@ -13,7 +10,7 @@ interface SlackNotificationsSectionProps {
   isEnabled?: boolean;
   channelName?: string | null;
   teamName?: string | null;
-  bucketId: string;
+  formId: string;
 }
 
 export function SlackNotificationsSection({
@@ -21,13 +18,13 @@ export function SlackNotificationsSection({
   isEnabled,
   channelName,
   teamName,
-  bucketId,
+  formId,
 }: SlackNotificationsSectionProps) {
-  const updateBucketMutation = useBucketUpdate(bucketId);
-  const disconnectSlackMutation = useDisconnectSlack(bucketId);
+  const updateFormMutation = useFormUpdate(formId);
+  const disconnectSlackMutation = useDisconnectSlack(formId);
 
   const handleToggle = () => {
-    updateBucketMutation.mutate({
+    updateFormMutation.mutate({
       slackNotificationsEnabled: !isEnabled,
     });
   };
@@ -59,10 +56,10 @@ export function SlackNotificationsSection({
             <>
               <button
                 onClick={handleToggle}
-                disabled={updateBucketMutation.isPending}
+                disabled={updateFormMutation.isPending}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                   isEnabled ? "bg-accent" : "bg-gray-200"
-                } ${updateBucketMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                } ${updateFormMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -83,7 +80,7 @@ export function SlackNotificationsSection({
           ) : (
             <Button
               onClick={() =>
-                (window.location.href = `/api/integrations/slack/authorize?bucketId=${bucketId}`)
+                (window.location.href = `/api/integrations/slack/authorize?formId=${formId}`)
               }
               requiresPro
               className="bg-purple-600 hover:bg-purple-700 rounded-3xl py-3"

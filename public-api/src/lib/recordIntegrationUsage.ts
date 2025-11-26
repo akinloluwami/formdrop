@@ -3,14 +3,14 @@ import { events } from "../db/schema";
 
 interface RecordIntegrationParams {
   userId: string;
-  bucketId: string;
+  formId: string;
   submissionId: string;
   integration: "google-sheets" | "airtable";
 }
 
 export async function recordIntegrationUsage({
   userId,
-  bucketId,
+  formId,
   submissionId,
   integration,
 }: RecordIntegrationParams): Promise<void> {
@@ -18,7 +18,7 @@ export async function recordIntegrationUsage({
     // Record integration sync event
     await db.insert(events).values({
       userId,
-      bucketId,
+      formId,
       eventType: "integration_synced",
       details: {
         integration,

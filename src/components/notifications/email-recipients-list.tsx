@@ -21,13 +21,13 @@ interface Recipient {
 }
 
 interface EmailRecipientsListProps {
-  bucketId: string;
+  formId: string;
   ownerEmail?: string;
   recipients: Recipient[];
 }
 
 export function EmailRecipientsList({
-  bucketId,
+  formId,
   ownerEmail,
   recipients,
 }: EmailRecipientsListProps) {
@@ -38,10 +38,10 @@ export function EmailRecipientsList({
     setDeletingRecipientId,
   } = useNotificationsStore();
 
-  const addRecipientMutation = useAddRecipient(bucketId);
-  const removeRecipientMutation = useRemoveRecipient(bucketId);
-  const updateRecipientMutation = useUpdateRecipient(bucketId);
-  const resendVerificationMutation = useResendVerification(bucketId);
+  const addRecipientMutation = useAddRecipient(formId);
+  const removeRecipientMutation = useRemoveRecipient(formId);
+  const updateRecipientMutation = useUpdateRecipient(formId);
+  const resendVerificationMutation = useResendVerification(formId);
 
   const handleAddRecipient = (e: React.FormEvent) => {
     e.preventDefault();

@@ -29,7 +29,7 @@ type ViewMode = "card" | "table";
 
 interface Submission {
   id: string;
-  bucketId: string;
+  formId: string;
   payload: Record<string, any>;
   ip: string | null;
   userAgent: string | null;
@@ -50,21 +50,12 @@ function RouteComponent() {
 
   const queryClient = useQueryClient();
 
-  const { data: bucket } = useQuery({
-    queryKey: ["bucket", id],
+  const { data: form } = useQuery({
+    queryKey: ["form", id],
     queryFn: async () => {
-      const response = await appClient.buckets.get(id);
+      const response = await appClient.forms.get(id);
       if ("error" in response) throw new Error(response.error);
-      return response.bucket;
-    },
-  });
-
-  const { data: keys } = useQuery({
-    queryKey: ["api-keys"],
-    queryFn: async () => {
-      const response = await appClient.apiKeys.list();
-      if ("error" in response) return null;
-      return response.keys;
+      return response.form;
     },
   });
 
@@ -87,29 +78,24 @@ function RouteComponent() {
     }
   }, [isLoading, submissions.length]);
 
-  const publicKey = keys?.public?.key || "your-public-key";
-  const bucketName = bucket?.name || "Contact Form";
+  const formName = form?.name || "Contact Form";
 
   const htmlCodeExample = `<form
-  action="https://api.formdrop.co/collect?key=${publicKey}" 
-  method="POST" name="${bucketName}">
+  action="https://api.formdrop.co/f/${form?.slug}" 
+  method="POST">
   <input type="text" name="name" placeholder="Your Name" required />
   <input type="email" name="email" placeholder="Your Email" required />
-  <Button type="submit">Submit</Button>
+  <button type="submit">Submit</button>
 </form>`;
 
-  const fetchCodeExample = `fetch('https://api.formdrop.co/collect', {
+  const fetchCodeExample = `fetch('https://api.formdrop.co/f/${form?.slug}', {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': "Bearer ${publicKey}"
+    'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    bucket: "${bucketName}",
-    data: {
-      name: "John Doe",
-      email: "john.doe@example.com"
-    }
+    name: "John Doe",
+    email: "john.doe@example.com"
   })
 })
   .then(res => res.json())
@@ -658,7 +644,7 @@ function RouteComponent() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-xl font-bold text-gray-900">
-                    Integrate {bucketName}
+                    Integrate {formName}
                   </h3>
                   <Button
                     onClick={() => setShowIntegrationModal(false)}
@@ -671,7 +657,6 @@ function RouteComponent() {
 
                 <div className="border rounded-3xl border-gray-200 p-4">
                   <div className="flex items-center gap-x-4 relative">
-                    {/* Animated indicator background */}
                     <div
                       className={`absolute h-10 w-10 rounded-lg transition-all duration-300 ease-out ${
                         selectedTab === "html"

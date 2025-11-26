@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets } from "@/db/schema";
+import { forms } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const Route = createFileRoute("/api/integrations/discord/callback")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/integrations/discord/callback")({
         try {
           const url = new URL(request.url);
           const code = url.searchParams.get("code");
-          const state = url.searchParams.get("state"); // bucketId
+          const state = url.searchParams.get("state"); // formId
           const error = url.searchParams.get("error");
 
           if (error) {
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/api/integrations/discord/callback")({
             );
           }
 
-          const bucketId = state;
+          const formId = state;
 
           // Exchange code for access token and webhook
           const tokenResponse = await fetch(
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/api/integrations/discord/callback")({
 
           if (!tokenResponse.ok) {
             return Response.redirect(
-              `${process.env.APP_URL}/app/forms/${bucketId}/notifications?error=discord_failed`,
+              `${process.env.APP_URL}/app/forms/${formId}/notifications?error=discord_failed`,
               302,
             );
           }
@@ -62,7 +62,7 @@ export const Route = createFileRoute("/api/integrations/discord/callback")({
 
           if (!webhook || !webhook.url) {
             return Response.redirect(
-              `${process.env.APP_URL}/app/forms/${bucketId}/notifications?error=discord_no_webhook`,
+              `${process.env.APP_URL}/app/forms/${formId}/notifications?error=discord_no_webhook`,
               302,
             );
           }
@@ -109,9 +109,9 @@ export const Route = createFileRoute("/api/integrations/discord/callback")({
             console.error("Failed to fetch Discord guild/channel info:", e);
           }
 
-          // Update bucket with Discord information
+          // Update form with Discord information
           await db
-            .update(buckets)
+            .update(forms)
             .set({
               discordWebhookUrl: webhookUrl,
               discordChannelId: channelId,
@@ -119,11 +119,11 @@ export const Route = createFileRoute("/api/integrations/discord/callback")({
               discordGuildName: guildName,
               discordNotificationsEnabled: true,
             })
-            .where(eq(buckets.id, bucketId));
+            .where(eq(forms.id, formId));
 
           // Redirect back to notifications page
           return Response.redirect(
-            `${process.env.APP_URL}/app/forms/${bucketId}/notifications?success=discord_connected`,
+            `${process.env.APP_URL}/app/forms/${formId}/notifications?success=discord_connected`,
             302,
           );
         } catch (error: any) {

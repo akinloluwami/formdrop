@@ -2,9 +2,9 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { GameIcon } from "@hugeicons/core-free-icons";
 import { Discord } from "@ridemountainpig/svgl-react";
 import {
-  useBucketUpdate,
+  useFormUpdate,
   useDisconnectDiscord,
-} from "@/hooks/use-bucket-mutations";
+} from "@/hooks/use-form-mutations";
 
 import { Button } from "@/components/button";
 
@@ -13,7 +13,7 @@ interface DiscordNotificationsSectionProps {
   isEnabled?: boolean;
   channelName?: string | null;
   guildName?: string | null;
-  bucketId: string;
+  formId: string;
 }
 
 export function DiscordNotificationsSection({
@@ -21,13 +21,13 @@ export function DiscordNotificationsSection({
   isEnabled,
   channelName,
   guildName,
-  bucketId,
+  formId,
 }: DiscordNotificationsSectionProps) {
-  const updateBucketMutation = useBucketUpdate(bucketId);
-  const disconnectDiscordMutation = useDisconnectDiscord(bucketId);
+  const updateFormMutation = useFormUpdate(formId);
+  const disconnectDiscordMutation = useDisconnectDiscord(formId);
 
   const handleToggle = () => {
-    updateBucketMutation.mutate({
+    updateFormMutation.mutate({
       discordNotificationsEnabled: !isEnabled,
     });
   };
@@ -59,10 +59,10 @@ export function DiscordNotificationsSection({
             <>
               <button
                 onClick={handleToggle}
-                disabled={updateBucketMutation.isPending}
+                disabled={updateFormMutation.isPending}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 ${
                   isEnabled ? "bg-accent" : "bg-gray-200"
-                } ${updateBucketMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                } ${updateFormMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -83,7 +83,7 @@ export function DiscordNotificationsSection({
           ) : (
             <Button
               onClick={() =>
-                (window.location.href = `/api/integrations/discord/authorize?bucketId=${bucketId}`)
+                (window.location.href = `/api/integrations/discord/authorize?formId=${formId}`)
               }
               requiresPro
               className="bg-indigo-600 hover:bg-indigo-700 rounded-3xl py-3"

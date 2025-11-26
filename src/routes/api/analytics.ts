@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets, usage } from "@/db/schema";
+import { forms, usage } from "@/db/schema";
 import { eq, and, sql, gte, isNull, desc } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import moment from "moment";
@@ -20,18 +20,18 @@ export const Route = createFileRoute("/api/analytics")({
 
           const userId = session.user.id;
 
-          // Get total buckets
-          const [bucketsResult] = await db
+          // Get total forms
+          const [formsResult] = await db
             .select({ count: sql<number>`count(*)` })
-            .from(buckets)
-            .where(and(eq(buckets.userId, userId), isNull(buckets.deletedAt)));
+            .from(forms)
+            .where(and(eq(forms.userId, userId), isNull(forms.deletedAt)));
 
-          // Get total submissions across all user buckets
+          // Get total submissions across all user forms
           const [submissionsResult] = await db
             .select({ count: sql<number>`sum(${usage.count})` })
             .from(usage)
-            .innerJoin(buckets, eq(usage.bucketId, buckets.id))
-            .where(and(eq(buckets.userId, userId), isNull(buckets.deletedAt)));
+            .innerJoin(forms, eq(usage.formId, forms.id))
+            .where(and(eq(forms.userId, userId), isNull(forms.deletedAt)));
 
           // Get submissions for this month
           const startOfMonthStr = moment()
@@ -40,11 +40,11 @@ export const Route = createFileRoute("/api/analytics")({
           const [thisMonthResult] = await db
             .select({ count: sql<number>`sum(${usage.count})` })
             .from(usage)
-            .innerJoin(buckets, eq(usage.bucketId, buckets.id))
+            .innerJoin(forms, eq(usage.formId, forms.id))
             .where(
               and(
-                eq(buckets.userId, userId),
-                isNull(buckets.deletedAt),
+                eq(forms.userId, userId),
+                isNull(forms.deletedAt),
                 gte(usage.period, startOfMonthStr),
               ),
             );
@@ -60,11 +60,11 @@ export const Route = createFileRoute("/api/analytics")({
               count: sql<number>`sum(${usage.count})`,
             })
             .from(usage)
-            .innerJoin(buckets, eq(usage.bucketId, buckets.id))
+            .innerJoin(forms, eq(usage.formId, forms.id))
             .where(
               and(
-                eq(buckets.userId, userId),
-                isNull(buckets.deletedAt),
+                eq(forms.userId, userId),
+                isNull(forms.deletedAt),
                 gte(usage.period, thirtyDaysAgoStr),
               ),
             )
@@ -85,20 +85,20 @@ export const Route = createFileRoute("/api/analytics")({
           // Get top performing forms
           const topForms = await db
             .select({
-              id: buckets.id,
-              name: buckets.name,
+              id: forms.id,
+              name: forms.name,
               submissionCount: sql<number>`sum(${usage.count})`,
             })
-            .from(buckets)
-            .leftJoin(usage, eq(buckets.id, usage.bucketId))
-            .where(and(eq(buckets.userId, userId), isNull(buckets.deletedAt)))
-            .groupBy(buckets.id, buckets.name)
+            .from(forms)
+            .leftJoin(usage, eq(forms.id, usage.formId))
+            .where(and(eq(forms.userId, userId), isNull(forms.deletedAt)))
+            .groupBy(forms.id, forms.name)
             .orderBy(desc(sql`sum(${usage.count})`))
             .limit(5);
 
           return Response.json({
             stats: {
-              totalBuckets: Number(bucketsResult?.count || 0),
+              totalForms: Number(formsResult?.count || 0),
               totalSubmissions: Number(submissionsResult?.count || 0),
               submissionsThisMonth: Number(thisMonthResult?.count || 0),
             },

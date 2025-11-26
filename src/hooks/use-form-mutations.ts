@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { appClient } from "@/lib/app-client";
 
-export function useBucketUpdate(bucketId: string) {
+export function useFormUpdate(formId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -12,47 +12,47 @@ export function useBucketUpdate(bucketId: string) {
       googleSheetsEnabled?: boolean;
       airtableEnabled?: boolean;
     }) => {
-      const response = await appClient.buckets.update(bucketId, data);
+      const response = await appClient.forms.update(formId, data);
       if ("error" in response) throw new Error(response.error);
-      return response.bucket;
+      return response.form;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bucket", bucketId] });
+      queryClient.invalidateQueries({ queryKey: ["form", formId] });
     },
   });
 }
 
-export function useDisconnectSlack(bucketId: string) {
+export function useDisconnectSlack(formId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
-      const response = await appClient.recipients.disconnectSlack(bucketId);
+      const response = await appClient.recipients.disconnectSlack(formId);
       if ("error" in response) throw new Error(response.error);
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bucket", bucketId] });
+      queryClient.invalidateQueries({ queryKey: ["form", formId] });
     },
   });
 }
 
-export function useDisconnectDiscord(bucketId: string) {
+export function useDisconnectDiscord(formId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
-      const response = await appClient.recipients.disconnectDiscord(bucketId);
+      const response = await appClient.recipients.disconnectDiscord(formId);
       if ("error" in response) throw new Error(response.error);
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bucket", bucketId] });
+      queryClient.invalidateQueries({ queryKey: ["form", formId] });
     },
   });
 }
 
-export function useDisconnectGoogleSheets(bucketId: string) {
+export function useDisconnectGoogleSheets(formId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -62,19 +62,19 @@ export function useDisconnectGoogleSheets(bucketId: string) {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ bucketId }),
+          body: JSON.stringify({ formId }),
         },
       );
       if (!response.ok) throw new Error("Failed to disconnect");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bucket", bucketId] });
+      queryClient.invalidateQueries({ queryKey: ["form", formId] });
     },
   });
 }
 
-export function useDisconnectAirtable(bucketId: string) {
+export function useDisconnectAirtable(formId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -82,13 +82,13 @@ export function useDisconnectAirtable(bucketId: string) {
       const response = await fetch("/api/integrations/airtable/disconnect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bucketId }),
+        body: JSON.stringify({ formId }),
       });
       if (!response.ok) throw new Error("Failed to disconnect");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bucket", bucketId] });
+      queryClient.invalidateQueries({ queryKey: ["form", formId] });
     },
   });
 }

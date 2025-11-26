@@ -9,10 +9,10 @@ const EMAIL_PROVIDER: "plunk" | "zepto" = "zepto";
 
 interface SendEmailNotificationParams {
   recipientEmail: string;
-  bucketName: string;
+  formName: string;
   data: Record<string, any>;
   userId: string;
-  bucketId: string;
+  formId: string;
   submissionId: string;
   period: string;
 }
@@ -25,12 +25,12 @@ function isValidEmail(email: string): boolean {
 
 // Generate email HTML template
 function generateEmailHTML(
-  bucketName: string,
+  formName: string,
   data: Record<string, any>,
 ): string {
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #18181b;">New Submission for ${bucketName}</h2>
+      <h2 style="color: #18181b;">New Submission for ${formName}</h2>
       <p style="color: #52525b;">You have received a new submission:</p>
       <div style="background: #f4f4f5; padding: 24px; border-radius: 12px; margin-top: 20px;">
         ${Object.entries(data)
@@ -56,7 +56,7 @@ function generateEmailHTML(
 
 async function sendViaPlunk(
   recipientEmail: string,
-  bucketName: string,
+  formName: string,
   data: Record<string, any>,
   submissionId: string,
 ): Promise<void> {
@@ -64,9 +64,9 @@ async function sendViaPlunk(
     method: "POST",
     body: JSON.stringify({
       to: recipientEmail,
-      subject: `New submission for ${bucketName}`,
+      subject: `New submission for ${formName}`,
       from: process.env.NOTIFICATION_SENDER_EMAIL,
-      body: generateEmailHTML(bucketName, data),
+      body: generateEmailHTML(formName, data),
     }),
     headers: {
       "Content-Type": "application/json",
@@ -81,7 +81,7 @@ async function sendViaPlunk(
       statusText: response.statusText,
       body: errorText,
       recipientEmail,
-      bucketName,
+      formName,
       submissionId,
     });
     throw new Error(`Plunk API error: ${response.status} - ${errorText}`);
@@ -90,7 +90,7 @@ async function sendViaPlunk(
   const responseData = await response.json();
   console.log("Email sent successfully via Plunk:", {
     recipientEmail,
-    bucketName,
+    formName,
     submissionId,
     response: responseData,
   });
@@ -98,7 +98,7 @@ async function sendViaPlunk(
 
 async function sendViaZepto(
   recipientEmail: string,
-  bucketName: string,
+  formName: string,
   data: Record<string, any>,
   submissionId: string,
 ): Promise<void> {
@@ -126,23 +126,23 @@ async function sendViaZepto(
         },
       },
     ],
-    subject: `New submission for ${bucketName}`,
-    htmlbody: generateEmailHTML(bucketName, data),
+    subject: `New submission for ${formName}`,
+    htmlbody: generateEmailHTML(formName, data),
   });
 
   console.log("Email sent successfully via ZeptoMail:", {
     recipientEmail,
-    bucketName,
+    formName,
     submissionId,
   });
 }
 
 export async function sendEmailNotification({
   recipientEmail,
-  bucketName,
+  formName,
   data,
   userId,
-  bucketId,
+  formId,
   submissionId,
   period,
 }: SendEmailNotificationParams): Promise<void> {
@@ -151,7 +151,7 @@ export async function sendEmailNotification({
     if (!recipientEmail || !isValidEmail(recipientEmail)) {
       console.error("Invalid email address:", {
         recipientEmail,
-        bucketName,
+        formName,
         submissionId,
       });
       throw new Error(`Invalid email address: ${recipientEmail}`);
@@ -159,15 +159,15 @@ export async function sendEmailNotification({
 
     // Send email using configured provider
     if (EMAIL_PROVIDER === "zepto") {
-      await sendViaZepto(recipientEmail, bucketName, data, submissionId);
+      await sendViaZepto(recipientEmail, formName, data, submissionId);
     } else {
-      await sendViaPlunk(recipientEmail, bucketName, data, submissionId);
+      await sendViaPlunk(recipientEmail, formName, data, submissionId);
     }
 
     // Record notification usage
     await recordNotificationUsage({
       userId,
-      bucketId,
+      formId,
       submissionId,
       period,
       type: "email",
@@ -178,7 +178,7 @@ export async function sendEmailNotification({
       error: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
       recipientEmail,
-      bucketName,
+      formName,
       submissionId,
     });
 

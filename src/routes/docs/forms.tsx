@@ -21,17 +21,11 @@ function FormsDocs() {
           You can create a form directly from the dashboard by clicking the
           <strong>Create Form</strong> button.
         </p>
-        <p className="mt-4">
-          <strong>Pro Tip:</strong> You don't have to create a form in the dashboard first!
-          Simply send a submission with a new <code>bucket</code> name, and we'll automatically create the form for you.
-        </p>
-
 
         <h2 className="text-2xl font-bold mt-10 mb-4">HTML Configuration</h2>
         <p>
           The simplest way to use FormDrop is with a standard HTML form. Set the
-          <code>action</code> attribute to our endpoint URL with your public key
-          as a query parameter.
+          <code>action</code> attribute to our endpoint URL with your form slug.
         </p>
 
         <CodeTabs
@@ -40,10 +34,7 @@ function FormsDocs() {
               title: "HTML",
               value: "html",
               language: "html",
-              code: `<form action="https://api.formdrop.co/collect?key=YOUR_PUBLIC_KEY" method="POST">
-  <!-- Hidden field for bucket name -->
-  <input type="hidden" name="bucket" value="Contact Us" />
-  
+              code: `<form action="https://api.formdrop.co/f/YOUR_FORM_SLUG" method="POST">
   <label for="email">Email</label>
   <input type="email" id="email" name="email" required />
 
@@ -62,16 +53,12 @@ function FormsDocs() {
     e.preventDefault();
     const formData = new FormData(e.target);
     
-    await fetch('https://api.formdrop.co/collect', {
+    await fetch('https://api.formdrop.co/f/YOUR_FORM_SLUG', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer YOUR_PUBLIC_KEY'
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        bucket: "Contact Us",
-        data: Object.fromEntries(formData)
-      })
+      body: JSON.stringify(Object.fromEntries(formData))
     });
     
     alert('Message sent!');
@@ -126,12 +113,13 @@ function FormsDocs() {
         </ul>
 
         <h2 className="text-2xl font-bold mt-10 mb-4">Form Settings</h2>
-        
+
         <h3 className="text-xl font-semibold mt-6 mb-2">Allowed Domains</h3>
         <p>
-          Restrict which websites can submit to your form. You can add multiple domains 
-          to the allowlist (e.g., <code>example.com</code>, <code>app.example.com</code>). 
-          This is a crucial security feature to prevent spam from unauthorized sources.
+          Restrict which websites can submit to your form. You can add multiple
+          domains to the allowlist (e.g., <code>example.com</code>,{" "}
+          <code>app.example.com</code>). This is a crucial security feature to
+          prevent spam from unauthorized sources.
         </p>
 
         <h3 className="text-xl font-semibold mt-6 mb-2">Danger Zone</h3>

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { buckets } from "@/db/schema";
+import { forms } from "@/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { isUserPro } from "@/lib/subscription-check";
@@ -19,11 +19,11 @@ export const Route = createFileRoute("/api/integrations/slack/authorize")({
           }
 
           const url = new URL(request.url);
-          const bucketId = url.searchParams.get("bucketId");
+          const formId = url.searchParams.get("formId");
 
-          if (!bucketId) {
+          if (!formId) {
             return Response.json(
-              { error: "bucketId is required" },
+              { error: "formId is required" },
               { status: 400 },
             );
           }
@@ -31,28 +31,25 @@ export const Route = createFileRoute("/api/integrations/slack/authorize")({
           const isPro = await isUserPro(session.user.id);
           if (!isPro) {
             return Response.redirect(
-              `${url.origin}/app/forms/${bucketId}/notifications?error=requires_pro`,
+              `${url.origin}/app/forms/${formId}/notifications?error=requires_pro`,
             );
           }
 
-          // Verify bucket belongs to user
-          const [bucket] = await db
+          // Verify form belongs to user
+          const [form] = await db
             .select()
-            .from(buckets)
+            .from(forms)
             .where(
               and(
-                eq(buckets.id, bucketId),
-                eq(buckets.userId, session.user.id),
-                isNull(buckets.deletedAt),
+                eq(forms.id, formId),
+                eq(forms.userId, session.user.id),
+                isNull(forms.deletedAt),
               ),
             )
             .limit(1);
 
-          if (!bucket) {
-            return Response.json(
-              { error: "Bucket not found" },
-              { status: 404 },
-            );
+          if (!form) {
+            return Response.json({ error: "Form not found" }, { status: 404 });
           }
 
           const clientId = process.env.SLACK_CLIENT_ID;
@@ -70,7 +67,7 @@ export const Route = createFileRoute("/api/integrations/slack/authorize")({
           slackAuthUrl.searchParams.set("client_id", clientId);
           slackAuthUrl.searchParams.set("scope", "incoming-webhook");
           slackAuthUrl.searchParams.set("redirect_uri", redirectUri);
-          slackAuthUrl.searchParams.set("state", bucketId); // Pass bucketId in state
+          slackAuthUrl.searchParams.set("state", formId); // Pass formId in state
 
           // Redirect to Slack OAuth
           return Response.redirect(slackAuthUrl.toString(), 302);
