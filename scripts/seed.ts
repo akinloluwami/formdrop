@@ -271,19 +271,6 @@ async function seed() {
 
     console.log(`✅ Created ${usageMap.size} usage records`);
 
-    await db.insert(apiKeys).values([
-      {
-        userId: user2Id,
-        key: generateApiKey("public"),
-        type: "public",
-      },
-      {
-        userId: user2Id,
-        key: generateApiKey("private"),
-        type: "private",
-      },
-    ]);
-
     console.log("✅ Created 4 API keys");
 
     // Create notifications
