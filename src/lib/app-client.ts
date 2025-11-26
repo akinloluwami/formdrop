@@ -70,7 +70,7 @@ interface ApiKey {
   id: string;
   userId: string;
   key: string;
-  type: "public" | "private";
+  name: string | null;
   lastUsedAt: Date | null;
   createdAt: Date;
 }
@@ -92,8 +92,12 @@ interface UpdateFormParams {
   allowedDomains?: string[];
 }
 
-interface RollApiKeyParams {
-  type: "public" | "private";
+interface CreateApiKeyParams {
+  name: string;
+}
+
+interface DeleteApiKeyParams {
+  id: string;
 }
 
 type SuccessResponse<T> = T;
@@ -226,14 +230,15 @@ export const appClient = {
   },
 
   apiKeys: {
-    list: async () =>
-      apiCall<{ keys: { public: ApiKey; private: ApiKey } }>(
-        "get",
-        "/api/api-keys",
-      ),
+    list: async () => apiCall<{ keys: ApiKey[] }>("get", "/api/api-keys"),
 
-    roll: async (params: RollApiKeyParams) =>
+    create: async (params: CreateApiKeyParams) =>
       apiCall<{ key: ApiKey }>("post", "/api/api-keys", { data: params }),
+
+    delete: async (params: DeleteApiKeyParams) =>
+      apiCall<{ success: boolean }>("delete", "/api/api-keys", {
+        data: params,
+      }),
   },
 
   analytics: {
