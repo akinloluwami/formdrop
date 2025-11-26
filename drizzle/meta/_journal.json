@@ -85,6 +85,13 @@
       "when": 1764114632184,
       "tag": "0011_light_warbound",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1764197606861,
+      "tag": "0012_true_ultimo",
+      "breakpoints": true
     }
   ]
 }
