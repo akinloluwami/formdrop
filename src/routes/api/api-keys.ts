@@ -1,15 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { apiKeys } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import crypto from "crypto";
 
-const generateApiKey = (type: "public" | "private") => {
-  if (type === "public") {
-    return `fd_pk_${crypto.randomBytes(7).toString("hex")}`;
-  }
-  return `fd_sk_${crypto.randomBytes(24).toString("hex")}`;
+const generateApiKey = () => {
+  return `fd_${crypto.randomBytes(24).toString("hex")}`;
 };
 
 export const Route = createFileRoute("/api/api-keys")({
@@ -28,48 +25,27 @@ export const Route = createFileRoute("/api/api-keys")({
           const userId = session.user.id;
 
           // Get existing keys
-          const userApiKeys = await db
+          let userApiKeys = await db
             .select()
             .from(apiKeys)
-            .where(eq(apiKeys.userId, userId));
+            .where(eq(apiKeys.userId, userId))
+            .orderBy(desc(apiKeys.createdAt));
 
-          let publicKey = userApiKeys.find((k) => k.type === "public");
-          let privateKey = userApiKeys.find((k) => k.type === "private");
-
-          // Create missing keys if necessary
-          const keysToInsert = [];
-          if (!publicKey) {
-            keysToInsert.push({
-              userId,
-              key: generateApiKey("public"),
-              type: "public" as const,
-            });
-          }
-          if (!privateKey) {
-            keysToInsert.push({
-              userId,
-              key: generateApiKey("private"),
-              type: "private" as const,
-            });
-          }
-
-          if (keysToInsert.length > 0) {
-            const newKeys = await db
+          // Auto-create a key if none exist
+          if (userApiKeys.length === 0) {
+            const [newKey] = await db
               .insert(apiKeys)
-              .values(keysToInsert)
+              .values({
+                userId,
+                key: generateApiKey(),
+                name: "Default Key",
+              })
               .returning();
-
-            if (!publicKey)
-              publicKey = newKeys.find((k) => k.type === "public");
-            if (!privateKey)
-              privateKey = newKeys.find((k) => k.type === "private");
+            userApiKeys = [newKey];
           }
 
           return Response.json({
-            keys: {
-              public: publicKey,
-              private: privateKey,
-            },
+            keys: userApiKeys,
           });
         } catch (error: any) {
           return Response.json(
@@ -94,27 +70,58 @@ export const Route = createFileRoute("/api/api-keys")({
 
           const userId = session.user.id;
           const body = await request.json();
-          const { type } = body;
+          const { name } = body;
 
-          if (type !== "public" && type !== "private") {
+          const [newKey] = await db
+            .insert(apiKeys)
+            .values({
+              userId,
+              key: generateApiKey(),
+              name: name || "New API Key",
+            })
+            .returning();
+
+          return Response.json({ key: newKey });
+        } catch (error: any) {
+          return Response.json(
+            {
+              error: "Internal server error",
+              details: error.message,
+            },
+            { status: 500 },
+          );
+        }
+      },
+
+      DELETE: async ({ request }: { request: Request }) => {
+        try {
+          const session = await auth.api.getSession({
+            headers: request.headers,
+          });
+
+          if (!session?.user) {
+            return Response.json({ error: "Unauthorized" }, { status: 401 });
+          }
+
+          const userId = session.user.id;
+          const body = await request.json();
+          const { id } = body;
+
+          if (!id) {
             return Response.json(
-              { error: "Invalid key type" },
+              { error: "Key ID is required" },
               { status: 400 },
             );
           }
 
-          const newKey = generateApiKey(type);
+          // Prevent deleting the last key? Maybe not strictly required but good practice.
+          // For now, let's allow deleting any key.
 
-          const [updatedKey] = await db
-            .update(apiKeys)
-            .set({
-              key: newKey,
-              createdAt: new Date(), // Reset created at on roll
-            })
-            .where(and(eq(apiKeys.userId, userId), eq(apiKeys.type, type)))
-            .returning();
+          await db
+            .delete(apiKeys)
+            .where(and(eq(apiKeys.id, id), eq(apiKeys.userId, userId)));
 
-          return Response.json({ key: updatedKey });
+          return Response.json({ success: true });
         } catch (error: any) {
           return Response.json(
             {
