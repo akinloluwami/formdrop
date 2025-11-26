@@ -29,8 +29,6 @@ export const eventTypeEnum = pgEnum("event_type", [
   "integration_synced",
 ]);
 
-export const apiKeyTypeEnum = pgEnum("api_key_type", ["public", "private"]);
-
 export const forms = pgTable(
   "forms",
   {
@@ -193,14 +191,13 @@ export const apiKeys = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     key: text("key").notNull().unique(),
-    type: apiKeyTypeEnum("type").notNull(),
+    name: text("name"),
     lastUsedAt: timestamp("last_used_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table: any) => [
     index("api_keys_key_idx").on(table.key),
     index("api_keys_user_id_idx").on(table.userId),
-    uniqueIndex("api_keys_user_type_unique").on(table.userId, table.type),
   ],
 );
 
