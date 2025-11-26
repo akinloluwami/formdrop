@@ -78,6 +78,13 @@
       "when": 1764053141645,
       "tag": "0010_confused_zodiak",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1764114632184,
+      "tag": "0011_light_warbound",
+      "breakpoints": true
     }
   ]
 }
