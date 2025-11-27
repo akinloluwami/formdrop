@@ -14,6 +14,9 @@ import {
 } from "recharts";
 
 export const Route = createFileRoute("/app/forms/$id/analytics")({
+  head: () => ({
+    meta: [{ title: "Analytics | FormDrop" }],
+  }),
   component: RouteComponent,
 });
 

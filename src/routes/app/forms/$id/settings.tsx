@@ -15,6 +15,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/forms/$id/settings")({
+  head: () => ({
+    meta: [{ title: "Settings | FormDrop" }],
+  }),
   component: RouteComponent,
 });
 

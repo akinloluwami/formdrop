@@ -7,6 +7,9 @@ import { appClient } from "@/lib/app-client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 export const Route = createFileRoute("/app/forms/")({
+  head: () => ({
+    meta: [{ title: "Forms | FormDrop" }],
+  }),
   component: RouteComponent,
 });
 

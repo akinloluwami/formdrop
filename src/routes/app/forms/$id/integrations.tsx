@@ -9,6 +9,9 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/forms/$id/integrations")({
+  head: () => ({
+    meta: [{ title: "Integrations | FormDrop" }],
+  }),
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>) => {
     return {

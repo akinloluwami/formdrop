@@ -15,6 +15,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/api-keys")({
+  head: () => ({
+    meta: [{ title: "API Keys | FormDrop" }],
+  }),
   component: ApiKeysPage,
 });
 

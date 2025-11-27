@@ -22,6 +22,9 @@ import { CopyButton } from "@/components/copy-button";
 import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/forms/$id/submissions")({
+  head: () => ({
+    meta: [{ title: "Submissions | FormDrop" }],
+  }),
   component: RouteComponent,
 });
 

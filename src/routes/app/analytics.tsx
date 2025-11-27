@@ -14,6 +14,9 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
 export const Route = createFileRoute("/app/analytics")({
+  head: () => ({
+    meta: [{ title: "Analytics | FormDrop" }],
+  }),
   component: RouteComponent,
 });
 

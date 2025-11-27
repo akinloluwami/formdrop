@@ -15,6 +15,9 @@ import { BillingSettings } from "@/components/settings/billing-settings";
 type Tab = "profile" | "password" | "billing";
 
 export const Route = createFileRoute("/app/settings")({
+  head: () => ({
+    meta: [{ title: "Settings | FormDrop" }],
+  }),
   validateSearch: (search: Record<string, unknown>): { tab: Tab } => {
     const tab = (search.tab as string) || "profile";
     if (["profile", "password", "billing"].includes(tab)) {

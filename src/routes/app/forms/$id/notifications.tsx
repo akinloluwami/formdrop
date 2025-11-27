@@ -14,6 +14,9 @@ import { Slack, Discord } from "@ridemountainpig/svgl-react";
 import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/app/forms/$id/notifications")({
+  head: () => ({
+    meta: [{ title: "Notifications | FormDrop" }],
+  }),
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>) => {
     return {
