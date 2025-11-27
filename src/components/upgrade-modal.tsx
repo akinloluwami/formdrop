@@ -27,7 +27,6 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
   const handleUpgrade = async () => {
     setIsLoading(true);
     try {
-      // @ts-ignore - checkout is added by the polar plugin
       await authClient.checkout({
         slug: billingInterval === "year" ? "Pro Yearly" : "Pro Monthly",
       });
