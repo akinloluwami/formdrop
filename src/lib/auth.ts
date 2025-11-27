@@ -81,7 +81,11 @@ export const auth = betterAuth({
           products: [
             {
               productId: process.env.POLAR_PRODUCT_ID!,
-              slug: "Pro",
+              slug: "Pro Monthly",
+            },
+            {
+              productId: process.env.POLAR_PRODUCT_ID_YEARLY!,
+              slug: "Pro Yearly",
             },
           ],
           successUrl: "/welcome-to-pro?checkout_id={CHECKOUT_ID}",
