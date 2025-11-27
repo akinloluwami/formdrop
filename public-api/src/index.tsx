@@ -15,7 +15,7 @@ function Backend() {
     >
       <CollectRoute />
 
-      <RouteGroup prefix="/api">
+      <RouteGroup prefix="/">
         <Middleware use={authMiddleware} />
         <FormsRoutes />
         <SubmissionsRoutes />
