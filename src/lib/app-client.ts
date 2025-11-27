@@ -197,11 +197,18 @@ export const appClient = {
   },
 
   submissions: {
-    list: async (formId: string) =>
-      apiCall<{ submissions: Submission[] }>(
-        "get",
-        `/api/forms/${formId}/submissions`,
-      ),
+    list: async (formId: string, page = 1, limit = 50) =>
+      apiCall<{
+        submissions: Submission[];
+        pagination: {
+          total: number;
+          page: number;
+          limit: number;
+          totalPages: number;
+        };
+      }>("get", `/api/forms/${formId}/submissions`, {
+        params: { page, limit },
+      }),
 
     get: async (formId: string, submissionId: string) =>
       apiCall<{ submission: Submission }>(
