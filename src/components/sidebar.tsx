@@ -50,8 +50,12 @@ export function Sidebar() {
   return (
     <div className="bg-white w-72 min-w-72 max-w-72 p-2 border border-gray-200 rounded-2xl flex flex-col gap-4 justify-between h-full">
       <div className="flex-1 min-w-0">
-        <div className="">
-          <h1 className="">FormDrop</h1>
+        <div className="px-5 pt-3">
+          <img
+            src="/purple_wordmark.png"
+            alt="FormDrop Logo"
+            className="w-30"
+          />
         </div>
         <div className="flex flex-col gap-y-3 mt-7">
           {links.map((link) => {
