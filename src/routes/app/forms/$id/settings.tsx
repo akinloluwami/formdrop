@@ -265,7 +265,6 @@ function RouteComponent() {
             onClick={() => setShowDeleteConfirm(true)}
             variant="danger"
             size="md"
-            className="bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-3xl"
             icon={<HugeiconsIcon icon={Delete02Icon} size={18} />}
           >
             Delete Form
