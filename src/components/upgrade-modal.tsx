@@ -29,7 +29,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
     try {
       // @ts-ignore - checkout is added by the polar plugin
       await authClient.checkout({
-        slug: "Pro",
+        slug: billingInterval === "year" ? "Pro Yearly" : "Pro Monthly",
       });
     } catch (error) {
       console.error("Failed to start checkout", error);
