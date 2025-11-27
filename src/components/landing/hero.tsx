@@ -17,11 +17,12 @@ export function Hero() {
         transition={{ duration: 0.5 }}
       >
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium mb-6">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-          </span>
-          v1.0 is now live
+          <img
+            src="/yc.jpeg"
+            alt="Y Combinator"
+            className="h-4 w-4 rounded-sm"
+          />
+          Not backed by Y Combinator
         </div>
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-6">
           The backend for your <br />
