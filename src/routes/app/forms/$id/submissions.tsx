@@ -1,5 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { appClient } from "@/lib/app-client";
 import moment from "moment";
 import {
@@ -14,9 +19,10 @@ import {
   Html5Icon,
   JavaScriptIcon,
   CodeIcon,
+  Loading03Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CopyButton } from "@/components/copy-button";
 import { Button } from "@/components/button";
@@ -62,18 +68,48 @@ function RouteComponent() {
     },
   });
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["submissions", id],
-    queryFn: async () => {
-      const response = await appClient.submissions.list(id);
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await appClient.submissions.list(id, pageParam, 50);
       if ("error" in response) {
         throw new Error(response.error);
       }
-      return response.submissions;
+      return response;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.pagination.page < lastPage.pagination.totalPages) {
+        return lastPage.pagination.page + 1;
+      }
+      return undefined;
     },
   });
 
-  const submissions = data || [];
+  const submissions = data?.pages.flatMap((page) => page.submissions) || [];
+  const totalSubmissions = data?.pages[0]?.pagination.total || 0;
+
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastSubmissionElementRef = useCallback(
+    (node: HTMLDivElement | HTMLTableRowElement | null) => {
+      if (isLoading || isFetchingNextPage) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, isFetchingNextPage, hasNextPage, fetchNextPage],
+  );
 
   useEffect(() => {
     if (!isLoading && submissions.length === 0) {
@@ -285,7 +321,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <div className="flex items-center justify-between py-2">
+      <div className="sticky top-[69px] z-10 bg-white flex items-center justify-between py-2">
         <div className="flex items-center gap-x-3">
           <Link
             to="/app/forms"
@@ -293,7 +329,14 @@ function RouteComponent() {
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
           </Link>
-          <h2 className="text-lg font-semibold">Submissions</h2>
+          <h2 className="text-lg font-semibold">
+            Submissions
+            {!isLoading && submissions.length > 0 && (
+              <span className="ml-2 text-sm font-normal text-gray-500">
+                (Showing {submissions.length} of {totalSubmissions})
+              </span>
+            )}
+          </h2>
         </div>
         <div className="flex gap-2 items-center">
           {selectedSubmissionIds.length > 0 && (
@@ -386,6 +429,17 @@ function RouteComponent() {
               )}
             </div>
           ))}
+          <div ref={lastSubmissionElementRef} className="h-4 w-full">
+            {isFetchingNextPage && (
+              <div className="flex justify-center py-4">
+                <HugeiconsIcon
+                  icon={Loading03Icon}
+                  className="animate-spin text-gray-400"
+                  size={24}
+                />
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         <div className="mt-4 border border-gray-200 rounded-3xl overflow-x-auto">
@@ -466,6 +520,19 @@ function RouteComponent() {
                   </td>
                 </tr>
               ))}
+              <tr ref={lastSubmissionElementRef}>
+                <td colSpan={allKeys.length + 3} className="p-0 border-0">
+                  {isFetchingNextPage && (
+                    <div className="flex justify-center py-4">
+                      <HugeiconsIcon
+                        icon={Loading03Icon}
+                        className="animate-spin text-gray-400"
+                        size={24}
+                      />
+                    </div>
+                  )}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
