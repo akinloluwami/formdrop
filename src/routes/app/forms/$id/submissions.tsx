@@ -20,12 +20,17 @@ import {
   JavaScriptIcon,
   CodeIcon,
   Loading03Icon,
+  StarIcon,
+  ArrowRight01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CopyButton } from "@/components/copy-button";
 import { Button } from "@/components/button";
+
+import { useIsPro } from "@/hooks/use-is-pro";
+import * as XLSX from "xlsx";
 
 export const Route = createFileRoute("/app/forms/$id/submissions")({
   head: () => ({
@@ -35,6 +40,7 @@ export const Route = createFileRoute("/app/forms/$id/submissions")({
 });
 
 type ViewMode = "card" | "table";
+type ExportFormat = "csv" | "json" | "xlsx";
 
 interface Submission {
   id: string;
@@ -57,6 +63,10 @@ function RouteComponent() {
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
   const [selectedTab, setSelectedTab] = useState<"html" | "fetch">("html");
   const [isExporting, setIsExporting] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFormat, setExportFormat] = useState<ExportFormat>("csv");
+  const [exportFilename, setExportFilename] = useState("");
+  const { isPro } = useIsPro();
 
   const queryClient = useQueryClient();
 
@@ -68,6 +78,14 @@ function RouteComponent() {
       return response.form;
     },
   });
+
+  useEffect(() => {
+    if (form?.name) {
+      setExportFilename(
+        `submissions-${form.name.replace(/[^a-z0-9]/gi, "_").toLowerCase()}`,
+      );
+    }
+  }, [form?.name]);
 
   const {
     data,
@@ -185,18 +203,38 @@ function RouteComponent() {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      const response = await fetch(`/api/forms/${id}/export`);
+      const response = await fetch(
+        `/api/forms/${id}/export?format=${exportFormat === "xlsx" ? "json" : exportFormat}`,
+      );
       if (!response.ok) throw new Error("Export failed");
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `submissions-${formName.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      if (exportFormat === "xlsx") {
+        const data = await response.json();
+        const worksheet = XLSX.utils.json_to_sheet(
+          data.map((sub: any) => ({
+            ID: sub.id,
+            "Created At": sub.createdAt,
+            IP: sub.ip,
+            "User Agent": sub.userAgent,
+            "Payload (JSON)": JSON.stringify(sub.payload),
+            ...sub.payload,
+          })),
+        );
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Submissions");
+        XLSX.writeFile(workbook, `${exportFilename}.xlsx`);
+      } else {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${exportFilename}.${exportFormat}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+      setShowExportModal(false);
     } catch (error) {
       console.error("Export error:", error);
     } finally {
@@ -375,24 +413,13 @@ function RouteComponent() {
             </Button>
           )}
           <Button
-            onClick={handleExport}
-            disabled={isExporting}
+            onClick={() => setShowExportModal(true)}
             variant="secondary"
             size="sm"
             className="text-gray-600 hover:bg-gray-100 border-gray-200"
-            icon={
-              isExporting ? (
-                <HugeiconsIcon
-                  icon={Loading03Icon}
-                  className="animate-spin"
-                  size={18}
-                />
-              ) : (
-                <HugeiconsIcon icon={Download01Icon} size={18} />
-              )
-            }
+            icon={<HugeiconsIcon icon={Download01Icon} size={18} />}
           >
-            {isExporting ? "Exporting..." : "Export"}
+            Export
           </Button>
           <div className="w-px h-6 bg-gray-200 mx-1"></div>
           <Button
@@ -726,6 +753,133 @@ function RouteComponent() {
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Export Modal */}
+      <AnimatePresence>
+        {showExportModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowExportModal(false)}
+              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden"
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Export Submissions
+                  </h3>
+                  <Button
+                    onClick={() => setShowExportModal(false)}
+                    variant="ghost"
+                    size="sm"
+                    className="p-2 hover:bg-gray-100 rounded-lg h-auto"
+                    icon={<HugeiconsIcon icon={Cancel01Icon} size={20} />}
+                  />
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Format
+                    </label>
+                    <div className="grid grid-cols-3 gap-3">
+                      {(["csv", "json", "xlsx"] as const).map((format) => (
+                        <button
+                          key={format}
+                          onClick={() => setExportFormat(format)}
+                          className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
+                            exportFormat === format
+                              ? "bg-black text-white border-black"
+                              : "bg-white text-gray-700 border-gray-200 hover:border-gray-300"
+                          }`}
+                        >
+                          {format.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Filename
+                    </label>
+                    <div className="flex items-center">
+                      <input
+                        type="text"
+                        value={exportFilename}
+                        onChange={(e) => setExportFilename(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-black/5 border-r-0"
+                      />
+                      <div className="px-3 py-2 bg-gray-50 border border-gray-300 border-l-0 rounded-r-xl text-gray-500 text-sm">
+                        .{exportFormat}
+                      </div>
+                    </div>
+                  </div>
+
+                  {!isPro && (
+                    <div className="bg-gray-900 rounded-xl p-4 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+
+                      <div className="relative flex gap-3">
+                        <div className="p-2 bg-white/10 rounded-lg h-fit shrink-0">
+                          <HugeiconsIcon
+                            icon={StarIcon}
+                            size={20}
+                            className="text-yellow-400"
+                          />
+                        </div>
+                        <div className="text-sm">
+                          <p className="font-semibold text-white">
+                            Unlock Unlimited Exports
+                          </p>
+                          <p className="mt-1 text-gray-300 leading-relaxed">
+                            Free plans are limited to the most recent 1,000
+                            submissions. Upgrade to Pro to export everything.
+                          </p>
+                          <Link
+                            to="/app/settings"
+                            search={{ tab: "billing" }}
+                            className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold text-white hover:text-gray-200 transition-colors"
+                          >
+                            Upgrade to Pro
+                            <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-3 pt-2">
+                    <Button
+                      variant="ghost"
+                      onClick={() => setShowExportModal(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleExport}
+                      disabled={isExporting}
+                      isLoading={isExporting}
+                    >
+                      {isExporting
+                        ? "Exporting..."
+                        : `Export ${!isPro && totalSubmissions > 1000 ? "1,000" : totalSubmissions} Rows`}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
