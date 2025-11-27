@@ -56,6 +56,7 @@ function RouteComponent() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showIntegrationModal, setShowIntegrationModal] = useState(false);
   const [selectedTab, setSelectedTab] = useState<"html" | "fetch">("html");
+  const [isExporting, setIsExporting] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -179,6 +180,28 @@ function RouteComponent() {
 
   const confirmDelete = () => {
     deleteMutation.mutate(selectedSubmissionIds);
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch(`/api/forms/${id}/export`);
+      if (!response.ok) throw new Error("Export failed");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `submissions-${formName.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Export error:", error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const truncateText = (text: string, maxLength: number = 50) => {
@@ -352,12 +375,24 @@ function RouteComponent() {
             </Button>
           )}
           <Button
+            onClick={handleExport}
+            disabled={isExporting}
             variant="secondary"
             size="sm"
             className="text-gray-600 hover:bg-gray-100 border-gray-200"
-            icon={<HugeiconsIcon icon={Download01Icon} size={18} />}
+            icon={
+              isExporting ? (
+                <HugeiconsIcon
+                  icon={Loading03Icon}
+                  className="animate-spin"
+                  size={18}
+                />
+              ) : (
+                <HugeiconsIcon icon={Download01Icon} size={18} />
+              )
+            }
           >
-            Export
+            {isExporting ? "Exporting..." : "Export"}
           </Button>
           <div className="w-px h-6 bg-gray-200 mx-1"></div>
           <Button
