@@ -52,6 +52,7 @@ import { Route as ApiIntegrationsDiscordCallbackRouteImport } from './routes/api
 import { Route as ApiIntegrationsDiscordAuthorizeRouteImport } from './routes/api/integrations/discord/authorize'
 import { Route as ApiFormsFormIdSubmissionsRouteImport } from './routes/api/forms/$formId/submissions'
 import { Route as ApiFormsFormIdRecipientsRouteImport } from './routes/api/forms/$formId/recipients'
+import { Route as ApiFormsFormIdExportRouteImport } from './routes/api/forms/$formId/export'
 import { Route as ApiFormsFormIdDisconnectSlackRouteImport } from './routes/api/forms/$formId/disconnect-slack'
 import { Route as ApiFormsFormIdDisconnectDiscordRouteImport } from './routes/api/forms/$formId/disconnect-discord'
 import { Route as ApiFormsFormIdAnalyticsRouteImport } from './routes/api/forms/$formId/analytics'
@@ -285,6 +286,11 @@ const ApiFormsFormIdRecipientsRoute =
     path: '/recipients',
     getParentRoute: () => ApiFormsFormIdRoute,
   } as any)
+const ApiFormsFormIdExportRoute = ApiFormsFormIdExportRouteImport.update({
+  id: '/export',
+  path: '/export',
+  getParentRoute: () => ApiFormsFormIdRoute,
+} as any)
 const ApiFormsFormIdDisconnectSlackRoute =
   ApiFormsFormIdDisconnectSlackRouteImport.update({
     id: '/disconnect-slack',
@@ -352,6 +358,7 @@ export interface FileRoutesByFullPath {
   '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
   '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
   '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
+  '/api/forms/$formId/export': typeof ApiFormsFormIdExportRoute
   '/api/forms/$formId/recipients': typeof ApiFormsFormIdRecipientsRouteWithChildren
   '/api/forms/$formId/submissions': typeof ApiFormsFormIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
@@ -402,6 +409,7 @@ export interface FileRoutesByTo {
   '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
   '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
   '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
+  '/api/forms/$formId/export': typeof ApiFormsFormIdExportRoute
   '/api/forms/$formId/recipients': typeof ApiFormsFormIdRecipientsRouteWithChildren
   '/api/forms/$formId/submissions': typeof ApiFormsFormIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
@@ -454,6 +462,7 @@ export interface FileRoutesById {
   '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
   '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
   '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
+  '/api/forms/$formId/export': typeof ApiFormsFormIdExportRoute
   '/api/forms/$formId/recipients': typeof ApiFormsFormIdRecipientsRouteWithChildren
   '/api/forms/$formId/submissions': typeof ApiFormsFormIdSubmissionsRouteWithChildren
   '/api/integrations/discord/authorize': typeof ApiIntegrationsDiscordAuthorizeRoute
@@ -507,6 +516,7 @@ export interface FileRouteTypes {
     | '/api/forms/$formId/analytics'
     | '/api/forms/$formId/disconnect-discord'
     | '/api/forms/$formId/disconnect-slack'
+    | '/api/forms/$formId/export'
     | '/api/forms/$formId/recipients'
     | '/api/forms/$formId/submissions'
     | '/api/integrations/discord/authorize'
@@ -557,6 +567,7 @@ export interface FileRouteTypes {
     | '/api/forms/$formId/analytics'
     | '/api/forms/$formId/disconnect-discord'
     | '/api/forms/$formId/disconnect-slack'
+    | '/api/forms/$formId/export'
     | '/api/forms/$formId/recipients'
     | '/api/forms/$formId/submissions'
     | '/api/integrations/discord/authorize'
@@ -608,6 +619,7 @@ export interface FileRouteTypes {
     | '/api/forms/$formId/analytics'
     | '/api/forms/$formId/disconnect-discord'
     | '/api/forms/$formId/disconnect-slack'
+    | '/api/forms/$formId/export'
     | '/api/forms/$formId/recipients'
     | '/api/forms/$formId/submissions'
     | '/api/integrations/discord/authorize'
@@ -960,6 +972,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiFormsFormIdRecipientsRouteImport
       parentRoute: typeof ApiFormsFormIdRoute
     }
+    '/api/forms/$formId/export': {
+      id: '/api/forms/$formId/export'
+      path: '/export'
+      fullPath: '/api/forms/$formId/export'
+      preLoaderRoute: typeof ApiFormsFormIdExportRouteImport
+      parentRoute: typeof ApiFormsFormIdRoute
+    }
     '/api/forms/$formId/disconnect-slack': {
       id: '/api/forms/$formId/disconnect-slack'
       path: '/disconnect-slack'
@@ -1110,6 +1129,7 @@ interface ApiFormsFormIdRouteChildren {
   ApiFormsFormIdAnalyticsRoute: typeof ApiFormsFormIdAnalyticsRoute
   ApiFormsFormIdDisconnectDiscordRoute: typeof ApiFormsFormIdDisconnectDiscordRoute
   ApiFormsFormIdDisconnectSlackRoute: typeof ApiFormsFormIdDisconnectSlackRoute
+  ApiFormsFormIdExportRoute: typeof ApiFormsFormIdExportRoute
   ApiFormsFormIdRecipientsRoute: typeof ApiFormsFormIdRecipientsRouteWithChildren
   ApiFormsFormIdSubmissionsRoute: typeof ApiFormsFormIdSubmissionsRouteWithChildren
 }
@@ -1118,6 +1138,7 @@ const ApiFormsFormIdRouteChildren: ApiFormsFormIdRouteChildren = {
   ApiFormsFormIdAnalyticsRoute: ApiFormsFormIdAnalyticsRoute,
   ApiFormsFormIdDisconnectDiscordRoute: ApiFormsFormIdDisconnectDiscordRoute,
   ApiFormsFormIdDisconnectSlackRoute: ApiFormsFormIdDisconnectSlackRoute,
+  ApiFormsFormIdExportRoute: ApiFormsFormIdExportRoute,
   ApiFormsFormIdRecipientsRoute: ApiFormsFormIdRecipientsRouteWithChildren,
   ApiFormsFormIdSubmissionsRoute: ApiFormsFormIdSubmissionsRouteWithChildren,
 }
