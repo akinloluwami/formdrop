@@ -37,7 +37,7 @@ function RouteComponent() {
   ];
   return (
     <div>
-      <div className="border-b border-gray-200 mb-6 mt-8">
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 mb-6 pt-8">
         <nav className="flex gap-8">
           {links.map((link) => {
             const isActive =
