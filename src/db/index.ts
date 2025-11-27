@@ -1,15 +1,15 @@
-import { config } from 'dotenv'
+import { config } from "dotenv";
 
-import { drizzle } from 'drizzle-orm/node-postgres'
-import { Pool } from 'pg'
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
-import * as schema from './schema.ts'
+import * as schema from "./schema.ts";
 
-config()
+config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL!,
   // Force the search path to public to ensure migrations and queries work as expected
   options: "-c search_path=public",
-})
-export const db = drizzle(pool, { schema })
+});
+export const db = drizzle(pool, { schema });
