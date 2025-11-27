@@ -5,6 +5,7 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { motion } from "motion/react";
 import { Navbar } from "@/components/landing/navbar";
+import { Button } from "@/components/button";
 
 export const Route = createFileRoute("/pricing")({
   component: PricingPage,
@@ -87,9 +88,15 @@ function PricingPage() {
 
             <Link
               to={session ? "/app/forms" : "/signup"}
-              className="block w-full py-3 px-6 text-center rounded-xl bg-gray-50 text-gray-900 font-medium hover:bg-gray-100 transition-colors mb-8"
+              className="block w-full mb-8"
             >
-              Get Started
+              <Button
+                variant="secondary"
+                size="lg"
+                className="w-full bg-gray-100! hover:bg-gray-200 text-gray-900 border-0"
+              >
+                Get Started
+              </Button>
             </Link>
 
             <ul className="space-y-4">
@@ -130,10 +137,17 @@ function PricingPage() {
             </div>
 
             <Link
-              to={session ? "/app/forms" : "/signup"}
-              className="block w-full py-3 px-6 text-center rounded-xl bg-accent text-white font-medium hover:bg-accent/90 transition-colors mb-8 shadow-lg shadow-accent/25"
+              to={session ? "/app/settings" : "/signup"}
+              search={session ? { tab: "billing" } : undefined}
+              className="block w-full mb-8"
             >
-              Upgrade to Pro
+              <Button
+                variant="primary"
+                size="lg"
+                className="w-full shadow-lg shadow-accent/25"
+              >
+                Upgrade to Pro
+              </Button>
             </Link>
 
             <ul className="space-y-4">
