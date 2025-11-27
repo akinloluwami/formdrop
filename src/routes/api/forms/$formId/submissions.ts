@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { submissions, forms } from "@/db/schema";
-import { eq, and, desc, isNull, inArray } from "drizzle-orm";
+import { eq, and, desc, isNull, inArray, count } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/forms/$formId/submissions")({
@@ -25,6 +25,10 @@ export const Route = createFileRoute("/api/forms/$formId/submissions")({
 
           const userId = session.user.id;
           const { formId } = params;
+          const url = new URL(request.url);
+          const page = parseInt(url.searchParams.get("page") || "1");
+          const limit = parseInt(url.searchParams.get("limit") || "50");
+          const offset = (page - 1) * limit;
 
           // Verify form belongs to user
           const [form] = await db
@@ -43,6 +47,18 @@ export const Route = createFileRoute("/api/forms/$formId/submissions")({
             return Response.json({ error: "Form not found" }, { status: 404 });
           }
 
+          const [totalResult] = await db
+            .select({ count: count() })
+            .from(submissions)
+            .where(
+              and(
+                eq(submissions.formId, formId),
+                isNull(submissions.deletedAt),
+              ),
+            );
+
+          const total = totalResult?.count || 0;
+
           const allSubmissions = await db
             .select()
             .from(submissions)
@@ -52,9 +68,19 @@ export const Route = createFileRoute("/api/forms/$formId/submissions")({
                 isNull(submissions.deletedAt),
               ),
             )
-            .orderBy(desc(submissions.createdAt));
+            .orderBy(desc(submissions.createdAt))
+            .limit(limit)
+            .offset(offset);
 
-          return Response.json({ submissions: allSubmissions });
+          return Response.json({
+            submissions: allSubmissions,
+            pagination: {
+              total,
+              page,
+              limit,
+              totalPages: Math.ceil(total / limit),
+            },
+          });
         } catch (error: any) {
           return Response.json(
             {
