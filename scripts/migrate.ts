@@ -5,7 +5,10 @@ async function main() {
   console.log("Running migrations...");
   try {
     // This will run migrations on the database, skipping the ones already applied
-    await migrate(db, { migrationsFolder: "drizzle" });
+    await migrate(db, {
+      migrationsFolder: "drizzle",
+      migrationsSchema: "drizzle",
+    });
     console.log("Migrations completed successfully");
     process.exit(0);
   } catch (error) {
