@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { submissions, forms } from "@/db/schema";
-import { eq, and, desc, isNull } from "drizzle-orm";
+import { eq, and, desc, isNull, count } from "drizzle-orm";
 import { auth } from "@/lib/auth";
+import { isUserPro } from "@/lib/subscription-check";
 
 export const Route = createFileRoute("/api/forms/$formId/export")({
   server: {
@@ -18,6 +19,8 @@ export const Route = createFileRoute("/api/forms/$formId/export")({
 
         const userId = session.user.id;
         const { formId } = params;
+        const url = new URL(request.url);
+        const format = url.searchParams.get("format") || "csv";
 
         const [form] = await db
           .select()
@@ -35,26 +38,38 @@ export const Route = createFileRoute("/api/forms/$formId/export")({
           return new Response("Form not found", { status: 404 });
         }
 
+        const isPro = await isUserPro(userId);
+        const exportLimit = isPro ? Infinity : 1000;
+
         const encoder = new TextEncoder();
         const stream = new ReadableStream({
           async start(controller) {
-            // Write BOM for Excel compatibility
-            controller.enqueue(encoder.encode("\uFEFF"));
+            if (format === "csv") {
+              // Write BOM for Excel compatibility
+              controller.enqueue(encoder.encode("\uFEFF"));
 
-            // Write Headers
-            const csvHeaders = [
-              "ID",
-              "Created At",
-              "IP",
-              "User Agent",
-              "Payload (JSON)",
-            ];
-            controller.enqueue(encoder.encode(csvHeaders.join(",") + "\n"));
+              // Write Headers
+              const csvHeaders = [
+                "ID",
+                "Created At",
+                "IP",
+                "User Agent",
+                "Payload (JSON)",
+              ];
+              controller.enqueue(encoder.encode(csvHeaders.join(",") + "\n"));
+            } else if (format === "json") {
+              controller.enqueue(encoder.encode("[\n"));
+            }
 
             const limit = 100;
             let offset = 0;
+            let totalExported = 0;
+            let isFirst = true;
 
             while (true) {
+              const currentLimit = Math.min(limit, exportLimit - totalExported);
+              if (currentLimit <= 0) break;
+
               const chunk = await db
                 .select()
                 .from(submissions)
@@ -65,7 +80,7 @@ export const Route = createFileRoute("/api/forms/$formId/export")({
                   ),
                 )
                 .orderBy(desc(submissions.createdAt))
-                .limit(limit)
+                .limit(currentLimit)
                 .offset(offset);
 
               if (chunk.length === 0) {
@@ -73,30 +88,59 @@ export const Route = createFileRoute("/api/forms/$formId/export")({
               }
 
               for (const sub of chunk) {
-                const row = [
-                  sub.id,
-                  sub.createdAt.toISOString(),
-                  sub.ip || "",
-                  sub.userAgent || "",
-                  JSON.stringify(sub.payload).replace(/"/g, '""'), // Escape quotes for CSV
-                ];
+                if (format === "csv") {
+                  const row = [
+                    sub.id,
+                    sub.createdAt.toISOString(),
+                    sub.ip || "",
+                    sub.userAgent || "",
+                    JSON.stringify(sub.payload).replace(/"/g, '""'), // Escape quotes for CSV
+                  ];
 
-                // Format as CSV line
-                const line = row.map((field) => `"${field}"`).join(",") + "\n";
-                controller.enqueue(encoder.encode(line));
+                  // Format as CSV line
+                  const line =
+                    row.map((field) => `"${field}"`).join(",") + "\n";
+                  controller.enqueue(encoder.encode(line));
+                } else if (format === "json") {
+                  const jsonStr = JSON.stringify(
+                    {
+                      id: sub.id,
+                      createdAt: sub.createdAt,
+                      ip: sub.ip,
+                      userAgent: sub.userAgent,
+                      payload: sub.payload,
+                    },
+                    null,
+                    2,
+                  );
+
+                  if (!isFirst) {
+                    controller.enqueue(encoder.encode(",\n"));
+                  }
+                  controller.enqueue(encoder.encode(jsonStr));
+                  isFirst = false;
+                }
+                totalExported++;
               }
 
               offset += limit;
+            }
+
+            if (format === "json") {
+              controller.enqueue(encoder.encode("\n]"));
             }
 
             controller.close();
           },
         });
 
+        const contentType = format === "json" ? "application/json" : "text/csv";
+        const extension = format === "json" ? "json" : "csv";
+
         return new Response(stream, {
           headers: {
-            "Content-Type": "text/csv",
-            "Content-Disposition": `attachment; filename="submissions-${form.name.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.csv"`,
+            "Content-Type": contentType,
+            "Content-Disposition": `attachment; filename="submissions-${form.name.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.${extension}"`,
           },
         });
       },
