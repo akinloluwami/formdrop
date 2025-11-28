@@ -66,6 +66,7 @@ function RouteComponent() {
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>("csv");
   const [exportFilename, setExportFilename] = useState("");
+  const [includeMetadata, setIncludeMetadata] = useState(false);
   const { isPro } = useIsPro();
 
   const queryClient = useQueryClient();
@@ -204,21 +205,26 @@ function RouteComponent() {
     setIsExporting(true);
     try {
       const response = await fetch(
-        `/api/forms/${id}/export?format=${exportFormat === "xlsx" ? "json" : exportFormat}`,
+        `/api/forms/${id}/export?format=${exportFormat === "xlsx" ? "json" : exportFormat}&includeMetadata=${includeMetadata}`,
       );
       if (!response.ok) throw new Error("Export failed");
 
       if (exportFormat === "xlsx") {
         const data = await response.json();
         const worksheet = XLSX.utils.json_to_sheet(
-          data.map((sub: any) => ({
-            ID: sub.id,
-            "Created At": sub.createdAt,
-            IP: sub.ip,
-            "User Agent": sub.userAgent,
-            "Payload (JSON)": JSON.stringify(sub.payload),
-            ...sub.payload,
-          })),
+          data.map((sub: any) => {
+            const row: any = {
+              ID: sub.id,
+              "Created At": sub.createdAt,
+              ...sub.payload,
+            };
+            if (includeMetadata) {
+              row.IP = sub.ip;
+              row["User Agent"] = sub.userAgent;
+              row["Payload (JSON)"] = JSON.stringify(sub.payload);
+            }
+            return row;
+          }),
         );
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Submissions");
@@ -824,6 +830,26 @@ function RouteComponent() {
                         .{exportFormat}
                       </div>
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={includeMetadata}
+                        onChange={(e) => setIncludeMetadata(e.target.checked)}
+                        className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                      />
+                      <div className="text-sm">
+                        <span className="font-medium text-gray-900">
+                          Include technical details
+                        </span>
+                        <p className="text-gray-500 text-xs mt-0.5">
+                          Adds IP address, User Agent, and raw JSON payload to
+                          the export
+                        </p>
+                      </div>
+                    </label>
                   </div>
 
                   {!isPro && (
