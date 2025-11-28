@@ -21,6 +21,8 @@ export const Route = createFileRoute("/api/forms/$formId/export")({
         const { formId } = params;
         const url = new URL(request.url);
         const format = url.searchParams.get("format") || "csv";
+        const includeMetadata =
+          url.searchParams.get("includeMetadata") === "true";
 
         const [form] = await db
           .select()
@@ -49,13 +51,11 @@ export const Route = createFileRoute("/api/forms/$formId/export")({
               controller.enqueue(encoder.encode("\uFEFF"));
 
               // Write Headers
-              const csvHeaders = [
-                "ID",
-                "Created At",
-                "IP",
-                "User Agent",
-                "Payload (JSON)",
-              ];
+              const csvHeaders = ["ID", "Created At"];
+              if (includeMetadata) {
+                csvHeaders.push("IP", "User Agent");
+              }
+              csvHeaders.push("Payload (JSON)");
               controller.enqueue(encoder.encode(csvHeaders.join(",") + "\n"));
             } else if (format === "json") {
               controller.enqueue(encoder.encode("[\n"));
@@ -89,30 +89,44 @@ export const Route = createFileRoute("/api/forms/$formId/export")({
 
               for (const sub of chunk) {
                 if (format === "csv") {
-                  const row = [
-                    sub.id,
-                    sub.createdAt.toISOString(),
-                    sub.ip || "",
-                    sub.userAgent || "",
-                    JSON.stringify(sub.payload).replace(/"/g, '""'), // Escape quotes for CSV
-                  ];
+                  const row = [sub.id, sub.createdAt.toISOString()];
+
+                  if (includeMetadata) {
+                    row.push(sub.ip || "", sub.userAgent || "");
+                  }
+
+                  row.push(JSON.stringify(sub.payload).replace(/"/g, '""')); // Escape quotes for CSV
 
                   // Format as CSV line
                   const line =
                     row.map((field) => `"${field}"`).join(",") + "\n";
                   controller.enqueue(encoder.encode(line));
                 } else if (format === "json") {
-                  const jsonStr = JSON.stringify(
-                    {
-                      id: sub.id,
-                      createdAt: sub.createdAt,
-                      ip: sub.ip,
-                      userAgent: sub.userAgent,
-                      payload: sub.payload,
-                    },
-                    null,
-                    2,
-                  );
+                  let jsonObj: any = {
+                    id: sub.id,
+                    createdAt: sub.createdAt,
+                  };
+
+                  if (includeMetadata) {
+                    jsonObj.ip = sub.ip;
+                    jsonObj.userAgent = sub.userAgent;
+                    jsonObj.payload = sub.payload;
+                  } else {
+                    if (
+                      typeof sub.payload === "object" &&
+                      sub.payload !== null
+                    ) {
+                      jsonObj = {
+                        id: sub.id,
+                        createdAt: sub.createdAt,
+                        ...sub.payload,
+                      };
+                    } else {
+                      jsonObj.payload = sub.payload;
+                    }
+                  }
+
+                  const jsonStr = JSON.stringify(jsonObj, null, 2);
 
                   if (!isFirst) {
                     controller.enqueue(encoder.encode(",\n"));
