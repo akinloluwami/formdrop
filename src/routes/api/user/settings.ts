@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { account, usage, subscriptions } from "@/db/schema";
-import { eq, and, isNotNull } from "drizzle-orm";
+import { account, subscriptions, forms, submissions } from "@/db/schema";
+import { eq, and, isNotNull, count } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/user/settings")({
@@ -28,19 +28,14 @@ export const Route = createFileRoute("/api/user/settings")({
 
           const hasPassword = !!passwordAccount;
 
-          // Get usage for current month
-          const now = new Date();
-          const period = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+          // Get total submissions count
+          const [result] = await db
+            .select({ count: count() })
+            .from(submissions)
+            .innerJoin(forms, eq(submissions.formId, forms.id))
+            .where(eq(forms.userId, userId));
 
-          const usageRecords = await db
-            .select()
-            .from(usage)
-            .where(and(eq(usage.userId, userId), eq(usage.period, period)));
-
-          const totalSubmissions = usageRecords.reduce(
-            (acc, curr) => acc + curr.count,
-            0,
-          );
+          const totalSubmissions = result?.count || 0;
 
           // Get subscription for limits
           const [subscription] = await db
@@ -57,7 +52,6 @@ export const Route = createFileRoute("/api/user/settings")({
             usage: {
               used: totalSubmissions,
               limit,
-              period,
             },
             subscription: subscription || null,
           });
