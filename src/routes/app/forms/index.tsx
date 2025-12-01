@@ -162,7 +162,9 @@ function RouteComponent() {
                     size={14}
                     className="text-accent"
                   />
-                  <span className="text-xs">{form.submissionCount}</span>
+                  <span className="text-xs">
+                    {form.submissionCount?.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </Link>
