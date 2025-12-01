@@ -40,18 +40,10 @@ export function BillingSettings({ settings }: BillingSettingsProps) {
 
         <div className="mb-2">
           <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Usage</span>
-            <span>{settings?.usage?.used} submissions</span>
+            <span>Total Submissions</span>
+            <span>{settings?.usage?.used?.toLocaleString()}</span>
           </div>
         </div>
-        <p className="text-xs text-gray-500">
-          Resets on{" "}
-          {new Date(
-            new Date().getFullYear(),
-            new Date().getMonth() + 1,
-            1,
-          ).toLocaleDateString()}
-        </p>
       </div>
 
       <div className="space-y-4">
