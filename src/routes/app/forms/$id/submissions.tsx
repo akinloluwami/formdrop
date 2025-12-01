@@ -400,7 +400,8 @@ function RouteComponent() {
             Submissions
             {!isLoading && submissions.length > 0 && (
               <span className="ml-2 text-sm font-normal text-gray-500">
-                (Showing {submissions.length} of {totalSubmissions})
+                (Showing {submissions.length.toLocaleString()} of{" "}
+                {totalSubmissions.toLocaleString()})
               </span>
             )}
           </h2>
@@ -899,7 +900,7 @@ function RouteComponent() {
                     >
                       {isExporting
                         ? "Exporting..."
-                        : `Export ${!isPro && totalSubmissions > 1000 ? "1,000" : totalSubmissions} Rows`}
+                        : `Export ${!isPro && totalSubmissions > 1000 ? "1,000" : totalSubmissions.toLocaleString()} Rows`}
                     </Button>
                   </div>
                 </div>
