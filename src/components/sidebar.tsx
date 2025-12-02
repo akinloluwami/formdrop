@@ -13,6 +13,7 @@ import { useState } from "react";
 import { UpgradeModal } from "./upgrade-modal";
 import { useQuery } from "@tanstack/react-query";
 import { appClient } from "@/lib/app-client";
+import { motion } from "motion/react";
 
 export function Sidebar() {
   const location = useLocation();
@@ -66,18 +67,30 @@ export function Sidebar() {
               <Link
                 to={link.path}
                 key={link.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-4xl ${
-                  isActive
-                    ? "bg-accent/15 text-accent"
-                    : "text-gray-600 hover:text-gray-900"
+                className={`relative flex items-center gap-3 px-4 py-3 rounded-4xl transition-colors ${
+                  isActive ? "text-accent" : "text-gray-600 hover:text-gray-900"
                 }`}
               >
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebar-active-link"
+                    className="absolute inset-0 bg-accent/15 rounded-4xl"
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30,
+                    }}
+                  />
+                )}
                 <HugeiconsIcon
                   icon={link.icon}
                   size={20}
+                  className="relative z-10"
                   color={isActive ? "#6f63e4" : undefined}
                 />
-                <span className={`text-sm font-medium`}>{link.name}</span>
+                <span className={`text-sm font-medium relative z-10`}>
+                  {link.name}
+                </span>
               </Link>
             );
           })}
