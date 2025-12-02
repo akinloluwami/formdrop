@@ -19,25 +19,18 @@ function GettingStarted() {
       </div>
 
       <div className="prose prose-gray max-w-none">
-        <h2 className="text-2xl font-bold mt-10 mb-4">1. Get your API Key</h2>
+        <h2 className="text-2xl font-bold mt-10 mb-4">1. Create a Form</h2>
         <p>
-          Log in to your dashboard and navigate to the <strong>API Keys</strong>{" "}
-          section. You'll need your <strong>Public Key</strong> for the frontend
-          code.
+          Log in to your dashboard and create a new form. You'll get a unique{" "}
+          <strong>Form URL</strong> (e.g.,{" "}
+          <code>https://api.formdrop.co/f/your-form-slug</code>) that you'll use
+          to send submissions.
         </p>
 
-        <h2 className="text-2xl font-bold mt-10 mb-4">
-          2. Create a Form (Optional)
-        </h2>
+        <h2 className="text-2xl font-bold mt-10 mb-4">2. Send a Submission</h2>
         <p>
-          You can create a form in the dashboard, or simply send a submission
-          with a new <code>form</code> name. If the form doesn't exist, we'll
-          automatically create it for you.
-        </p>
-
-        <h2 className="text-2xl font-bold mt-10 mb-4">3. Send a Submission</h2>
-        <p>
-          You can submit data using a standard HTML form or send an API request.
+          You can submit data using a standard HTML form or send an API request
+          to your Form URL.
         </p>
 
         <CodeTabs
@@ -46,10 +39,7 @@ function GettingStarted() {
               title: "HTML Form",
               value: "html",
               language: "html",
-              code: `<form action="https://api.formdrop.co/collect?key=YOUR_PUBLIC_KEY" method="POST">
-  <!-- The form field must match your form name in the dashboard -->
-  <input type="hidden" name="form" value="Contact Us" />
-  
+              code: `<form action="https://api.formdrop.co/f/YOUR_FORM_SLUG" method="POST">
   <input type="email" name="email" placeholder="Email" required />
   <textarea name="message" placeholder="Message" required></textarea>
   <button type="submit">Send</button>
@@ -60,18 +50,14 @@ function GettingStarted() {
               value: "javascript",
               language: "javascript",
               code: `const submitForm = async (data) => {
-  const response = await fetch('https://api.formdrop.co/collect', {
+  const response = await fetch('https://api.formdrop.co/f/YOUR_FORM_SLUG', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer YOUR_PUBLIC_KEY'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      form: "Contact Us",
-      data: {
-        email: "user@example.com",
-        message: "Hello world"
-      }
+      email: "user@example.com",
+      message: "Hello world"
     })
   });
 
@@ -84,19 +70,15 @@ function GettingStarted() {
               value: "php",
               language: "php",
               code: `<?php
-$url = 'https://api.formdrop.co/collect';
+$url = 'https://api.formdrop.co/f/YOUR_FORM_SLUG';
 $data = [
-    'form' => 'Contact Us',
-    'data' => [
-        'email' => 'user@example.com',
-        'message' => 'Hello world'
-    ]
+    'email' => 'user@example.com',
+    'message' => 'Hello world'
 ];
 
 $options = [
     'http' => [
-        'header'  => "Content-type: application/json\r\n" .
-                     "Authorization: Bearer YOUR_PUBLIC_KEY\r\n",
+        'header'  => "Content-type: application/json\r\n",
         'method'  => 'POST',
         'content' => json_encode($data)
     ]
@@ -113,22 +95,18 @@ var_dump($result);
               title: "cURL",
               value: "curl",
               language: "bash",
-              code: `curl -X POST https://api.formdrop.co/collect \\
-  -H "Authorization: Bearer YOUR_PUBLIC_KEY" \\
+              code: `curl -X POST https://api.formdrop.co/f/YOUR_FORM_SLUG \\
   -H "Content-Type: application/json" \\
   -d '{
-    "form": "Contact Us",
-    "data": {
-      "email": "user@example.com",
-      "message": "Hello world"
-    }
+    "email": "user@example.com",
+    "message": "Hello world"
   }'`,
             },
           ]}
         />
 
         <h2 className="text-2xl font-bold mt-10 mb-4">
-          4. Check your Dashboard
+          3. Check your Dashboard
         </h2>
         <p>
           Go to the <strong>Forms</strong> section in your dashboard to view the
