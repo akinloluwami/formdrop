@@ -79,7 +79,9 @@ function RouteComponent() {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="p-6 border border-gray-200 rounded-3xl bg-white">
           <p className="text-sm font-medium text-gray-500">Total Submissions</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{stats.total}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">
+            {stats.total.toLocaleString()}
+          </p>
         </div>
         <div className="p-6 border border-gray-200 rounded-3xl bg-white">
           <p className="text-sm font-medium text-gray-500">This Month</p>
@@ -89,7 +91,9 @@ function RouteComponent() {
         </div>
         <div className="p-6 border border-gray-200 rounded-3xl bg-white">
           <p className="text-sm font-medium text-gray-500">Today</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{stats.today}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">
+            {stats.today.toLocaleString()}
+          </p>
         </div>
       </div>
 
