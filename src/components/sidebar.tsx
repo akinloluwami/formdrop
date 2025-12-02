@@ -20,10 +20,12 @@ export function Sidebar() {
   const { data: session, isPending } = useSession();
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
-  const { data: subscriptionData } = useQuery({
-    queryKey: ["subscription"],
-    queryFn: () => appClient.subscription.get(),
-  });
+  const { data: subscriptionData, isPending: isSubscriptionPending } = useQuery(
+    {
+      queryKey: ["subscription"],
+      queryFn: () => appClient.subscription.get(),
+    },
+  );
 
   const isPro =
     subscriptionData &&
@@ -81,7 +83,7 @@ export function Sidebar() {
           })}
         </div>
       </div>
-      {!isPro && (
+      {!isSubscriptionPending && !isPro && (
         <div className="px-2">
           <div className="bg-linear-to-br from-accent/5 to-accent/20 p-4 rounded-xl border border-accent/10 relative overflow-hidden group">
             <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/15 transition-colors duration-500"></div>
