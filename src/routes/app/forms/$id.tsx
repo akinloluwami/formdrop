@@ -5,6 +5,8 @@ import {
   useLocation,
 } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useQuery } from "@tanstack/react-query";
+import { appClient } from "@/lib/app-client";
 
 export const Route = createFileRoute("/app/forms/$id")({
   component: RouteComponent,
@@ -12,6 +14,18 @@ export const Route = createFileRoute("/app/forms/$id")({
 
 function RouteComponent() {
   const location = useLocation();
+  const { id } = Route.useParams();
+
+  const { data: form } = useQuery({
+    queryKey: ["form", id],
+    queryFn: async () => {
+      const response = await appClient.forms.get(id);
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      return response.form;
+    },
+  });
 
   const links = [
     {
@@ -38,6 +52,7 @@ function RouteComponent() {
   return (
     <div>
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200 mb-6 pt-8">
+        <h1 className="text-2xl font-bold mb-4">{form?.name}</h1>
         <nav className="flex gap-8">
           {links.map((link) => {
             const isActive =
