@@ -57,7 +57,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">
         Global Analytics
       </h1>
@@ -66,13 +66,13 @@ function RouteComponent() {
         <div className="p-6 border border-gray-200 rounded-3xl bg-white">
           <p className="text-sm font-medium text-gray-500">Total Forms</p>
           <p className="text-3xl font-bold text-gray-900 mt-2">
-            {stats.totalForms}
+            {stats.totalForms.toLocaleString()}
           </p>
         </div>
         <div className="p-6 border border-gray-200 rounded-3xl bg-white">
           <p className="text-sm font-medium text-gray-500">Total Submissions</p>
           <p className="text-3xl font-bold text-gray-900 mt-2">
-            {stats.totalSubmissions}
+            {stats.totalSubmissions.toLocaleString()}
           </p>
         </div>
         <div className="p-6 border border-gray-200 rounded-3xl bg-white">
@@ -80,7 +80,7 @@ function RouteComponent() {
             Submissions (30 Days)
           </p>
           <p className="text-3xl font-bold text-gray-900 mt-2">
-            {stats.submissionsThisMonth}
+            {stats.submissionsThisMonth.toLocaleString()}
           </p>
         </div>
       </div>
@@ -167,7 +167,7 @@ function RouteComponent() {
                     <div>
                       <p className="font-medium text-gray-900">{form.name}</p>
                       <p className="text-xs text-gray-500">
-                        {form.submissionCount} submissions
+                        {form.submissionCount.toLocaleString()} submissions
                       </p>
                     </div>
                   </div>
