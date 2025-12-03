@@ -107,8 +107,8 @@ function RouteComponent() {
 
   return (
     <div>
-      <div className="flex items-center justify-between py-2">
-        <h2 className="text-lg font-semibold">Forms</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Forms</h2>
         <button
           onClick={() => setIsCreateModalOpen(true)}
           className="bg-accent hover:bg-accent/90 transition-colors text-white px-5 py-3 rounded-3xl font-semibold text-sm"
