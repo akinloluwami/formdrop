@@ -60,7 +60,7 @@ function RouteComponent() {
       <IntegrationExamplesModal
         isOpen={showIntegrationModal}
         onClose={() => setShowIntegrationModal(false)}
-        formId={form?.slug || id}
+        formSlug={form?.slug!}
       />
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200 mb-6 pt-8">
         <div className="flex items-center justify-between mb-4">

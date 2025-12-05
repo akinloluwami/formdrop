@@ -6,23 +6,19 @@ import { HugeiconsIcon } from "@hugeicons/react";
 interface IntegrationExamplesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formId: string;
+  formSlug: string;
 }
 
 export function IntegrationExamplesModal({
   isOpen,
   onClose,
-  formId,
+  formSlug,
 }: IntegrationExamplesModalProps) {
   const origin =
     typeof window !== "undefined"
       ? window.location.origin
-      : "https://formdrop.io";
-  // Assuming the endpoint uses the form ID. If it uses slug, we might need to pass that instead.
-  // Based on public-api/src/routes/collect.tsx it uses :slug.
-  // But usually id is used as slug or slug is unique.
-  // I'll use formId for now as the prop name suggests, but if the user passes slug, it works too.
-  const endpoint = `${origin}/f/${formId}`;
+      : "https://api.formdrop.io";
+  const endpoint = `${origin}/f/${formSlug}`;
 
   const tabs = [
     {
