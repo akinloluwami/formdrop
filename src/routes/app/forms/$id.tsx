@@ -7,6 +7,11 @@ import {
 import { motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { appClient } from "@/lib/app-client";
+import { useState } from "react";
+import { Button } from "@/components/button";
+import { IntegrationExamplesModal } from "@/components/integration-examples-modal";
+import { CodeIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 export const Route = createFileRoute("/app/forms/$id")({
   component: RouteComponent,
@@ -15,8 +20,9 @@ export const Route = createFileRoute("/app/forms/$id")({
 function RouteComponent() {
   const location = useLocation();
   const { id } = Route.useParams();
+  const [showIntegrationModal, setShowIntegrationModal] = useState(false);
 
-  const { data: form } = useQuery({
+  const { data: form, isLoading } = useQuery({
     queryKey: ["form", id],
     queryFn: async () => {
       const response = await appClient.forms.get(id);
@@ -51,8 +57,25 @@ function RouteComponent() {
   ];
   return (
     <div>
+      <IntegrationExamplesModal
+        isOpen={showIntegrationModal}
+        onClose={() => setShowIntegrationModal(false)}
+        formId={form?.slug || id}
+      />
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200 mb-6 pt-8">
-        <h1 className="text-2xl font-bold mb-4">{form?.name}</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold">{form?.name}</h1>
+          {!isLoading && (
+            <Button
+              onClick={() => setShowIntegrationModal(true)}
+              variant="outline"
+              size="sm"
+              icon={<HugeiconsIcon icon={CodeIcon} size={16} />}
+            >
+              Integration Guide
+            </Button>
+          )}
+        </div>
         <nav className="flex gap-8">
           {links.map((link) => {
             const isActive =
