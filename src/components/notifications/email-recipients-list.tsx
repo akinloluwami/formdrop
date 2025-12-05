@@ -149,7 +149,7 @@ export function EmailRecipientsList({
             size="md"
             className="rounded-3xl"
             icon={<HugeiconsIcon icon={Add01Icon} size={16} />}
-            requiresPro
+            requiresPro={recipients.length >= 2}
           >
             Add Recipient
           </Button>
