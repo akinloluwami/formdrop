@@ -129,7 +129,7 @@ export const Route = createFileRoute("/api/forms/$formId/recipients")({
             .from(emailNotificationRecipients)
             .where(eq(emailNotificationRecipients.formId, formId));
 
-          const limit = isPro ? 10 : 1;
+          const limit = isPro ? 10 : 2;
           if (existingRecipients.length >= limit) {
             return Response.json(
               {
