@@ -18,8 +18,10 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DocsIndexRouteImport } from './routes/docs/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as DocsIntegrationsRouteImport } from './routes/docs/integrations'
 import { Route as DocsGettingStartedRouteImport } from './routes/docs/getting-started'
 import { Route as DocsFormsRouteImport } from './routes/docs/forms'
@@ -32,11 +34,18 @@ import { Route as ApiSubscriptionRouteImport } from './routes/api/subscription'
 import { Route as ApiFormsRouteImport } from './routes/api/forms'
 import { Route as ApiApiKeysRouteImport } from './routes/api/api-keys'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminSubmissionsRouteImport } from './routes/admin/submissions'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminFormsRouteImport } from './routes/admin/forms'
 import { Route as AppFormsIndexRouteImport } from './routes/app/forms/index'
 import { Route as AppFormsIdRouteImport } from './routes/app/forms/$id'
 import { Route as ApiUserSettingsRouteImport } from './routes/api/user/settings'
 import { Route as ApiFormsFormIdRouteImport } from './routes/api/forms/$formId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAdminSubmissionsRouteImport } from './routes/api/admin/submissions'
+import { Route as ApiAdminStatsRouteImport } from './routes/api/admin/stats'
+import { Route as ApiAdminFormsRouteImport } from './routes/api/admin/forms'
 import { Route as AppFormsIdSubmissionsRouteImport } from './routes/app/forms/$id/submissions'
 import { Route as AppFormsIdSettingsRouteImport } from './routes/app/forms/$id/settings'
 import { Route as AppFormsIdNotificationsRouteImport } from './routes/app/forms/$id/notifications'
@@ -57,6 +66,7 @@ import { Route as ApiFormsFormIdExportRouteImport } from './routes/api/forms/$fo
 import { Route as ApiFormsFormIdDisconnectSlackRouteImport } from './routes/api/forms/$formId/disconnect-slack'
 import { Route as ApiFormsFormIdDisconnectDiscordRouteImport } from './routes/api/forms/$formId/disconnect-discord'
 import { Route as ApiFormsFormIdAnalyticsRouteImport } from './routes/api/forms/$formId/analytics'
+import { Route as ApiAdminSettingsClearOldSubmissionsRouteImport } from './routes/api/admin/settings/clear-old-submissions'
 import { Route as ApiFormsFormIdSubmissionsSubmissionIdRouteImport } from './routes/api/forms/$formId/submissions/$submissionId'
 import { Route as ApiFormsFormIdRecipientsRecipientIdRouteImport } from './routes/api/forms/$formId/recipients/$recipientId'
 import { Route as ApiFormsFormIdRecipientsRecipientIdResendVerificationRouteImport } from './routes/api/forms/$formId/recipients/$recipientId/resend-verification'
@@ -106,6 +116,11 @@ const AppRoute = AppRouteImport.update({
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -115,6 +130,11 @@ const DocsIndexRoute = DocsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DocsRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const DocsIntegrationsRoute = DocsIntegrationsRouteImport.update({
   id: '/integrations',
@@ -176,6 +196,26 @@ const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
   path: '/api/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFormsRoute = AdminFormsRouteImport.update({
+  id: '/forms',
+  path: '/forms',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AppFormsIndexRoute = AppFormsIndexRouteImport.update({
   id: '/forms/',
   path: '/forms/',
@@ -199,6 +239,21 @@ const ApiFormsFormIdRoute = ApiFormsFormIdRouteImport.update({
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminSubmissionsRoute = ApiAdminSubmissionsRouteImport.update({
+  id: '/api/admin/submissions',
+  path: '/api/admin/submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminStatsRoute = ApiAdminStatsRouteImport.update({
+  id: '/api/admin/stats',
+  path: '/api/admin/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminFormsRoute = ApiAdminFormsRouteImport.update({
+  id: '/api/admin/forms',
+  path: '/api/admin/forms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppFormsIdSubmissionsRoute = AppFormsIdSubmissionsRouteImport.update({
@@ -314,6 +369,12 @@ const ApiFormsFormIdAnalyticsRoute = ApiFormsFormIdAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => ApiFormsFormIdRoute,
 } as any)
+const ApiAdminSettingsClearOldSubmissionsRoute =
+  ApiAdminSettingsClearOldSubmissionsRouteImport.update({
+    id: '/api/admin/settings/clear-old-submissions',
+    path: '/api/admin/settings/clear-old-submissions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiFormsFormIdSubmissionsSubmissionIdRoute =
   ApiFormsFormIdSubmissionsSubmissionIdRouteImport.update({
     id: '/$submissionId',
@@ -335,6 +396,7 @@ const ApiFormsFormIdRecipientsRecipientIdResendVerificationRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/docs': typeof DocsRouteWithChildren
   '/login': typeof LoginRoute
@@ -344,6 +406,10 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof VerifyEmailRoute
   '/verify-recipient': typeof VerifyRecipientRoute
   '/welcome-to-pro': typeof WelcomeToProRoute
+  '/admin/forms': typeof AdminFormsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/forms': typeof ApiFormsRouteWithChildren
@@ -356,12 +422,17 @@ export interface FileRoutesByFullPath {
   '/docs/forms': typeof DocsFormsRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/docs/integrations': typeof DocsIntegrationsRoute
+  '/admin/': typeof AdminIndexRoute
   '/docs/': typeof DocsIndexRoute
+  '/api/admin/forms': typeof ApiAdminFormsRoute
+  '/api/admin/stats': typeof ApiAdminStatsRoute
+  '/api/admin/submissions': typeof ApiAdminSubmissionsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/forms/$formId': typeof ApiFormsFormIdRouteWithChildren
   '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
+  '/api/admin/settings/clear-old-submissions': typeof ApiAdminSettingsClearOldSubmissionsRoute
   '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
   '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
   '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
@@ -396,6 +467,10 @@ export interface FileRoutesByTo {
   '/verify-email': typeof VerifyEmailRoute
   '/verify-recipient': typeof VerifyRecipientRoute
   '/welcome-to-pro': typeof WelcomeToProRoute
+  '/admin/forms': typeof AdminFormsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/forms': typeof ApiFormsRouteWithChildren
@@ -408,12 +483,17 @@ export interface FileRoutesByTo {
   '/docs/forms': typeof DocsFormsRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/docs/integrations': typeof DocsIntegrationsRoute
+  '/admin': typeof AdminIndexRoute
   '/docs': typeof DocsIndexRoute
+  '/api/admin/forms': typeof ApiAdminFormsRoute
+  '/api/admin/stats': typeof ApiAdminStatsRoute
+  '/api/admin/submissions': typeof ApiAdminSubmissionsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/forms/$formId': typeof ApiFormsFormIdRouteWithChildren
   '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms': typeof AppFormsIndexRoute
+  '/api/admin/settings/clear-old-submissions': typeof ApiAdminSettingsClearOldSubmissionsRoute
   '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
   '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
   '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
@@ -441,6 +521,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/docs': typeof DocsRouteWithChildren
   '/login': typeof LoginRoute
@@ -450,6 +531,10 @@ export interface FileRoutesById {
   '/verify-email': typeof VerifyEmailRoute
   '/verify-recipient': typeof VerifyRecipientRoute
   '/welcome-to-pro': typeof WelcomeToProRoute
+  '/admin/forms': typeof AdminFormsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/analytics': typeof ApiAnalyticsRoute
   '/api/api-keys': typeof ApiApiKeysRoute
   '/api/forms': typeof ApiFormsRouteWithChildren
@@ -462,12 +547,17 @@ export interface FileRoutesById {
   '/docs/forms': typeof DocsFormsRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/docs/integrations': typeof DocsIntegrationsRoute
+  '/admin/': typeof AdminIndexRoute
   '/docs/': typeof DocsIndexRoute
+  '/api/admin/forms': typeof ApiAdminFormsRoute
+  '/api/admin/stats': typeof ApiAdminStatsRoute
+  '/api/admin/submissions': typeof ApiAdminSubmissionsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/forms/$formId': typeof ApiFormsFormIdRouteWithChildren
   '/api/user/settings': typeof ApiUserSettingsRoute
   '/app/forms/$id': typeof AppFormsIdRouteWithChildren
   '/app/forms/': typeof AppFormsIndexRoute
+  '/api/admin/settings/clear-old-submissions': typeof ApiAdminSettingsClearOldSubmissionsRoute
   '/api/forms/$formId/analytics': typeof ApiFormsFormIdAnalyticsRoute
   '/api/forms/$formId/disconnect-discord': typeof ApiFormsFormIdDisconnectDiscordRoute
   '/api/forms/$formId/disconnect-slack': typeof ApiFormsFormIdDisconnectSlackRoute
@@ -496,6 +586,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/app'
     | '/docs'
     | '/login'
@@ -505,6 +596,10 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/verify-recipient'
     | '/welcome-to-pro'
+    | '/admin/forms'
+    | '/admin/settings'
+    | '/admin/submissions'
+    | '/admin/users'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/forms'
@@ -517,12 +612,17 @@ export interface FileRouteTypes {
     | '/docs/forms'
     | '/docs/getting-started'
     | '/docs/integrations'
+    | '/admin/'
     | '/docs/'
+    | '/api/admin/forms'
+    | '/api/admin/stats'
+    | '/api/admin/submissions'
     | '/api/auth/$'
     | '/api/forms/$formId'
     | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms'
+    | '/api/admin/settings/clear-old-submissions'
     | '/api/forms/$formId/analytics'
     | '/api/forms/$formId/disconnect-discord'
     | '/api/forms/$formId/disconnect-slack'
@@ -557,6 +657,10 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/verify-recipient'
     | '/welcome-to-pro'
+    | '/admin/forms'
+    | '/admin/settings'
+    | '/admin/submissions'
+    | '/admin/users'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/forms'
@@ -569,12 +673,17 @@ export interface FileRouteTypes {
     | '/docs/forms'
     | '/docs/getting-started'
     | '/docs/integrations'
+    | '/admin'
     | '/docs'
+    | '/api/admin/forms'
+    | '/api/admin/stats'
+    | '/api/admin/submissions'
     | '/api/auth/$'
     | '/api/forms/$formId'
     | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms'
+    | '/api/admin/settings/clear-old-submissions'
     | '/api/forms/$formId/analytics'
     | '/api/forms/$formId/disconnect-discord'
     | '/api/forms/$formId/disconnect-slack'
@@ -601,6 +710,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/app'
     | '/docs'
     | '/login'
@@ -610,6 +720,10 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/verify-recipient'
     | '/welcome-to-pro'
+    | '/admin/forms'
+    | '/admin/settings'
+    | '/admin/submissions'
+    | '/admin/users'
     | '/api/analytics'
     | '/api/api-keys'
     | '/api/forms'
@@ -622,12 +736,17 @@ export interface FileRouteTypes {
     | '/docs/forms'
     | '/docs/getting-started'
     | '/docs/integrations'
+    | '/admin/'
     | '/docs/'
+    | '/api/admin/forms'
+    | '/api/admin/stats'
+    | '/api/admin/submissions'
     | '/api/auth/$'
     | '/api/forms/$formId'
     | '/api/user/settings'
     | '/app/forms/$id'
     | '/app/forms/'
+    | '/api/admin/settings/clear-old-submissions'
     | '/api/forms/$formId/analytics'
     | '/api/forms/$formId/disconnect-discord'
     | '/api/forms/$formId/disconnect-slack'
@@ -655,6 +774,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   DocsRoute: typeof DocsRouteWithChildren
   LoginRoute: typeof LoginRoute
@@ -669,8 +789,12 @@ export interface RootRouteChildren {
   ApiFormsRoute: typeof ApiFormsRouteWithChildren
   ApiSubscriptionRoute: typeof ApiSubscriptionRoute
   ApiVerifyRecipientRoute: typeof ApiVerifyRecipientRoute
+  ApiAdminFormsRoute: typeof ApiAdminFormsRoute
+  ApiAdminStatsRoute: typeof ApiAdminStatsRoute
+  ApiAdminSubmissionsRoute: typeof ApiAdminSubmissionsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiUserSettingsRoute: typeof ApiUserSettingsRoute
+  ApiAdminSettingsClearOldSubmissionsRoute: typeof ApiAdminSettingsClearOldSubmissionsRoute
   ApiIntegrationsDiscordAuthorizeRoute: typeof ApiIntegrationsDiscordAuthorizeRoute
   ApiIntegrationsDiscordCallbackRoute: typeof ApiIntegrationsDiscordCallbackRoute
   ApiIntegrationsGoogleSheetsAuthorizeRoute: typeof ApiIntegrationsGoogleSheetsAuthorizeRoute
@@ -747,6 +871,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -760,6 +891,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/docs/'
       preLoaderRoute: typeof DocsIndexRouteImport
       parentRoute: typeof DocsRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/docs/integrations': {
       id: '/docs/integrations'
@@ -845,6 +983,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/submissions': {
+      id: '/admin/submissions'
+      path: '/submissions'
+      fullPath: '/admin/submissions'
+      preLoaderRoute: typeof AdminSubmissionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/forms': {
+      id: '/admin/forms'
+      path: '/forms'
+      fullPath: '/admin/forms'
+      preLoaderRoute: typeof AdminFormsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/app/forms/': {
       id: '/app/forms/'
       path: '/forms'
@@ -878,6 +1044,27 @@ declare module '@tanstack/react-router' {
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/submissions': {
+      id: '/api/admin/submissions'
+      path: '/api/admin/submissions'
+      fullPath: '/api/admin/submissions'
+      preLoaderRoute: typeof ApiAdminSubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/stats': {
+      id: '/api/admin/stats'
+      path: '/api/admin/stats'
+      fullPath: '/api/admin/stats'
+      preLoaderRoute: typeof ApiAdminStatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/forms': {
+      id: '/api/admin/forms'
+      path: '/api/admin/forms'
+      fullPath: '/api/admin/forms'
+      preLoaderRoute: typeof ApiAdminFormsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/forms/$id/submissions': {
@@ -1020,6 +1207,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiFormsFormIdAnalyticsRouteImport
       parentRoute: typeof ApiFormsFormIdRoute
     }
+    '/api/admin/settings/clear-old-submissions': {
+      id: '/api/admin/settings/clear-old-submissions'
+      path: '/api/admin/settings/clear-old-submissions'
+      fullPath: '/api/admin/settings/clear-old-submissions'
+      preLoaderRoute: typeof ApiAdminSettingsClearOldSubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/forms/$formId/submissions/$submissionId': {
       id: '/api/forms/$formId/submissions/$submissionId'
       path: '/$submissionId'
@@ -1043,6 +1237,24 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteChildren {
+  AdminFormsRoute: typeof AdminFormsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminFormsRoute: AdminFormsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSubmissionsRoute: AdminSubmissionsRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AppFormsIdRouteChildren {
   AppFormsIdAnalyticsRoute: typeof AppFormsIdAnalyticsRoute
@@ -1181,6 +1393,7 @@ const ApiFormsRouteWithChildren = ApiFormsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   DocsRoute: DocsRouteWithChildren,
   LoginRoute: LoginRoute,
@@ -1195,8 +1408,13 @@ const rootRouteChildren: RootRouteChildren = {
   ApiFormsRoute: ApiFormsRouteWithChildren,
   ApiSubscriptionRoute: ApiSubscriptionRoute,
   ApiVerifyRecipientRoute: ApiVerifyRecipientRoute,
+  ApiAdminFormsRoute: ApiAdminFormsRoute,
+  ApiAdminStatsRoute: ApiAdminStatsRoute,
+  ApiAdminSubmissionsRoute: ApiAdminSubmissionsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiUserSettingsRoute: ApiUserSettingsRoute,
+  ApiAdminSettingsClearOldSubmissionsRoute:
+    ApiAdminSettingsClearOldSubmissionsRoute,
   ApiIntegrationsDiscordAuthorizeRoute: ApiIntegrationsDiscordAuthorizeRoute,
   ApiIntegrationsDiscordCallbackRoute: ApiIntegrationsDiscordCallbackRoute,
   ApiIntegrationsGoogleSheetsAuthorizeRoute:
