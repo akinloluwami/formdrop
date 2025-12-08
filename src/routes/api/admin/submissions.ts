@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { forms, submissions } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/admin/submissions")({
@@ -31,6 +31,7 @@ export const Route = createFileRoute("/api/admin/submissions")({
             })
             .from(submissions)
             .innerJoin(forms, eq(submissions.formId, forms.id))
+            .where(isNull(submissions.deletedAt))
             .orderBy(desc(submissions.createdAt))
             .limit(100);
 
