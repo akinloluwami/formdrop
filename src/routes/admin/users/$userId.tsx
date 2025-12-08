@@ -156,7 +156,16 @@ function AdminUserDetail() {
   if (!user) {
     return (
       <div className="space-y-6">
-        <Link to="/admin/users">
+        <Link
+          to="/admin/users"
+          search={{
+            page: 1,
+            pageSize: 10,
+            sortBy: "createdAt",
+            sortOrder: "desc",
+            search: "",
+          }}
+        >
           <Button variant="outline" size="sm">
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
             Back to Users
@@ -172,7 +181,16 @@ function AdminUserDetail() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Link to="/admin/users">
+        <Link
+          to="/admin/users"
+          search={{
+            page: 1,
+            pageSize: 10,
+            sortBy: "createdAt",
+            sortOrder: "desc",
+            search: "",
+          }}
+        >
           <Button variant="outline" size="sm">
             <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
             Back to Users
