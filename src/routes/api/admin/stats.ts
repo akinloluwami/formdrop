@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { user, forms, submissions } from "@/db/schema";
-import { count, sql, desc, gte } from "drizzle-orm";
+import { count, sql, desc, gte, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/admin/stats")({
@@ -25,7 +25,8 @@ export const Route = createFileRoute("/api/admin/stats")({
           const [totalForms] = await db.select({ count: count() }).from(forms);
           const [totalSubmissions] = await db
             .select({ count: count() })
-            .from(submissions);
+            .from(submissions)
+            .where(isNull(submissions.deletedAt));
 
           // Get users over time (last 30 days)
           const thirtyDaysAgo = new Date();
@@ -48,7 +49,9 @@ export const Route = createFileRoute("/api/admin/stats")({
               count: count(),
             })
             .from(submissions)
-            .where(gte(submissions.createdAt, thirtyDaysAgo))
+            .where(
+              sql`${submissions.createdAt} >= ${thirtyDaysAgo} AND ${submissions.deletedAt} IS NULL`,
+            )
             .groupBy(sql`DATE(${submissions.createdAt})`)
             .orderBy(sql`DATE(${submissions.createdAt})`);
 
@@ -61,6 +64,7 @@ export const Route = createFileRoute("/api/admin/stats")({
             })
             .from(submissions)
             .innerJoin(forms, sql`${submissions.formId} = ${forms.id}`)
+            .where(isNull(submissions.deletedAt))
             .groupBy(submissions.formId, forms.name)
             .orderBy(desc(count()))
             .limit(5);
