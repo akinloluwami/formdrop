@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
-import { forms, submissions } from "@/db/schema";
+import { forms, submissions, user } from "@/db/schema";
 import { count, sql, eq, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/api/admin/forms")({
               id: forms.id,
               name: forms.name,
               userId: forms.userId,
+              userName: user.name,
               createdAt: forms.createdAt,
               submissionCount: sql<number>`(
                 SELECT COUNT(*)::int 
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/api/admin/forms")({
               )`.as("submissionCount"),
             })
             .from(forms)
+            .innerJoin(user, eq(forms.userId, user.id))
             .orderBy(sql`${forms.createdAt} DESC`);
 
           return new Response(JSON.stringify({ forms: allForms }), {
