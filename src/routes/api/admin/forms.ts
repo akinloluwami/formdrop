@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { db } from "@/db";
 import { forms, submissions } from "@/db/schema";
-import { count, sql, eq } from "drizzle-orm";
+import { count, sql, eq, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 
 export const Route = createFileRoute("/api/admin/forms")({
@@ -29,9 +29,10 @@ export const Route = createFileRoute("/api/admin/forms")({
               createdAt: forms.createdAt,
               submissionCount: sql<number>`(
                 SELECT COUNT(*)::int 
-                FROM ${submissions} 
-                WHERE ${submissions.formId} = ${forms.id}
-              )`,
+                FROM submissions 
+                WHERE submissions.form_id = forms.id
+                AND submissions.deleted_at IS NULL
+              )`.as("submissionCount"),
             })
             .from(forms)
             .orderBy(sql`${forms.createdAt} DESC`);
