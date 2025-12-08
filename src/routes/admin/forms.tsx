@@ -19,6 +19,7 @@ type Form = {
   id: string;
   name: string;
   userId: string;
+  userName: string;
   createdAt: Date;
   submissionCount: number;
 };
@@ -32,10 +33,17 @@ const columns = [
       <div className="font-medium text-gray-900">{info.getValue()}</div>
     ),
   }),
-  columnHelper.accessor("userId", {
-    header: "Owner ID",
+  columnHelper.accessor("userName", {
+    header: "Owner",
     cell: (info) => (
-      <div className="text-gray-500 font-mono text-xs">{info.getValue()}</div>
+      <Link
+        to="/admin/users/$userId"
+        params={{ userId: info.row.original.userId }}
+      >
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors cursor-pointer">
+          {info.getValue()}
+        </span>
+      </Link>
     ),
   }),
   columnHelper.accessor("submissionCount", {
