@@ -14,10 +14,7 @@ export function IntegrationExamplesModal({
   onClose,
   formSlug,
 }: IntegrationExamplesModalProps) {
-  const origin =
-    typeof window !== "undefined"
-      ? window.location.origin
-      : "https://api.formdrop.io";
+  const origin = "https://api.formdrop.co";
   const endpoint = `${origin}/f/${formSlug}`;
 
   const tabs = [
