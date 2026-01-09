@@ -11,13 +11,7 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { isNull } from "drizzle-orm";
-import {
-  account,
-  session,
-  user,
-  verification,
-  impersonation,
-} from "./auth-schema";
+import { account, session, user, verification } from "./auth-schema";
 
 export const notificationTypeEnum = pgEnum("notification_type", [
   "email",
@@ -307,4 +301,4 @@ export const subscriptions = pgTable("subscriptions", {
     .notNull(),
 });
 
-export { account, session, user, verification, impersonation };
+export { account, session, user, verification };

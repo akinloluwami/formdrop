@@ -11,7 +11,7 @@ import {
   webhooks,
 } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
-import { emailOTP, admin, organization } from "better-auth/plugins";
+import { emailOTP } from "better-auth/plugins";
 import { Resend } from "resend";
 import { OTPEmail } from "@/emails/OTPEmail";
 
@@ -41,8 +41,6 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    organization(),
-    admin(),
     emailOTP({
       async sendVerificationOTP({ email, otp }) {
         try {
